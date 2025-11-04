@@ -1,0 +1,5 @@
+// Prueba simple del compilador
+
+var x: Int = 10
+var y: Int = 20
+var resultado: Int = x + y

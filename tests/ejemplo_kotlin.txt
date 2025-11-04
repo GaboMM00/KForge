@@ -1,0 +1,52 @@
+// Ejemplo de código Kotlin para pruebas del compilador
+
+// Declaración de variables
+var contador: Int = 0
+val maximo: Int = 5
+
+// Ciclo while con condicional
+while (contador < maximo) {
+    if (contador % 2 == 0) {
+        contador = contador + 1
+    } else {
+        contador = contador + 2
+    }
+}
+
+// Declaración de variables con diferentes tipos
+var nombre: String = "Kotlin"
+var version: Double = 1.9
+var activo: Boolean = true
+
+// Ciclo for con rango
+var suma: Int = 0
+for (i in 1..10) {
+    suma = suma + i
+}
+
+// Condicionales anidados
+var a: Int = 10
+var b: Int = 20
+
+if (a < b) {
+    var temp: Int = a
+    if (temp > 5) {
+        b = b - 1
+    } else {
+        a = a + 1
+    }
+} else {
+    a = a * 2
+}
+
+// Expresiones matemáticas
+var resultado: Double = 3.14
+resultado = resultado * 2.0
+resultado = resultado / 2.0
+resultado = resultado + 1.5
+resultado = resultado - 0.5
+
+// Variables inmutables (val)
+val PI: Double = 3.14159
+val NOMBRE_APP: String = "KForge"
+val ES_VALIDO: Boolean = true
