@@ -4,7 +4,7 @@ Integra todos los componentes de la interfaz moderna.
 """
 
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, ttk
 from ui.theme_manager import get_theme_manager, get_language_manager
 from ui.splash_screen import show_splash
 from ui.editor_panel import EditorPanel
@@ -148,6 +148,176 @@ class KForgeApp(tk.Tk):
         self.phases_panel.bind("<<RunSyntactic>>", lambda e: self._run_syntactic())
         self.phases_panel.bind("<<RunSemantic>>", lambda e: self._run_semantic())
         self.phases_panel.bind("<<RunCodeGen>>", lambda e: self._run_codegen())
+        self.phases_panel.bind("<<ClearConsole>>", lambda e: self.console_panel.clear_all())
+
+        # Sidebar events
+        self.sidebar.bind("<<SidebarFiles>>", lambda e: self._sidebar_files())
+        self.sidebar.bind("<<SidebarSettings>>", lambda e: self._sidebar_settings())
+        self.sidebar.bind("<<SidebarTerminal>>", lambda e: self._sidebar_terminal())
+        self.sidebar.bind("<<SidebarToggle>>", lambda e: self._sidebar_toggle())
+
+    # ========== Métodos de sidebar ==========
+
+    def _sidebar_files(self):
+        """Abre el diálogo de gestión de archivos."""
+        # Crear menú contextual de archivos
+        menu = tk.Menu(self, tearoff=0)
+        menu.add_command(label="Nuevo archivo (Ctrl+N)", command=self._new_file)
+        menu.add_command(label="Abrir archivo (Ctrl+O)", command=self._open_file)
+        menu.add_command(label="Guardar (Ctrl+S)", command=self._save_file)
+        menu.add_separator()
+        menu.add_command(label="Información del archivo", command=self._show_file_info)
+
+        # Mostrar el menú en la posición del sidebar
+        x = self.sidebar.winfo_rootx() + self.sidebar.winfo_width()
+        y = self.sidebar.winfo_rooty() + 50
+        menu.tk_popup(x, y)
+
+    def _show_file_info(self):
+        """Muestra información del archivo actual."""
+        filename = self.editor_panel.get_current_filename()
+        filepath = self.editor_panel.get_current_filepath()
+        text = self.editor_panel.get_current_text()
+        lines = text.count('\n') + 1 if text else 0
+        chars = len(text)
+
+        info_text = f"""Archivo: {filename}
+Ruta: {filepath if filepath else '(sin guardar)'}
+Líneas: {lines}
+Caracteres: {chars}"""
+
+        messagebox.showinfo("Información del Archivo", info_text)
+
+    def _sidebar_settings(self):
+        """Abre ventana de configuración."""
+        settings_window = tk.Toplevel(self)
+        settings_window.title("Configuración de KForge")
+        settings_window.geometry("400x300")
+        settings_window.resizable(False, False)
+
+        colors = self.theme.get_colors()
+        settings_window.configure(bg=colors.bg_primary)
+
+        # Frame principal
+        main_frame = tk.Frame(settings_window, bg=colors.bg_primary, padx=20, pady=20)
+        main_frame.pack(fill=tk.BOTH, expand=True)
+
+        # Título
+        title = tk.Label(
+            main_frame,
+            text="⚙️ Configuración",
+            font=("Segoe UI", 14, "bold"),
+            fg=colors.fg_primary,
+            bg=colors.bg_primary
+        )
+        title.pack(pady=(0, 20))
+
+        # Tema
+        theme_frame = tk.Frame(main_frame, bg=colors.bg_primary)
+        theme_frame.pack(fill=tk.X, pady=10)
+
+        tk.Label(
+            theme_frame,
+            text="Tema:",
+            font=("Segoe UI", 10),
+            fg=colors.fg_primary,
+            bg=colors.bg_primary
+        ).pack(side=tk.LEFT)
+
+        theme_var = tk.StringVar(value=self.theme.theme_name)
+        theme_combo = ttk.Combobox(
+            theme_frame,
+            textvariable=theme_var,
+            values=["dark", "light"],
+            state="readonly",
+            width=15
+        )
+        theme_combo.pack(side=tk.LEFT, padx=10)
+        theme_combo.bind("<<ComboboxSelected>>", lambda e: self._toggle_theme(theme_var.get()))
+
+        # Idioma
+        lang_frame = tk.Frame(main_frame, bg=colors.bg_primary)
+        lang_frame.pack(fill=tk.X, pady=10)
+
+        tk.Label(
+            lang_frame,
+            text="Idioma:",
+            font=("Segoe UI", 10),
+            fg=colors.fg_primary,
+            bg=colors.bg_primary
+        ).pack(side=tk.LEFT)
+
+        lang_var = tk.StringVar(value=self.lang.current_lang)
+        lang_combo = ttk.Combobox(
+            lang_frame,
+            textvariable=lang_var,
+            values=["es", "en"],
+            state="readonly",
+            width=15
+        )
+        lang_combo.pack(side=tk.LEFT, padx=10)
+
+        # Fuente
+        font_frame = tk.Frame(main_frame, bg=colors.bg_primary)
+        font_frame.pack(fill=tk.X, pady=10)
+
+        tk.Label(
+            font_frame,
+            text="Tamaño de fuente:",
+            font=("Segoe UI", 10),
+            fg=colors.fg_primary,
+            bg=colors.bg_primary
+        ).pack(side=tk.LEFT)
+
+        font_size_var = tk.IntVar(value=self.theme.font_size)
+        font_spinbox = tk.Spinbox(
+            font_frame,
+            from_=8,
+            to=20,
+            textvariable=font_size_var,
+            width=5
+        )
+        font_spinbox.pack(side=tk.LEFT, padx=10)
+
+        # Información
+        info_text = f"""Versión: {self.lang.t('app_version')}
+Fuente actual: {self.theme.font_family}"""
+
+        tk.Label(
+            main_frame,
+            text=info_text,
+            font=("Segoe UI", 9),
+            fg=colors.fg_secondary,
+            bg=colors.bg_primary,
+            justify=tk.LEFT
+        ).pack(pady=20)
+
+        # Botón cerrar
+        close_btn = tk.Button(
+            main_frame,
+            text="Cerrar",
+            command=settings_window.destroy,
+            bg=colors.button_bg,
+            fg=colors.button_fg,
+            font=("Segoe UI", 10),
+            relief=tk.FLAT,
+            padx=20,
+            pady=5
+        )
+        close_btn.pack(pady=10)
+
+    def _sidebar_terminal(self):
+        """Alterna la visibilidad de la consola."""
+        if self.console_panel.winfo_viewable():
+            self.console_panel.pack_forget()
+            self.status_bar.set_status("Terminal ocultada", "ready")
+        else:
+            self.console_panel.pack(fill=tk.BOTH, expand=False, padx=2, pady=2)
+            self.status_bar.set_status("Terminal visible", "ready")
+
+    def _sidebar_toggle(self):
+        """Maneja el toggle de la sidebar (ya gestionado por la propia sidebar)."""
+        pass
 
     # ========== Métodos de archivo ==========
 
@@ -212,6 +382,10 @@ class KForgeApp(tk.Tk):
             messagebox.showwarning("Advertencia", "El editor está vacío")
             return
 
+        # LIMPIAR RESULTADOS PREVIOS
+        self.console_panel.clear_all()
+        self.phases_panel.reset_all()
+
         self.phases_panel.set_phase_running("lexical")
         self.status_bar.set_status(self.lang.t("phases.analyzing"), "analyzing")
 
@@ -220,6 +394,8 @@ class KForgeApp(tk.Tk):
 
             if resultado["exito"]:
                 self.console_panel.show_tokens(resultado["tokens"])
+                # Cambiar a la pestaña de Tokens
+                self.console_panel.select(self.console_panel.tokens_tab)
                 self.phases_panel.set_phase_completed("lexical", True)
                 self.status_bar.set_status(self.lang.t("status.completed"), "completed")
             else:
@@ -239,16 +415,27 @@ class KForgeApp(tk.Tk):
             messagebox.showwarning("Advertencia", "El editor está vacío")
             return
 
+        # LIMPIAR RESULTADOS PREVIOS
+        self.console_panel.clear_all()
         self.phases_panel.reset_all()
+
         self.phases_panel.set_phase_running("syntactic")
         self.status_bar.set_status(self.lang.t("phases.analyzing"), "analyzing")
 
         try:
+            # Primero ejecutar análisis léxico para mostrar tokens
+            resultado_lexico = self.controller.ejecutar_lexico(code)
+            if resultado_lexico["exito"]:
+                self.console_panel.show_tokens(resultado_lexico["tokens"])
+                self.phases_panel.set_phase_completed("lexical", True)
+
+            # Luego ejecutar análisis sintáctico
             resultado = self.controller.ejecutar_sintactico(code)
 
             if resultado["exito"]:
                 self.console_panel.show_ast(resultado["arbol"])
-                self.phases_panel.set_phase_completed("lexical", True)
+                # Cambiar a la pestaña de AST
+                self.console_panel.select(self.console_panel.ast_tab)
                 self.phases_panel.set_phase_completed("syntactic", True)
                 self.status_bar.set_status(self.lang.t("status.completed"), "completed")
             else:
@@ -267,17 +454,33 @@ class KForgeApp(tk.Tk):
             messagebox.showwarning("Advertencia", "El editor está vacío")
             return
 
+        # LIMPIAR RESULTADOS PREVIOS
+        self.console_panel.clear_all()
         self.phases_panel.reset_all()
+
         self.phases_panel.set_phase_running("semantic")
         self.status_bar.set_status(self.lang.t("phases.analyzing"), "analyzing")
 
         try:
+            # 1. Ejecutar análisis léxico
+            resultado_lexico = self.controller.ejecutar_lexico(code)
+            if resultado_lexico["exito"]:
+                self.console_panel.show_tokens(resultado_lexico["tokens"])
+                self.phases_panel.set_phase_completed("lexical", True)
+
+            # 2. Ejecutar análisis sintáctico
+            resultado_sintactico = self.controller.ejecutar_sintactico(code)
+            if resultado_sintactico["exito"]:
+                self.console_panel.show_ast(resultado_sintactico["arbol"])
+                self.phases_panel.set_phase_completed("syntactic", True)
+
+            # 3. Ejecutar análisis semántico
             resultado = self.controller.ejecutar_semantico(code)
             self.console_panel.show_results(resultado)
+            # Cambiar a la pestaña de Salida
+            self.console_panel.select(self.console_panel.output_tab)
 
             if resultado["exito"]:
-                self.phases_panel.set_phase_completed("lexical", True)
-                self.phases_panel.set_phase_completed("syntactic", True)
                 self.phases_panel.set_phase_completed("semantic", True)
                 self.status_bar.set_status(self.lang.t("messages.compilation_success"), "completed")
             else:
@@ -288,7 +491,7 @@ class KForgeApp(tk.Tk):
             self.phases_panel.set_phase_completed("semantic", False)
 
     def _run_complete(self):
-        """Ejecuta compilación completa."""
+        """Ejecuta compilación completa (semántica + resaltado)."""
         self._run_semantic()
 
         # Aplicar resaltado de sintaxis
@@ -300,22 +503,66 @@ class KForgeApp(tk.Tk):
         """Ejecuta generación de código."""
         code = self.editor_panel.get_current_text()
         if not code.strip():
+            messagebox.showwarning("Advertencia", "El editor está vacío")
             return
 
+        # LIMPIAR RESULTADOS PREVIOS
+        self.console_panel.clear_all()
+        self.phases_panel.reset_all()
+
         self.phases_panel.set_phase_running("codegen")
+        self.status_bar.set_status("Generando código...", "analyzing")
+
         try:
+            # 1. Ejecutar análisis léxico
+            resultado_lexico = self.controller.ejecutar_lexico(code)
+            if resultado_lexico["exito"]:
+                self.console_panel.show_tokens(resultado_lexico["tokens"])
+                self.phases_panel.set_phase_completed("lexical", True)
+
+            # 2. Ejecutar análisis sintáctico
+            resultado_sintactico = self.controller.ejecutar_sintactico(code)
+            if resultado_sintactico["exito"]:
+                self.console_panel.show_ast(resultado_sintactico["arbol"])
+                self.phases_panel.set_phase_completed("syntactic", True)
+
+            # 3. Ejecutar análisis semántico
+            resultado_semantico = self.controller.ejecutar_semantico(code)
+            self.console_panel.show_results(resultado_semantico)
+            if resultado_semantico["exito"]:
+                self.phases_panel.set_phase_completed("semantic", True)
+
+            # 4. Ejecutar generación de código
             resultado = self.controller.ejecutar_codegen(code)
             if resultado.get("codigo_intermedio"):
+                self.console_panel.write_output("\n=== Código Intermedio ===", "info")
                 self.console_panel.write_output(resultado["codigo_intermedio"])
-            self.phases_panel.set_phase_completed("codegen", resultado["exito"])
+            # Cambiar a la pestaña de Salida
+            self.console_panel.select(self.console_panel.output_tab)
+
+            self.phases_panel.set_phase_completed("codegen", resultado.get("exito", False))
+            self.status_bar.set_status("Generación de código completada", "completed")
         except Exception as e:
             self.console_panel.write_error(str(e))
             self.phases_panel.set_phase_completed("codegen", False)
+            self.status_bar.set_status("Error en generación de código", "error")
 
     def _toggle_theme(self, theme: str):
         """Cambia el tema de la aplicación."""
         self.theme.set_theme(theme)
-        messagebox.showinfo("Tema", f"Tema cambiado. Reinicie la aplicación para aplicar completamente.")
+        colors = self.theme.get_colors()
+
+        # Aplicar tema a todos los componentes
+        self._apply_theme()
+
+        # Actualizar componentes
+        if hasattr(self, 'status_bar'):
+            self.status_bar.update_theme()
+
+        # Actualizar editor y consola requiere reiniciar, por ahora solo el fondo
+        self.configure(bg=colors.bg_primary)
+
+        messagebox.showinfo("Tema", f"Tema cambiado a {theme}. Algunos cambios requieren reiniciar la aplicación.")
 
 
 def run():

@@ -283,14 +283,15 @@ class AnalizadorSemantico:
         """Visita el nodo de expresión literal y retorna su tipo."""
         valor = nodo.valor
 
-        if isinstance(valor, int):
+        # IMPORTANTE: Verificar bool PRIMERO porque bool es subclase de int en Python
+        if isinstance(valor, bool):
+            return TipoDato.BOOLEAN
+        elif isinstance(valor, int):
             return TipoDato.INT
         elif isinstance(valor, float):
             return TipoDato.DOUBLE
         elif isinstance(valor, str):
             return TipoDato.STRING
-        elif isinstance(valor, bool):
-            return TipoDato.BOOLEAN
 
         return TipoDato.UNKNOWN
 

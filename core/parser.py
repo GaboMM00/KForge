@@ -368,52 +368,44 @@ class Parser:
 
     def expresion_primaria(self) -> NodoAST:
         """
-        expresion_primaria -> literal | IDENTIFIER | ( expresion ) | rango
+        expresion_primaria -> literal | IDENTIFIER | ( expresion )
+        Maneja también rangos después de parsear el valor inicial
         """
+        nodo = None
+
         # Literales
         if self.verificar(TipoToken.INT_LITERAL):
             token = self.token_actual
             self.avanzar()
-            return NodoAST(TipoNodo.EXPRESION_LITERAL, token.valor, linea=token.linea, columna=token.columna)
+            nodo = NodoAST(TipoNodo.EXPRESION_LITERAL, token.valor, linea=token.linea, columna=token.columna)
 
         elif self.verificar(TipoToken.DOUBLE_LITERAL):
             token = self.token_actual
             self.avanzar()
-            return NodoAST(TipoNodo.EXPRESION_LITERAL, token.valor, linea=token.linea, columna=token.columna)
+            nodo = NodoAST(TipoNodo.EXPRESION_LITERAL, token.valor, linea=token.linea, columna=token.columna)
 
         elif self.verificar(TipoToken.STRING_LITERAL):
             token = self.token_actual
             self.avanzar()
-            return NodoAST(TipoNodo.EXPRESION_LITERAL, token.valor, linea=token.linea, columna=token.columna)
+            nodo = NodoAST(TipoNodo.EXPRESION_LITERAL, token.valor, linea=token.linea, columna=token.columna)
 
         elif self.verificar(TipoToken.BOOLEAN_LITERAL):
             token = self.token_actual
             self.avanzar()
             valor_bool = token.valor == 'true'
-            return NodoAST(TipoNodo.EXPRESION_LITERAL, valor_bool, linea=token.linea, columna=token.columna)
+            nodo = NodoAST(TipoNodo.EXPRESION_LITERAL, valor_bool, linea=token.linea, columna=token.columna)
 
         # Identificador
         elif self.verificar(TipoToken.IDENTIFIER):
             token = self.token_actual
             self.avanzar()
-
-            # Verificar si es un rango (a..b)
-            if self.verificar(TipoToken.RANGE):
-                self.retroceder()
-                return self.expresion_rango()
-
-            return NodoAST(TipoNodo.EXPRESION_VARIABLE, token.valor, linea=token.linea, columna=token.columna)
+            nodo = NodoAST(TipoNodo.EXPRESION_VARIABLE, token.valor, linea=token.linea, columna=token.columna)
 
         # Expresión entre paréntesis
         elif self.verificar(TipoToken.LPAREN):
             self.avanzar()
             nodo = self.expresion()
             self.consumir(TipoToken.RPAREN, "Se esperaba ')' después de la expresión")
-            return nodo
-
-        # Rango literal (ej. 1..10)
-        elif self.verificar(TipoToken.INT_LITERAL):
-            return self.expresion_rango()
 
         else:
             error = SyntaxError(
@@ -424,28 +416,41 @@ class Parser:
             self.error_manager.agregar_error(error)
             raise error
 
-    def expresion_rango(self) -> NodoAST:
-        """
-        expresion_rango -> expresion_primaria .. expresion_primaria
-        """
-        inicio = self.expresion_primaria()
-
+        # Verificar si es un rango (.. después del valor)
         if self.verificar(TipoToken.RANGE):
             token_range = self.token_actual
             self.avanzar()
-            fin = self.expresion_primaria()
+            # Parsear el valor final del rango (solo literal o identificador simple)
+            fin = None
+            if self.verificar(TipoToken.INT_LITERAL):
+                token = self.token_actual
+                self.avanzar()
+                fin = NodoAST(TipoNodo.EXPRESION_LITERAL, token.valor, linea=token.linea, columna=token.columna)
+            elif self.verificar(TipoToken.IDENTIFIER):
+                token = self.token_actual
+                self.avanzar()
+                fin = NodoAST(TipoNodo.EXPRESION_VARIABLE, token.valor, linea=token.linea, columna=token.columna)
+            else:
+                error = SyntaxError(
+                    f"Se esperaba un valor después de '..'",
+                    self.token_actual.linea,
+                    self.token_actual.columna
+                )
+                self.error_manager.agregar_error(error)
+                raise error
 
-            nodo = NodoAST(
+            # Crear nodo de rango
+            nodo_rango = NodoAST(
                 TipoNodo.EXPRESION_BINARIA,
                 "..",
                 linea=token_range.linea,
                 columna=token_range.columna
             )
-            nodo.agregar_hijo(inicio)
-            nodo.agregar_hijo(fin)
-            return nodo
+            nodo_rango.agregar_hijo(nodo)
+            nodo_rango.agregar_hijo(fin)
+            return nodo_rango
 
-        return inicio
+        return nodo
 
     def sincronizar(self):
         """

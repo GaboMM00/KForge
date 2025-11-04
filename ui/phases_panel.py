@@ -181,6 +181,18 @@ class PhasesPanel(tk.Frame):
         )
         title_label.pack(side=tk.LEFT, padx=5)
 
+        # Botón de limpiar consola
+        clear_btn = tk.Label(
+            title_frame,
+            text="🗑",
+            font=("Segoe UI", 12),
+            fg=colors.fg_tertiary,
+            bg=colors.bg_secondary,
+            cursor="hand2"
+        )
+        clear_btn.pack(side=tk.RIGHT, padx=5)
+        clear_btn.bind("<Button-1>", lambda e: self.event_generate("<<ClearConsole>>"))
+
         # Botón de reset
         reset_btn = tk.Label(
             title_frame,
