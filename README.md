@@ -20,9 +20,13 @@ KForge es un compilador modular para el lenguaje Kotlin que implementa las fases
 - ✅ **Análisis Sintáctico**: Generación de AST (Árbol Sintáctico Abstracto)
 - ✅ **Análisis Semántico**: Verificación de tipos y símbolos
 - 🔜 **Generación de Código Intermedio**: Preparado para implementación futura
-- 🎨 **Interfaz Gráfica**: Editor tipo IDE con numeración de líneas y consola de resultados
+- 🎨 **Dos Interfaces Gráficas**:
+  - **Clásica**: Editor simple y funcional (legacy)
+  - **Moderna**: Interfaz modular tipo JetBrains/VSCode ⭐ **NUEVO**
 - 🏗️ **Arquitectura Modular**: Fácil extensión y mantenimiento
-- 🔍 **Resaltado de Sintaxis**: Básico para Kotlin en el editor
+- 🔍 **Resaltado de Sintaxis**: Avanzado con keywords.json compartido
+- 🌍 **Multilenguaje**: Español e Inglés
+- 🎨 **Temas**: Oscuro (Darcula) y Claro
 
 ## 🚀 Instalación y Ejecución
 
@@ -37,7 +41,10 @@ KForge es un compilador modular para el lenguaje Kotlin que implementa las fases
 # Clonar o descargar el proyecto
 cd KForge
 
-# Ejecutar el compilador
+# Interfaz MODERNA (recomendada) ⭐
+python main_modern.py
+
+# Interfaz CLÁSICA (legacy)
 python main.py
 ```
 
@@ -45,7 +52,8 @@ python main.py
 
 ```
 KForge/
-├── main.py                      # Punto de entrada
+├── main.py                      # Punto de entrada (interfaz clásica)
+├── main_modern.py              # Punto de entrada (interfaz moderna) ⭐
 ├── core/                        # Lógica del compilador
 │   ├── __init__.py
 │   ├── controller.py            # Controlador principal
@@ -55,22 +63,48 @@ KForge/
 │   ├── codegen.py               # Generación de código (placeholder)
 │   ├── errors.py                # Manejo de errores
 │   └── utils.py                 # Utilidades y estructuras de datos
-├── ui/                          # Interfaz gráfica
+├── ui/                          # Interfaces gráficas
 │   ├── __init__.py
-│   ├── interfaz.py              # Ventana principal
-│   ├── editor.py                # Editor con numeración
-│   └── consola.py               # Consola de resultados
+│   ├── app_ui.py                # 🆕 Aplicación moderna integrada
+│   ├── theme_manager.py         # 🆕 Gestión de temas y lenguajes
+│   ├── editor_panel.py          # 🆕 Editor con pestañas
+│   ├── console_panel.py         # 🆕 Consola multi-pestaña
+│   ├── sidebar.py               # 🆕 Barra lateral tipo VSCode
+│   ├── phases_panel.py          # 🆕 Panel de fases animado
+│   ├── status_bar.py            # 🆕 Barra de estado
+│   ├── splash_screen.py         # 🆕 Pantalla de inicio
+│   ├── interfaz.py              # Interfaz clásica (legacy)
+│   ├── editor.py                # Editor clásico (legacy)
+│   └── consola.py               # Consola clásica (legacy)
+├── resources/                   # 🆕 Recursos compartidos
+│   ├── keywords.json            # 🆕 Palabras clave y colores
+│   └── lang.json                # 🆕 Traducciones ES/EN
 ├── tests/                       # Archivos de prueba
 │   └── ejemplo_kotlin.txt       # Código Kotlin de ejemplo
-├── assets/                      # Recursos (opcional)
-└── README.md                    # Este archivo
+├── README.md                    # Este archivo
+└── UI_MODERNA_README.md        # 🆕 Documentación de UI moderna
 ```
 
 ## 📖 Uso
 
-### Interfaz Gráfica
+### Interfaz Moderna (Recomendada) ⭐
 
-1. **Abrir el compilador**: Ejecutar `python main.py`
+1. **Abrir**: `python main_modern.py`
+2. **Características exclusivas**:
+   - Splash screen animado al inicio
+   - Editor con pestañas para múltiples archivos
+   - Consola con 4 pestañas (Salida, Errores, Tokens, AST)
+   - Panel de fases con animaciones
+   - Barra lateral tipo VSCode
+   - Barra de estado con info en tiempo real
+   - Temas oscuro/claro
+   - Soporte multilenguaje (ES/EN)
+
+**Ver documentación completa**: [UI_MODERNA_README.md](UI_MODERNA_README.md)
+
+### Interfaz Clásica (Legacy)
+
+1. **Abrir**: `python main.py`
 2. **Escribir código**: En el editor superior
 3. **Compilar**: Usar el menú `Compilador` o atajos de teclado
 4. **Ver resultados**: En la consola inferior

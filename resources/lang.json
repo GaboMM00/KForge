@@ -1,0 +1,156 @@
+{
+  "es": {
+    "app_title": "KForge - Compilador Kotlin",
+    "menu": {
+      "file": "Archivo",
+      "new": "Nuevo",
+      "open": "Abrir",
+      "save": "Guardar",
+      "save_as": "Guardar como",
+      "close": "Cerrar",
+      "exit": "Salir",
+      "edit": "Editar",
+      "undo": "Deshacer",
+      "redo": "Rehacer",
+      "cut": "Cortar",
+      "copy": "Copiar",
+      "paste": "Pegar",
+      "find": "Buscar",
+      "replace": "Reemplazar",
+      "compiler": "Compilador",
+      "lexical": "Análisis Léxico",
+      "syntactic": "Análisis Sintáctico",
+      "semantic": "Análisis Semántico",
+      "compile_all": "Compilación Completa",
+      "code_gen": "Código Intermedio",
+      "view": "Ver",
+      "sidebar": "Barra Lateral",
+      "console": "Consola",
+      "phases": "Panel de Fases",
+      "zoom_in": "Acercar",
+      "zoom_out": "Alejar",
+      "reset_zoom": "Restablecer Zoom",
+      "theme": "Tema",
+      "dark_theme": "Tema Oscuro",
+      "light_theme": "Tema Claro",
+      "help": "Ayuda",
+      "documentation": "Documentación",
+      "syntax": "Sintaxis Soportada",
+      "about": "Acerca de"
+    },
+    "sidebar": {
+      "files": "Archivos",
+      "tokens": "Tokens",
+      "ast": "AST",
+      "settings": "Configuración",
+      "terminal": "Terminal"
+    },
+    "console": {
+      "output": "Salida",
+      "errors": "Errores",
+      "tokens": "Tokens",
+      "ast": "AST",
+      "clear": "Limpiar"
+    },
+    "phases": {
+      "lexical": "Léxico",
+      "syntactic": "Sintáctico",
+      "semantic": "Semántico",
+      "codegen": "Código",
+      "analyzing": "Analizando..."
+    },
+    "status": {
+      "ready": "Listo",
+      "analyzing": "Analizando",
+      "completed": "Completado",
+      "error": "Error",
+      "version": "Versión",
+      "language": "Idioma"
+    },
+    "messages": {
+      "welcome": "Bienvenido a KForge",
+      "compilation_success": "Compilación exitosa",
+      "compilation_failed": "Compilación fallida",
+      "tokens_generated": "tokens generados",
+      "errors_found": "errores encontrados",
+      "no_errors": "Sin errores detectados"
+    }
+  },
+  "en": {
+    "app_title": "KForge - Kotlin Compiler",
+    "menu": {
+      "file": "File",
+      "new": "New",
+      "open": "Open",
+      "save": "Save",
+      "save_as": "Save As",
+      "close": "Close",
+      "exit": "Exit",
+      "edit": "Edit",
+      "undo": "Undo",
+      "redo": "Redo",
+      "cut": "Cut",
+      "copy": "Copy",
+      "paste": "Paste",
+      "find": "Find",
+      "replace": "Replace",
+      "compiler": "Compiler",
+      "lexical": "Lexical Analysis",
+      "syntactic": "Syntactic Analysis",
+      "semantic": "Semantic Analysis",
+      "compile_all": "Full Compilation",
+      "code_gen": "Intermediate Code",
+      "view": "View",
+      "sidebar": "Sidebar",
+      "console": "Console",
+      "phases": "Phases Panel",
+      "zoom_in": "Zoom In",
+      "zoom_out": "Zoom Out",
+      "reset_zoom": "Reset Zoom",
+      "theme": "Theme",
+      "dark_theme": "Dark Theme",
+      "light_theme": "Light Theme",
+      "help": "Help",
+      "documentation": "Documentation",
+      "syntax": "Supported Syntax",
+      "about": "About"
+    },
+    "sidebar": {
+      "files": "Files",
+      "tokens": "Tokens",
+      "ast": "AST",
+      "settings": "Settings",
+      "terminal": "Terminal"
+    },
+    "console": {
+      "output": "Output",
+      "errors": "Errors",
+      "tokens": "Tokens",
+      "ast": "AST",
+      "clear": "Clear"
+    },
+    "phases": {
+      "lexical": "Lexical",
+      "syntactic": "Syntactic",
+      "semantic": "Semantic",
+      "codegen": "Code",
+      "analyzing": "Analyzing..."
+    },
+    "status": {
+      "ready": "Ready",
+      "analyzing": "Analyzing",
+      "completed": "Completed",
+      "error": "Error",
+      "version": "Version",
+      "language": "Language"
+    },
+    "messages": {
+      "welcome": "Welcome to KForge",
+      "compilation_success": "Compilation successful",
+      "compilation_failed": "Compilation failed",
+      "tokens_generated": "tokens generated",
+      "errors_found": "errors found",
+      "no_errors": "No errors detected"
+    }
+  }
+}
