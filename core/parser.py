@@ -104,6 +104,8 @@ class Parser:
                   | sentencia_if
                   | sentencia_while
                   | sentencia_for
+                  | break
+                  | continue
                   | bloque
         """
         if self.verificar(TipoToken.VAR) or self.verificar(TipoToken.VAL):
@@ -114,6 +116,10 @@ class Parser:
             return self.sentencia_while()
         elif self.verificar(TipoToken.FOR):
             return self.sentencia_for()
+        elif self.verificar(TipoToken.BREAK):
+            return self.sentencia_break()
+        elif self.verificar(TipoToken.CONTINUE):
+            return self.sentencia_continue()
         elif self.verificar(TipoToken.LBRACE):
             return self.bloque()
         elif self.verificar(TipoToken.IDENTIFIER):
@@ -169,9 +175,32 @@ class Parser:
 
     def asignacion(self) -> NodoAST:
         """
-        asignacion -> IDENTIFIER = expresion
+        asignacion -> IDENTIFIER [indice]* = expresion
+        Soporta asignaciones a variables simples y elementos de arreglos
         """
         token_id = self.consumir(TipoToken.IDENTIFIER)
+
+        # Construir expresión del lado izquierdo (puede tener índices)
+        nodo_izq = NodoAST(TipoNodo.EXPRESION_VARIABLE, token_id.valor, linea=token_id.linea, columna=token_id.columna)
+
+        # Verificar si hay acceso a índices (array[0][1] = valor)
+        while self.verificar(TipoToken.LBRACKET):
+            bracket_token = self.token_actual
+            self.avanzar()
+            indice = self.expresion()
+            self.consumir(TipoToken.RBRACKET, "Se esperaba ']' después del índice")
+
+            # Crear nodo de acceso a índice
+            nodo_indice = NodoAST(
+                TipoNodo.EXPRESION_INDICE,
+                "[]",
+                linea=bracket_token.linea,
+                columna=bracket_token.columna
+            )
+            nodo_indice.agregar_hijo(nodo_izq)
+            nodo_indice.agregar_hijo(indice)
+            nodo_izq = nodo_indice
+
         self.consumir(TipoToken.ASSIGN, "Se esperaba '=' en la asignación")
         valor = self.expresion()
 
@@ -181,7 +210,8 @@ class Parser:
             linea=token_id.linea,
             columna=token_id.columna
         )
-        nodo.agregar_hijo(valor)
+        nodo.agregar_hijo(nodo_izq)  # Lado izquierdo (puede ser variable o acceso a índice)
+        nodo.agregar_hijo(valor)      # Lado derecho (valor a asignar)
         return nodo
 
     def sentencia_if(self) -> NodoAST:
@@ -246,6 +276,22 @@ class Parser:
 
         return nodo
 
+    def sentencia_break(self) -> NodoAST:
+        """
+        sentencia_break -> break
+        """
+        token_break = self.consumir(TipoToken.BREAK)
+        nodo = NodoAST(TipoNodo.BREAK, "break", linea=token_break.linea, columna=token_break.columna)
+        return nodo
+
+    def sentencia_continue(self) -> NodoAST:
+        """
+        sentencia_continue -> continue
+        """
+        token_continue = self.consumir(TipoToken.CONTINUE)
+        nodo = NodoAST(TipoNodo.CONTINUE, "continue", linea=token_continue.linea, columna=token_continue.columna)
+        return nodo
+
     def bloque(self) -> NodoAST:
         """
         bloque -> { sentencia* }
@@ -291,9 +337,58 @@ class Parser:
 
     def expresion(self) -> NodoAST:
         """
-        expresion -> termino_logico ((==|!=|<|<=|>|>=) termino_logico)*
+        expresion -> expresion_or
+        Jerarquía: OR -> AND -> comparación -> suma -> multiplicación -> unaria -> primaria
         """
-        return self.expresion_comparacion()
+        return self.expresion_or()
+
+    def expresion_or(self) -> NodoAST:
+        """
+        expresion_or -> expresion_and (|| expresion_and)*
+        OR lógico tiene la menor precedencia
+        """
+        nodo = self.expresion_and()
+
+        while self.verificar(TipoToken.OR):
+            operador = self.token_actual
+            self.avanzar()
+            derecha = self.expresion_and()
+
+            nodo_nuevo = NodoAST(
+                TipoNodo.EXPRESION_BINARIA,
+                operador.valor,
+                linea=operador.linea,
+                columna=operador.columna
+            )
+            nodo_nuevo.agregar_hijo(nodo)
+            nodo_nuevo.agregar_hijo(derecha)
+            nodo = nodo_nuevo
+
+        return nodo
+
+    def expresion_and(self) -> NodoAST:
+        """
+        expresion_and -> expresion_comparacion (&& expresion_comparacion)*
+        AND lógico tiene mayor precedencia que OR
+        """
+        nodo = self.expresion_comparacion()
+
+        while self.verificar(TipoToken.AND):
+            operador = self.token_actual
+            self.avanzar()
+            derecha = self.expresion_comparacion()
+
+            nodo_nuevo = NodoAST(
+                TipoNodo.EXPRESION_BINARIA,
+                operador.valor,
+                linea=operador.linea,
+                columna=operador.columna
+            )
+            nodo_nuevo.agregar_hijo(nodo)
+            nodo_nuevo.agregar_hijo(derecha)
+            nodo = nodo_nuevo
+
+        return nodo
 
     def expresion_comparacion(self) -> NodoAST:
         """
@@ -345,14 +440,14 @@ class Parser:
 
     def expresion_multiplicacion(self) -> NodoAST:
         """
-        expresion_multiplicacion -> expresion_primaria ((*|/|%) expresion_primaria)*
+        expresion_multiplicacion -> expresion_unaria ((*|/|%) expresion_unaria)*
         """
-        nodo = self.expresion_primaria()
+        nodo = self.expresion_unaria()
 
         while self.token_actual.tipo in [TipoToken.MULTIPLY, TipoToken.DIVIDE, TipoToken.MODULO]:
             operador = self.token_actual
             self.avanzar()
-            derecha = self.expresion_primaria()
+            derecha = self.expresion_unaria()
 
             nodo_nuevo = NodoAST(
                 TipoNodo.EXPRESION_BINARIA,
@@ -365,6 +460,30 @@ class Parser:
             nodo = nodo_nuevo
 
         return nodo
+
+    def expresion_unaria(self) -> NodoAST:
+        """
+        expresion_unaria -> (! | -) expresion_unaria | expresion_primaria
+        Soporta operadores unarios: ! (NOT lógico) y - (negativo)
+        """
+        # Verificar si hay operador unario
+        if self.token_actual.tipo in [TipoToken.NOT, TipoToken.MINUS]:
+            operador = self.token_actual
+            self.avanzar()
+            # Recursivo para soportar múltiples operadores unarios: !!x, -(-x)
+            operando = self.expresion_unaria()
+
+            nodo = NodoAST(
+                TipoNodo.EXPRESION_UNARIA,
+                operador.valor,
+                linea=operador.linea,
+                columna=operador.columna
+            )
+            nodo.agregar_hijo(operando)
+            return nodo
+
+        # Si no hay operador unario, parsear expresión primaria
+        return self.expresion_primaria()
 
     def expresion_primaria(self) -> NodoAST:
         """
@@ -416,11 +535,31 @@ class Parser:
             self.error_manager.agregar_error(error)
             raise error
 
-        # Verificar si es un rango (.. después del valor)
-        if self.verificar(TipoToken.RANGE):
-            token_range = self.token_actual
+        # Verificar si hay acceso a índices (soporta n dimensiones: array[0][1][2]...)
+        while self.verificar(TipoToken.LBRACKET):
+            bracket_token = self.token_actual
             self.avanzar()
-            # Parsear el valor final del rango (solo literal o identificador simple)
+            # Parsear la expresión del índice
+            indice = self.expresion()
+            self.consumir(TipoToken.RBRACKET, "Se esperaba ']' después del índice")
+
+            # Crear nodo de acceso a índice
+            nodo_indice = NodoAST(
+                TipoNodo.EXPRESION_INDICE,
+                "[]",
+                linea=bracket_token.linea,
+                columna=bracket_token.columna
+            )
+            nodo_indice.agregar_hijo(nodo)      # El arreglo/lista
+            nodo_indice.agregar_hijo(indice)    # El índice
+            nodo = nodo_indice                  # Actualizar para soportar múltiples []
+
+        # Verificar si es un rango (.. o until después del valor)
+        if self.verificar(TipoToken.RANGE) or self.verificar(TipoToken.UNTIL):
+            token_range = self.token_actual
+            operador = ".." if self.verificar(TipoToken.RANGE) else "until"
+            self.avanzar()
+            # Parsear el valor final del rango (solo literal o identificador simple o expresión)
             fin = None
             if self.verificar(TipoToken.INT_LITERAL):
                 token = self.token_actual
@@ -429,10 +568,20 @@ class Parser:
             elif self.verificar(TipoToken.IDENTIFIER):
                 token = self.token_actual
                 self.avanzar()
+                # Puede seguir con operaciones: n - 1
                 fin = NodoAST(TipoNodo.EXPRESION_VARIABLE, token.valor, linea=token.linea, columna=token.columna)
+                # Verificar si hay operadores después (para soportar "n - 1")
+                if self.token_actual.tipo in [TipoToken.PLUS, TipoToken.MINUS, TipoToken.MULTIPLY, TipoToken.DIVIDE]:
+                    # Convertir a expresión completa retrocediendo
+                    self.posicion -= 1
+                    self.token_actual = self.tokens[self.posicion]
+                    fin = self.expresion_suma()
+            elif self.verificar(TipoToken.LPAREN):
+                # Expresión entre paréntesis
+                fin = self.expresion_primaria()
             else:
                 error = SyntaxError(
-                    f"Se esperaba un valor después de '..'",
+                    f"Se esperaba un valor después de '{operador}'",
                     self.token_actual.linea,
                     self.token_actual.columna
                 )
@@ -440,9 +589,10 @@ class Parser:
                 raise error
 
             # Crear nodo de rango
+            # Nota: "until" se marca en metadata para que el semántico lo maneje diferente
             nodo_rango = NodoAST(
                 TipoNodo.EXPRESION_BINARIA,
-                "..",
+                operador,
                 linea=token_range.linea,
                 columna=token_range.columna
             )

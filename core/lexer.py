@@ -21,6 +21,9 @@ class Lexer:
         'while': TipoToken.WHILE,
         'for': TipoToken.FOR,
         'in': TipoToken.IN,
+        'until': TipoToken.UNTIL,
+        'break': TipoToken.BREAK,
+        'continue': TipoToken.CONTINUE,
         'fun': TipoToken.FUN,
         'return': TipoToken.RETURN,
         'Int': TipoToken.INT_TYPE,
@@ -41,6 +44,10 @@ class Lexer:
         ('INT_LITERAL', r'\d+'),
         ('STRING_LITERAL', r'"([^"\\]|\\.)*"'),
 
+        # Operadores lógicos (antes que operadores simples)
+        ('AND', r'&&'),
+        ('OR', r'\|\|'),
+
         # Operadores de comparación (antes que operadores simples)
         ('EQUAL', r'=='),
         ('NOT_EQUAL', r'!='),
@@ -56,6 +63,7 @@ class Lexer:
         ('DIVIDE', r'/'),
         ('MODULO', r'%'),
         ('ASSIGN', r'='),
+        ('NOT', r'!'),
 
         # Rango
         ('RANGE', r'\.\.'),
@@ -65,6 +73,8 @@ class Lexer:
         ('RPAREN', r'\)'),
         ('LBRACE', r'\{'),
         ('RBRACE', r'\}'),
+        ('LBRACKET', r'\['),
+        ('RBRACKET', r'\]'),
         ('COMMA', r','),
         ('COLON', r':'),
         ('SEMICOLON', r';'),

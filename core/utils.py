@@ -18,6 +18,9 @@ class TipoToken(Enum):
     WHILE = auto()
     FOR = auto()
     IN = auto()
+    UNTIL = auto()
+    BREAK = auto()
+    CONTINUE = auto()
     FUN = auto()
     RETURN = auto()
 
@@ -49,12 +52,17 @@ class TipoToken(Enum):
     LESS_EQUAL = auto()    # <=
     GREATER_THAN = auto()  # >
     GREATER_EQUAL = auto() # >=
+    NOT = auto()           # ! (negación lógica)
+    AND = auto()           # && (AND lógico)
+    OR = auto()            # || (OR lógico)
 
     # Delimitadores
     LPAREN = auto()        # (
     RPAREN = auto()        # )
     LBRACE = auto()        # {
     RBRACE = auto()        # }
+    LBRACKET = auto()      # [
+    RBRACKET = auto()      # ]
     COMMA = auto()         # ,
     COLON = auto()         # :
     SEMICOLON = auto()     # ;
@@ -85,12 +93,16 @@ class TipoNodo(Enum):
     DECLARACION_VARIABLE = auto()
     ASIGNACION = auto()
     EXPRESION_BINARIA = auto()
+    EXPRESION_UNARIA = auto()      # Para operadores unarios como ! (NOT)
     EXPRESION_LITERAL = auto()
     EXPRESION_VARIABLE = auto()
+    EXPRESION_INDICE = auto()      # Para acceso a arreglos/listas con []
     BLOQUE = auto()
     IF = auto()
     WHILE = auto()
     FOR = auto()
+    BREAK = auto()
+    CONTINUE = auto()
     FUNCION = auto()
     LLAMADA_FUNCION = auto()
     RETURN = auto()
