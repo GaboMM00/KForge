@@ -113,54 +113,54 @@ class ThemeManager:
         scrollbar_fg="#5A5A5A"
     )
 
-    # Tema claro (JetBrains Light)
+    # Tema claro (JetBrains Light mejorado)
     LIGHT_THEME = ThemeColors(
         # Principales
-        bg_primary="#FFFFFF",
-        bg_secondary="#F5F5F5",
-        bg_tertiary="#EEEEEE",
-        fg_primary="#000000",
-        fg_secondary="#555555",
-        fg_tertiary="#888888",
+        bg_primary="#FAFAFA",
+        bg_secondary="#F0F0F0",
+        bg_tertiary="#E5E5E5",
+        fg_primary="#1E1E1E",
+        fg_secondary="#424242",
+        fg_tertiary="#757575",
 
         # Acentos
-        accent="#2470B3",
-        accent_hover="#1E5C8F",
-        accent_active="#1A4F7F",
+        accent="#0078D4",
+        accent_hover="#106EBE",
+        accent_active="#005A9E",
 
         # Editor
         editor_bg="#FFFFFF",
-        editor_fg="#000000",
-        editor_line_numbers_bg="#F0F0F0",
-        editor_line_numbers_fg="#999999",
-        editor_current_line="#F0F8FF",
-        editor_selection_bg="#D5E8FF",
-        editor_selection_fg="#000000",
+        editor_fg="#1E1E1E",
+        editor_line_numbers_bg="#F8F8F8",
+        editor_line_numbers_fg="#858585",
+        editor_current_line="#E8F2FF",
+        editor_selection_bg="#ADD6FF",
+        editor_selection_fg="#1E1E1E",
 
         # Consola
         console_bg="#FFFFFF",
-        console_fg="#000000",
-        console_error="#BC3F3C",
-        console_warning="#B58900",
-        console_success="#2B7A0B",
-        console_info="#1764A0",
+        console_fg="#1E1E1E",
+        console_error="#D32F2F",
+        console_warning="#F57C00",
+        console_success="#388E3C",
+        console_info="#0078D4",
 
-        # Sintaxis (Light)
-        syntax_keyword="#0033B3",
-        syntax_type="#000000",
-        syntax_string="#067D17",
-        syntax_number="#1750EB",
-        syntax_comment="#8C8C8C",
-        syntax_operator="#000000",
-        syntax_function="#00627A",
+        # Sintaxis (Light - estilo VS Code)
+        syntax_keyword="#0000FF",
+        syntax_type="#267F99",
+        syntax_string="#A31515",
+        syntax_number="#098658",
+        syntax_comment="#008000",
+        syntax_operator="#1E1E1E",
+        syntax_function="#795E26",
 
         # UI
-        border="#D0D0D0",
-        button_bg="#F5F5F5",
-        button_fg="#000000",
-        button_hover="#E5E5E5",
+        border="#CCCCCC",
+        button_bg="#F3F3F3",
+        button_fg="#1E1E1E",
+        button_hover="#E1E1E1",
         scrollbar_bg="#F5F5F5",
-        scrollbar_fg="#AAAAAA"
+        scrollbar_fg="#C1C1C1"
     )
 
     # Fuentes disponibles
@@ -178,6 +178,8 @@ class ThemeManager:
         self.current_font = "Consolas"
         self.font_size = 11
         self.keywords = self._load_keywords()
+        # Cargar configuración guardada
+        self.load_config()
 
     def _load_keywords(self) -> Dict[str, Any]:
         """Carga las palabras clave desde keywords.json."""
@@ -247,6 +249,33 @@ class ThemeManager:
         """Restablece el tamaño de fuente por defecto."""
         self.font_size = 11
 
+    def save_config(self):
+        """Guarda la configuración actual en un archivo JSON."""
+        config = {
+            "theme": self.current_theme,
+            "font": self.current_font,
+            "font_size": self.font_size
+        }
+        try:
+            config_path = os.path.join(os.path.dirname(__file__), "..", "config.json")
+            with open(config_path, 'w', encoding='utf-8') as f:
+                json.dump(config, f, indent=2)
+        except Exception as e:
+            print(f"Error guardando configuración: {e}")
+
+    def load_config(self):
+        """Carga la configuración desde un archivo JSON."""
+        try:
+            config_path = os.path.join(os.path.dirname(__file__), "..", "config.json")
+            if os.path.exists(config_path):
+                with open(config_path, 'r', encoding='utf-8') as f:
+                    config = json.load(f)
+                    self.current_theme = config.get("theme", "dark")
+                    self.current_font = config.get("font", "Consolas")
+                    self.font_size = config.get("font_size", 11)
+        except Exception as e:
+            print(f"Error cargando configuración: {e}")
+
     def get_keywords(self) -> list:
         """Obtiene la lista de palabras clave."""
         return self.keywords.get("keywords", [])
@@ -294,6 +323,8 @@ class LanguageManager:
         """
         self.current_language = language
         self.translations = self._load_translations()
+        # Cargar idioma guardado
+        self.load_config()
 
     def _load_translations(self) -> Dict[str, Any]:
         """Carga las traducciones desde lang.json."""
@@ -351,6 +382,36 @@ class LanguageManager:
     def get_current_language(self) -> str:
         """Obtiene el código del idioma actual."""
         return self.current_language
+
+    def save_config(self):
+        """Guarda el idioma actual en el archivo de configuración."""
+        try:
+            config_path = os.path.join(os.path.dirname(__file__), "..", "config.json")
+            # Cargar configuración existente
+            config = {}
+            if os.path.exists(config_path):
+                with open(config_path, 'r', encoding='utf-8') as f:
+                    config = json.load(f)
+
+            # Actualizar idioma
+            config["language"] = self.current_language
+
+            # Guardar
+            with open(config_path, 'w', encoding='utf-8') as f:
+                json.dump(config, f, indent=2)
+        except Exception as e:
+            print(f"Error guardando idioma: {e}")
+
+    def load_config(self):
+        """Carga el idioma desde el archivo de configuración."""
+        try:
+            config_path = os.path.join(os.path.dirname(__file__), "..", "config.json")
+            if os.path.exists(config_path):
+                with open(config_path, 'r', encoding='utf-8') as f:
+                    config = json.load(f)
+                    self.current_language = config.get("language", "es")
+        except Exception as e:
+            print(f"Error cargando idioma: {e}")
 
 
 # Instancias globales (singleton)

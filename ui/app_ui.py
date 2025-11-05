@@ -189,10 +189,10 @@ Caracteres: {chars}"""
         messagebox.showinfo("Información del Archivo", info_text)
 
     def _sidebar_settings(self):
-        """Abre ventana de configuración."""
+        """Abre ventana de configuración funcional."""
         settings_window = tk.Toplevel(self)
         settings_window.title("Configuración de KForge")
-        settings_window.geometry("400x300")
+        settings_window.geometry("450x400")
         settings_window.resizable(False, False)
 
         colors = self.theme.get_colors()
@@ -212,99 +212,191 @@ Caracteres: {chars}"""
         )
         title.pack(pady=(0, 20))
 
-        # Tema
+        # === TEMA ===
         theme_frame = tk.Frame(main_frame, bg=colors.bg_primary)
         theme_frame.pack(fill=tk.X, pady=10)
 
         tk.Label(
             theme_frame,
             text="Tema:",
-            font=("Segoe UI", 10),
+            font=("Segoe UI", 10, "bold"),
             fg=colors.fg_primary,
-            bg=colors.bg_primary
+            bg=colors.bg_primary,
+            width=15,
+            anchor="w"
         ).pack(side=tk.LEFT)
 
-        theme_var = tk.StringVar(value=self.theme.theme_name)
+        theme_var = tk.StringVar(value=self.theme.current_theme)
         theme_combo = ttk.Combobox(
             theme_frame,
             textvariable=theme_var,
             values=["dark", "light"],
             state="readonly",
-            width=15
+            width=18
         )
         theme_combo.pack(side=tk.LEFT, padx=10)
-        theme_combo.bind("<<ComboboxSelected>>", lambda e: self._toggle_theme(theme_var.get()))
 
-        # Idioma
+        def apply_theme(event=None):
+            new_theme = theme_var.get()
+            self.theme.set_theme(new_theme)
+            self.theme.save_config()  # Guardar configuración
+            self._apply_theme_to_all()
+            update_info()
+            self.status_bar.set_status(f"Tema '{new_theme}' aplicado", "ready")
+
+        theme_combo.bind("<<ComboboxSelected>>", apply_theme)
+
+        # === TIPOGRAFÍA ===
+        font_family_frame = tk.Frame(main_frame, bg=colors.bg_primary)
+        font_family_frame.pack(fill=tk.X, pady=10)
+
+        tk.Label(
+            font_family_frame,
+            text="Tipografía:",
+            font=("Segoe UI", 10, "bold"),
+            fg=colors.fg_primary,
+            bg=colors.bg_primary,
+            width=15,
+            anchor="w"
+        ).pack(side=tk.LEFT)
+
+        font_family_var = tk.StringVar(value=self.theme.current_font)
+        font_family_combo = ttk.Combobox(
+            font_family_frame,
+            textvariable=font_family_var,
+            values=["JetBrains Mono", "Fira Code", "Consolas", "Source Code Pro"],
+            state="readonly",
+            width=18
+        )
+        font_family_combo.pack(side=tk.LEFT, padx=10)
+
+        def apply_font_family(event=None):
+            new_font = font_family_var.get()
+            self.theme.set_font(new_font)
+            self.theme.save_config()  # Guardar configuración
+            self._apply_font_to_editors()
+            # Actualizar la información mostrada
+            update_info()
+            self.status_bar.set_status(f"Fuente '{new_font}' aplicada", "ready")
+
+        font_family_combo.bind("<<ComboboxSelected>>", apply_font_family)
+
+        # === TAMAÑO DE FUENTE ===
+        font_size_frame = tk.Frame(main_frame, bg=colors.bg_primary)
+        font_size_frame.pack(fill=tk.X, pady=10)
+
+        tk.Label(
+            font_size_frame,
+            text="Tamaño fuente:",
+            font=("Segoe UI", 10, "bold"),
+            fg=colors.fg_primary,
+            bg=colors.bg_primary,
+            width=15,
+            anchor="w"
+        ).pack(side=tk.LEFT)
+
+        font_size_var = tk.IntVar(value=self.theme.font_size)
+
+        def apply_font_size_change():
+            new_size = font_size_var.get()
+            self.theme.font_size = new_size
+            self.theme.save_config()  # Guardar configuración
+            self._apply_font_to_editors()
+            update_info()
+            self.status_bar.set_status(f"Tamaño de fuente: {new_size}pt", "ready")
+
+        font_spinbox = tk.Spinbox(
+            font_size_frame,
+            from_=8,
+            to=24,
+            textvariable=font_size_var,
+            width=10,
+            command=apply_font_size_change
+        )
+        font_spinbox.pack(side=tk.LEFT, padx=10)
+
+        # === IDIOMA ===
         lang_frame = tk.Frame(main_frame, bg=colors.bg_primary)
         lang_frame.pack(fill=tk.X, pady=10)
 
         tk.Label(
             lang_frame,
             text="Idioma:",
-            font=("Segoe UI", 10),
+            font=("Segoe UI", 10, "bold"),
             fg=colors.fg_primary,
-            bg=colors.bg_primary
+            bg=colors.bg_primary,
+            width=15,
+            anchor="w"
         ).pack(side=tk.LEFT)
 
-        lang_var = tk.StringVar(value=self.lang.current_lang)
+        lang_var = tk.StringVar(value=self.lang.current_language)
         lang_combo = ttk.Combobox(
             lang_frame,
             textvariable=lang_var,
             values=["es", "en"],
             state="readonly",
-            width=15
+            width=18
         )
         lang_combo.pack(side=tk.LEFT, padx=10)
 
-        # Fuente
-        font_frame = tk.Frame(main_frame, bg=colors.bg_primary)
-        font_frame.pack(fill=tk.X, pady=10)
+        def apply_language(event=None):
+            new_lang = lang_var.get()
+            self.lang.set_language(new_lang)
+            self.lang.save_config()  # Guardar configuración
+            update_info()
+            self.status_bar.set_status(f"Idioma cambiado a '{new_lang}'", "ready")
+            messagebox.showinfo(
+                "Cambio de idioma",
+                "El idioma se ha cambiado. Algunos cambios requieren reiniciar la aplicación para aplicarse completamente."
+            )
 
-        tk.Label(
-            font_frame,
-            text="Tamaño de fuente:",
-            font=("Segoe UI", 10),
-            fg=colors.fg_primary,
-            bg=colors.bg_primary
-        ).pack(side=tk.LEFT)
+        lang_combo.bind("<<ComboboxSelected>>", apply_language)
 
-        font_size_var = tk.IntVar(value=self.theme.font_size)
-        font_spinbox = tk.Spinbox(
-            font_frame,
-            from_=8,
-            to=20,
-            textvariable=font_size_var,
-            width=5
-        )
-        font_spinbox.pack(side=tk.LEFT, padx=10)
+        # Separador
+        separator = tk.Frame(main_frame, bg=colors.fg_tertiary, height=1)
+        separator.pack(fill=tk.X, pady=15)
 
-        # Información
-        info_text = f"""Versión: {self.lang.t('app_version')}
-Fuente actual: {self.theme.font_family}"""
+        # === INFORMACIÓN DINÁMICA ===
+        info_frame = tk.Frame(main_frame, bg=colors.bg_secondary, relief=tk.FLAT, padx=10, pady=10)
+        info_frame.pack(fill=tk.X, pady=10)
 
-        tk.Label(
-            main_frame,
-            text=info_text,
-            font=("Segoe UI", 9),
+        info_label = tk.Label(
+            info_frame,
+            text="",
+            font=("Consolas", 9),
             fg=colors.fg_secondary,
-            bg=colors.bg_primary,
-            justify=tk.LEFT
-        ).pack(pady=20)
+            bg=colors.bg_secondary,
+            justify=tk.LEFT,
+            anchor="w"
+        )
+        info_label.pack(fill=tk.X)
+
+        def update_info():
+            """Actualiza la información mostrada."""
+            info_text = f"""📌 Configuración actual:
+  • Versión: {self.lang.t('app_version')}
+  • Tema: {self.theme.current_theme}
+  • Fuente: {self.theme.current_font} {self.theme.font_size}pt
+  • Idioma: {self.lang.current_language}"""
+            info_label.config(text=info_text)
+
+        # Mostrar información inicial
+        update_info()
 
         # Botón cerrar
         close_btn = tk.Button(
             main_frame,
             text="Cerrar",
             command=settings_window.destroy,
-            bg=colors.button_bg,
-            fg=colors.button_fg,
-            font=("Segoe UI", 10),
+            bg=colors.accent,
+            fg="#FFFFFF",
+            font=("Segoe UI", 10, "bold"),
             relief=tk.FLAT,
-            padx=20,
-            pady=5
+            padx=30,
+            pady=8,
+            cursor="hand2"
         )
-        close_btn.pack(pady=10)
+        close_btn.pack(pady=15)
 
     def _sidebar_terminal(self):
         """Alterna la visibilidad de la consola."""
@@ -547,22 +639,82 @@ Fuente actual: {self.theme.font_family}"""
             self.phases_panel.set_phase_completed("codegen", False)
             self.status_bar.set_status("Error en generación de código", "error")
 
-    def _toggle_theme(self, theme: str):
-        """Cambia el tema de la aplicación."""
-        self.theme.set_theme(theme)
+    def _apply_theme_to_all(self):
+        """Aplica el tema actual a todos los componentes."""
         colors = self.theme.get_colors()
 
-        # Aplicar tema a todos los componentes
+        # Aplicar a ventana principal
+        self.configure(bg=colors.bg_primary)
+
+        # Aplicar a todos los componentes principales
         self._apply_theme()
 
-        # Actualizar componentes
+        # Actualizar status bar
         if hasattr(self, 'status_bar'):
             self.status_bar.update_theme()
 
-        # Actualizar editor y consola requiere reiniciar, por ahora solo el fondo
-        self.configure(bg=colors.bg_primary)
+        # Actualizar sidebar
+        if hasattr(self, 'sidebar'):
+            self.sidebar.configure(bg=colors.bg_secondary)
 
-        messagebox.showinfo("Tema", f"Tema cambiado a {theme}. Algunos cambios requieren reiniciar la aplicación.")
+        # Actualizar phases panel
+        if hasattr(self, 'phases_panel'):
+            self.phases_panel.configure(bg=colors.bg_primary)
+
+        # Actualizar editor panel
+        self._apply_theme_to_editors()
+
+        # Actualizar consola
+        self._apply_theme_to_console()
+
+    def _apply_theme_to_editors(self):
+        """Aplica el tema a todos los editores abiertos."""
+        colors = self.theme.get_colors()
+        if hasattr(self, 'editor_panel'):
+            for filename, editor in self.editor_panel.editors.items():
+                editor.text.config(
+                    bg=colors.editor_bg,
+                    fg=colors.editor_fg,
+                    insertbackground=colors.editor_fg,
+                    selectbackground=colors.editor_selection_bg
+                )
+                editor.line_numbers.config(
+                    bg=colors.editor_line_numbers_bg,
+                    fg=colors.editor_line_numbers_fg
+                )
+
+    def _apply_theme_to_console(self):
+        """Aplica el tema a la consola."""
+        colors = self.theme.get_colors()
+        if hasattr(self, 'console_panel'):
+            for tab in [self.console_panel.output_tab, self.console_panel.errors_tab,
+                        self.console_panel.tokens_tab, self.console_panel.ast_tab]:
+                tab.text.config(
+                    bg=colors.console_bg,
+                    fg=colors.console_fg,
+                    insertbackground=colors.console_fg,
+                    selectbackground=colors.editor_selection_bg
+                )
+
+    def _apply_font_to_editors(self):
+        """Aplica la fuente seleccionada a todos los editores."""
+        font = self.theme.get_font()
+        if hasattr(self, 'editor_panel'):
+            for filename, editor in self.editor_panel.editors.items():
+                editor.text.config(font=font)
+                # Redibujar números de línea con nueva fuente (Canvas no soporta config font)
+                editor._update_line_numbers()
+
+    def _apply_font_size(self, size):
+        """Aplica el tamaño de fuente a los editores."""
+        self.theme.font_size = size
+        self._apply_font_to_editors()
+
+    def _toggle_theme(self, theme: str):
+        """Cambia el tema de la aplicación."""
+        self.theme.set_theme(theme)
+        self._apply_theme_to_all()
+        messagebox.showinfo("Tema", f"Tema '{theme}' aplicado correctamente")
 
 
 def run():
