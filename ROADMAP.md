@@ -306,24 +306,29 @@ def expresion_primaria(self):
 - Scopes de funciones ✅
 - Todos los tests pasando ✅
 
-#### ⏳ Fase 3: PENDIENTE (Siguiente a implementar)
-- Operador punto para propiedades (F008)
-- Arrays tipados (F011)
-- Operador punto para métodos
+#### ✅ Fase 3: COMPLETADA (2025-11-05)
+- Operador punto para propiedades (F008) ✅
+- Propiedad .size para arrays ✅
+- Propiedad .length para strings ✅
+- Acceso a elementos de array con [] ✅
+- Modificación de elementos de array ✅
+- Uso de propiedades en expresiones ✅
+- Uso de propiedades en rangos (for loops) ✅
+- Todos los tests pasando ✅
 
 #### ⏳ Fases 4-5: PENDIENTES
 - Ver plan detallado abajo
 
 ---
 
-### 🚀 8. CÓMO EMPEZAR LA FASE 3
+### 🚀 8. CÓMO EMPEZAR LA FASE 4
 
-**Cuando estés listo para implementar Fase 3, sigue estos pasos**:
+**Cuando estés listo para implementar Fase 4, sigue estos pasos**:
 
-1. **Lee la sección "FASE 3: Arrays y Propiedades" completa**
-2. **Empieza con 3.1: Operador Punto para Propiedades**
-3. **Crea `test_kt/test_fase3.kt` con código de prueba**
-4. **Crea `tests/test_fase3_directo.py` copiando el de Fase 2**
+1. **Lee la sección "FASE 4: Expresiones Avanzadas" completa**
+2. **Empieza con 4.1: When Expression**
+3. **Crea `test_kt/test_fase4.kt` con código de prueba**
+4. **Crea `tests/test_fase4_directo.py` copiando el de Fase 3**
 5. **Implementa paso a paso según el flujo de trabajo**
 
 ---
@@ -564,32 +569,37 @@ def expresion_primaria(self):
 
 ---
 
-### **FASE 3: Arrays y Propiedades** (3-4 semanas)
+### **FASE 3: Arrays y Propiedades** ✅ COMPLETADA (2025-11-05)
 
 **Objetivo**: Soporte completo para arrays y acceso a propiedades
 
 #### Tareas:
 
-##### 3.1. Operador Punto para Propiedades (F008)
-**Duración**: 3-4 días
+##### 3.1. Operador Punto para Propiedades (F008) ✅ COMPLETADO
+**Duración**: Completado en 1 día
 **Archivos**: `core/utils.py`, `core/parser.py`, `core/semantic.py`
 
 ```markdown
-- [ ] Agregar nodo `TipoNodo.ACCESO_PROPIEDAD`
-- [ ] Parser: modificar `expresion_primaria()`:
-      * Después de parsear IDENTIFIER, verificar '.'
+- [x] Agregar nodo `TipoNodo.EXPRESION_PUNTO`
+- [x] Parser: modificar `expresion_primaria()`:
+      * Después de parsear expresión base, verificar '.'
       * Si hay '.', parsear propiedad: objeto.propiedad
-      * Crear nodo ACCESO_PROPIEDAD
-- [ ] Semántico: crear tabla de propiedades por tipo:
-      PROPIEDADES = {
-          TipoDato.ARRAY_INT: {'size': TipoDato.INT},
-          TipoDato.STRING: {'length': TipoDato.INT},
-      }
+      * Crear nodo EXPRESION_PUNTO
+      * Soporta encadenamiento: array[0].size, obj.prop1.prop2
+- [x] Semántico: validación de propiedades por tipo:
+      * .size para ARRAY_INT, ARRAY_DOUBLE, ARRAY_STRING
+      * .length para STRING
       * Validar que tipo tenga la propiedad
       * Retornar tipo de la propiedad
-- [ ] Tests:
-      val arr = intArrayOf(1, 2, 3)
-      val n = arr.size  // 3
+      * Mejorar visitar_expresion_indice para retornar tipo correcto de elementos
+- [x] Parser: soporte para propiedades en rangos:
+      * for (i in 0 until arr.size) correctamente parseado
+- [x] Tests:
+      var arr = intArrayOf(1, 2, 3)
+      var n = arr.size
+      var mensaje = "Hola"
+      var len = mensaje.length
+      for (i in 0 until numeros.size) { ... }
 ```
 
 ##### 3.2. Arrays Tipados (F011)
@@ -726,7 +736,7 @@ def expresion_primaria(self):
 |---|---|---|---|---|
 | Fase 1 | 2-3 semanas | 2025-11-04 | 2025-11-04 | ✅ Completada |
 | Fase 2 | 3-4 semanas | 2025-11-05 | 2025-11-05 | ✅ Completada |
-| Fase 3 | 3-4 semanas | TBD | TBD | ⏳ Pendiente |
+| Fase 3 | 3-4 semanas | 2025-11-05 | 2025-11-05 | ✅ Completada |
 | Fase 4 | 3-4 semanas | TBD | TBD | ⏳ Pendiente |
 | Fase 5 | 2-3 meses | TBD | TBD | ⏳ Pendiente |
 
@@ -750,9 +760,11 @@ def expresion_primaria(self):
 - ✅ Return statement con validación de tipos
 - ✅ Scopes de funciones correctamente implementados
 
-### Hito 3: "Arrays Reales" (Fin Fase 3)
-- ✅ Arrays tipados con propiedades y métodos
+### Hito 3: "Arrays Reales" (Fin Fase 3) ✅ COMPLETADO
+- ✅ Arrays tipados con propiedades (.size, .length)
 - ✅ Operador punto funcional
+- ✅ Acceso y modificación de elementos de array
+- ✅ Uso de propiedades en expresiones y rangos
 
 ### Hito 4: "Kotlin Expresivo" (Fin Fase 4)
 - ✅ When, interpolación, null safety
@@ -891,6 +903,25 @@ for (elemento in arr) {
     - `core/parser.py`: Implementados métodos para funciones, return y llamadas
     - `core/semantic.py`: Agregada validación semántica completa para funciones
   - 🎯 **Próximo paso**: Fase 3 - Arrays y Propiedades
+
+- **2025-11-05** (continuación):
+  - ✅ **FASE 3 COMPLETADA**: Arrays y Propiedades
+    - Implementado operador punto (.) para acceso a propiedades
+    - Agregada propiedad `.size` para arrays (IntArray, DoubleArray)
+    - Agregada propiedad `.length` para strings
+    - Mejorado acceso a elementos de array con validación de tipos correcta
+    - Soportado uso de propiedades en expresiones aritméticas y rangos
+    - Soportado encadenamiento: `array[0].size`, `obj.prop1.prop2`
+    - Parser mejorado para manejar propiedades en rangos: `for (i in 0 until arr.size)`
+    - Creado `test_kt/test_fase3.kt` con pruebas exhaustivas
+    - Creado `tests/test_fase3_directo.py` para validación automática
+    - Todos los tests de Fase 1, 2 y 3 pasando correctamente (0 errores)
+  - 📦 **ARCHIVOS MODIFICADOS**:
+    - `core/utils.py`: Agregado `TipoNodo.EXPRESION_PUNTO`
+    - `core/parser.py`: Soporte para operador punto y propiedades en rangos
+    - `core/semantic.py`: Agregado `visitar_expresion_punto()` con validación de propiedades
+    - `core/semantic.py`: Mejorado `visitar_expresion_indice()` para retornar tipos correctos
+  - 🎯 **Próximo paso**: Fase 4 - Expresiones Avanzadas
 
 ---
 

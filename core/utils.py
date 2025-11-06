@@ -97,6 +97,7 @@ class TipoNodo(Enum):
     EXPRESION_LITERAL = auto()
     EXPRESION_VARIABLE = auto()
     EXPRESION_INDICE = auto()      # Para acceso a arreglos/listas con []
+    EXPRESION_PUNTO = auto()       # Para acceso a propiedades con . (obj.property)
     BLOQUE = auto()
     IF = auto()
     WHILE = auto()

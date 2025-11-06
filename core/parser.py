@@ -667,24 +667,45 @@ class Parser:
             self.error_manager.agregar_error(error)
             raise error
 
-        # Verificar si hay acceso a índices (soporta n dimensiones: array[0][1][2]...)
-        while self.verificar(TipoToken.LBRACKET):
-            bracket_token = self.token_actual
-            self.avanzar()
-            # Parsear la expresión del índice
-            indice = self.expresion()
-            self.consumir(TipoToken.RBRACKET, "Se esperaba ']' después del índice")
+        # Verificar si hay acceso a índices o propiedades (soporta n dimensiones y encadenamiento)
+        # Ejemplos: array[0], array[0].size, obj.property, obj.property[0]
+        while self.verificar(TipoToken.LBRACKET) or self.verificar(TipoToken.DOT):
+            if self.verificar(TipoToken.LBRACKET):
+                # Acceso a índice: array[0]
+                bracket_token = self.token_actual
+                self.avanzar()
+                # Parsear la expresión del índice
+                indice = self.expresion()
+                self.consumir(TipoToken.RBRACKET, "Se esperaba ']' después del índice")
 
-            # Crear nodo de acceso a índice
-            nodo_indice = NodoAST(
-                TipoNodo.EXPRESION_INDICE,
-                "[]",
-                linea=bracket_token.linea,
-                columna=bracket_token.columna
-            )
-            nodo_indice.agregar_hijo(nodo)      # El arreglo/lista
-            nodo_indice.agregar_hijo(indice)    # El índice
-            nodo = nodo_indice                  # Actualizar para soportar múltiples []
+                # Crear nodo de acceso a índice
+                nodo_indice = NodoAST(
+                    TipoNodo.EXPRESION_INDICE,
+                    "[]",
+                    linea=bracket_token.linea,
+                    columna=bracket_token.columna
+                )
+                nodo_indice.agregar_hijo(nodo)      # El arreglo/lista
+                nodo_indice.agregar_hijo(indice)    # El índice
+                nodo = nodo_indice                  # Actualizar para soportar múltiples []
+
+            elif self.verificar(TipoToken.DOT):
+                # Acceso a propiedad: obj.property
+                dot_token = self.token_actual
+                self.avanzar()  # Consumir el punto
+
+                # El siguiente token debe ser un identificador (nombre de propiedad)
+                propiedad = self.consumir(TipoToken.IDENTIFIER, "Se esperaba nombre de propiedad después de '.'")
+
+                # Crear nodo de acceso a propiedad
+                nodo_punto = NodoAST(
+                    TipoNodo.EXPRESION_PUNTO,
+                    propiedad.valor,  # El nombre de la propiedad
+                    linea=dot_token.linea,
+                    columna=dot_token.columna
+                )
+                nodo_punto.agregar_hijo(nodo)  # El objeto base
+                nodo = nodo_punto              # Actualizar para soportar encadenamiento
 
         # Verificar si es un rango (.. o until después del valor)
         if self.verificar(TipoToken.RANGE) or self.verificar(TipoToken.UNTIL):
@@ -700,9 +721,24 @@ class Parser:
             elif self.verificar(TipoToken.IDENTIFIER):
                 token = self.token_actual
                 self.avanzar()
-                # Puede seguir con operaciones: n - 1
+                # Puede seguir con operaciones: n - 1, o con propiedades: arr.size
                 fin = NodoAST(TipoNodo.EXPRESION_VARIABLE, token.valor, linea=token.linea, columna=token.columna)
-                # Verificar si hay operadores después (para soportar "n - 1")
+
+                # Verificar si hay acceso a propiedades (.size, .length)
+                if self.verificar(TipoToken.DOT):
+                    dot_token = self.token_actual
+                    self.avanzar()  # Consumir el punto
+                    propiedad = self.consumir(TipoToken.IDENTIFIER, "Se esperaba nombre de propiedad después de '.'")
+                    nodo_punto = NodoAST(
+                        TipoNodo.EXPRESION_PUNTO,
+                        propiedad.valor,
+                        linea=dot_token.linea,
+                        columna=dot_token.columna
+                    )
+                    nodo_punto.agregar_hijo(fin)
+                    fin = nodo_punto
+
+                # Verificar si hay operadores después (para soportar "n - 1" o "arr.size - 1")
                 if self.token_actual.tipo in [TipoToken.PLUS, TipoToken.MINUS, TipoToken.MULTIPLY, TipoToken.DIVIDE]:
                     # Convertir a expresión completa retrocediendo
                     self.posicion -= 1

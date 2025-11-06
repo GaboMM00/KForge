@@ -88,6 +88,8 @@ class AnalizadorSemantico:
             return self.visitar_expresion_variable(nodo)
         elif nodo.tipo == TipoNodo.EXPRESION_INDICE:
             return self.visitar_expresion_indice(nodo)
+        elif nodo.tipo == TipoNodo.EXPRESION_PUNTO:
+            return self.visitar_expresion_punto(nodo)
 
     def visitar_programa(self, nodo: NodoAST):
         """Visita el nodo programa."""
@@ -494,10 +496,67 @@ class AnalizadorSemantico:
             )
             self.error_manager.agregar_error(error)
 
-        # Por ahora, asumimos que el acceso a un arreglo retorna el mismo tipo
-        # (esto es una simplificación, en un compilador completo necesitaríamos
-        # un sistema de tipos más sofisticado para arreglos tipados)
+        # Determinar el tipo del elemento basado en el tipo del arreglo
+        if tipo_arreglo == TipoDato.ARRAY_INT:
+            return TipoDato.INT
+        elif tipo_arreglo == TipoDato.ARRAY_DOUBLE:
+            return TipoDato.DOUBLE
+        elif tipo_arreglo == TipoDato.ARRAY_STRING:
+            return TipoDato.STRING
+
+        # Para otros tipos, retornar el mismo tipo (simplificación)
         return tipo_arreglo
+
+    def visitar_expresion_punto(self, nodo: NodoAST) -> Optional[TipoDato]:
+        """
+        Visita el nodo de expresión de acceso a propiedad con punto.
+        Ejemplo: array.size, string.length
+        """
+        if len(nodo.hijos) < 1:
+            return TipoDato.UNKNOWN
+
+        # Obtener el tipo del objeto base
+        tipo_objeto = self.visitar(nodo.hijos[0])
+
+        # Obtener el nombre de la propiedad
+        propiedad = nodo.valor
+
+        # Validar propiedades según el tipo del objeto
+        if propiedad == 'size':
+            # .size es válido para arrays
+            if tipo_objeto in [TipoDato.ARRAY_INT, TipoDato.ARRAY_DOUBLE, TipoDato.ARRAY_STRING]:
+                return TipoDato.INT
+            else:
+                error = SemanticError(
+                    f"Propiedad 'size' no válida para tipo {tipo_objeto.value}",
+                    nodo.linea,
+                    nodo.columna
+                )
+                self.error_manager.agregar_error(error)
+                return TipoDato.UNKNOWN
+
+        elif propiedad == 'length':
+            # .length es válido para String
+            if tipo_objeto == TipoDato.STRING:
+                return TipoDato.INT
+            else:
+                error = SemanticError(
+                    f"Propiedad 'length' no válida para tipo {tipo_objeto.value}",
+                    nodo.linea,
+                    nodo.columna
+                )
+                self.error_manager.agregar_error(error)
+                return TipoDato.UNKNOWN
+
+        else:
+            # Propiedad desconocida
+            error = SemanticError(
+                f"Propiedad '{propiedad}' no reconocida para tipo {tipo_objeto.value}",
+                nodo.linea,
+                nodo.columna
+            )
+            self.error_manager.agregar_error(error)
+            return TipoDato.UNKNOWN
 
     def tipos_compatibles(self, tipo_esperado: TipoDato, tipo_actual: TipoDato) -> bool:
         """
