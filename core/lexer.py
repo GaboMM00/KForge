@@ -30,6 +30,9 @@ class Lexer:
         'Double': TipoToken.DOUBLE_TYPE,
         'String': TipoToken.STRING_TYPE,
         'Boolean': TipoToken.BOOLEAN_TYPE,
+        'IntArray': TipoToken.INT_TYPE,  # IntArray se maneja como tipo
+        'DoubleArray': TipoToken.DOUBLE_TYPE,  # DoubleArray se maneja como tipo
+        'Unit': TipoToken.BOOLEAN_TYPE,  # Unit para funciones void
         'true': TipoToken.BOOLEAN_LITERAL,
         'false': TipoToken.BOOLEAN_LITERAL,
     }

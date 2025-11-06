@@ -3,8 +3,8 @@ Analizador Semántico para el compilador de Kotlin.
 Verifica la correctitud semántica del AST generado por el parser.
 """
 
-from typing import Optional
-from core.utils import NodoAST, TipoNodo, TablaSimbolos, Simbolo, TipoDato
+from typing import Optional, Dict
+from core.utils import NodoAST, TipoNodo, TablaSimbolos, Simbolo, TipoDato, FuncionInfo, Parametro
 from core.errors import SemanticError, ErrorManager
 
 
@@ -21,8 +21,13 @@ class AnalizadorSemantico:
         self.error_manager = error_manager or ErrorManager()
         self.tabla_simbolos_global = TablaSimbolos()
         self.tabla_simbolos_actual = self.tabla_simbolos_global
+        self.tabla_funciones: Dict[str, FuncionInfo] = {}  # Tabla de funciones declaradas
+        self.funcion_actual: Optional[FuncionInfo] = None  # Función que se está analizando
         self.resultados = []
         self.dentro_de_loop = False  # Flag para validar break/continue
+
+        # Inicializar funciones built-in
+        self._inicializar_funciones_builtin()
 
     def analizar(self, ast: NodoAST) -> list:
         """
@@ -65,6 +70,12 @@ class AnalizadorSemantico:
             self.visitar_break(nodo)
         elif nodo.tipo == TipoNodo.CONTINUE:
             self.visitar_continue(nodo)
+        elif nodo.tipo == TipoNodo.FUNCION:
+            self.visitar_funcion(nodo)
+        elif nodo.tipo == TipoNodo.RETURN:
+            return self.visitar_return(nodo)
+        elif nodo.tipo == TipoNodo.LLAMADA_FUNCION:
+            return self.visitar_llamada_funcion(nodo)
         elif nodo.tipo == TipoNodo.BLOQUE:
             self.visitar_bloque(nodo)
         elif nodo.tipo == TipoNodo.EXPRESION_BINARIA:
@@ -502,11 +513,193 @@ class AnalizadorSemantico:
         if tipo_esperado == tipo_actual:
             return True
 
+        # UNKNOWN acepta cualquier tipo (usado para Any en built-ins)
+        if tipo_esperado == TipoDato.UNKNOWN or tipo_actual == TipoDato.UNKNOWN:
+            return True
+
         # Int puede convertirse a Double
         if tipo_esperado == TipoDato.DOUBLE and tipo_actual == TipoDato.INT:
             return True
 
         return False
+
+    def _inicializar_funciones_builtin(self):
+        """Inicializa las funciones built-in del lenguaje."""
+        # println(mensaje: Any): Unit - acepta cualquier tipo
+        self.tabla_funciones['println'] = FuncionInfo(
+            nombre='println',
+            parametros=[Parametro('mensaje', TipoDato.UNKNOWN)],  # UNKNOWN = Any
+            tipo_retorno=TipoDato.VOID,
+            es_builtin=True
+        )
+
+        # print(mensaje: Any): Unit - acepta cualquier tipo
+        self.tabla_funciones['print'] = FuncionInfo(
+            nombre='print',
+            parametros=[Parametro('mensaje', TipoDato.UNKNOWN)],  # UNKNOWN = Any
+            tipo_retorno=TipoDato.VOID,
+            es_builtin=True
+        )
+
+        # intArrayOf(varargs): IntArray - acepta múltiples argumentos Int
+        self.tabla_funciones['intArrayOf'] = FuncionInfo(
+            nombre='intArrayOf',
+            parametros=[],  # Varargs, validación especial
+            tipo_retorno=TipoDato.ARRAY_INT,
+            es_builtin=True
+        )
+
+    def visitar_funcion(self, nodo: NodoAST):
+        """Visita el nodo de declaración de función."""
+        nombre = nodo.valor
+        parametros_meta = nodo.metadata.get('parametros', [])
+        tipo_retorno_str = nodo.metadata.get('tipo_retorno')
+
+        # Verificar si la función ya existe
+        if nombre in self.tabla_funciones:
+            error = SemanticError(
+                f"Función '{nombre}' ya declarada",
+                nodo.linea,
+                nodo.columna
+            )
+            self.error_manager.agregar_error(error)
+            return
+
+        # Convertir parámetros a objetos Parametro
+        parametros = []
+        for p in parametros_meta:
+            tipo_param = TipoDato.desde_string(p['tipo'])
+            parametros.append(Parametro(
+                nombre=p['nombre'],
+                tipo=tipo_param,
+                linea=p.get('linea'),
+                columna=p.get('columna')
+            ))
+
+        # Crear información de función
+        tipo_retorno = TipoDato.desde_string(tipo_retorno_str)
+        funcion_info = FuncionInfo(
+            nombre=nombre,
+            parametros=parametros,
+            tipo_retorno=tipo_retorno,
+            cuerpo=nodo.hijos[0] if nodo.hijos else None,
+            linea=nodo.linea,
+            columna=nodo.columna
+        )
+
+        # Agregar a tabla de funciones
+        self.tabla_funciones[nombre] = funcion_info
+
+        # Guardar contexto anterior
+        tabla_anterior = self.tabla_simbolos_actual
+        funcion_anterior = self.funcion_actual
+
+        # Crear nuevo scope para la función
+        self.tabla_simbolos_actual = TablaSimbolos(padre=self.tabla_simbolos_global)
+        self.funcion_actual = funcion_info
+
+        # Agregar parámetros al scope de la función
+        for param in parametros:
+            simbolo = Simbolo(
+                nombre=param.nombre,
+                tipo=param.tipo,
+                es_constante=False,
+                linea=param.linea or nodo.linea,
+                columna=param.columna or nodo.columna
+            )
+            self.tabla_simbolos_actual.declarar(simbolo)
+
+        # Visitar cuerpo de la función
+        if nodo.hijos:
+            self.visitar(nodo.hijos[0])
+
+        # Restaurar contexto
+        self.tabla_simbolos_actual = tabla_anterior
+        self.funcion_actual = funcion_anterior
+
+        self.resultados.append(f"Declaración: fun {nombre}({', '.join(p.nombre + ': ' + p.tipo.value for p in parametros)}): {tipo_retorno.value}")
+
+    def visitar_return(self, nodo: NodoAST) -> Optional[TipoDato]:
+        """Visita el nodo de sentencia return."""
+        # Verificar que estamos dentro de una función
+        if not self.funcion_actual:
+            error = SemanticError(
+                "Sentencia 'return' fuera de una función",
+                nodo.linea,
+                nodo.columna
+            )
+            self.error_manager.agregar_error(error)
+            return TipoDato.VOID
+
+        # Determinar el tipo del valor de retorno
+        tipo_retorno = TipoDato.VOID
+        if nodo.hijos:
+            tipo_retorno = self.visitar(nodo.hijos[0])
+
+        # Verificar que el tipo coincida con la declaración de la función
+        if not self.tipos_compatibles(self.funcion_actual.tipo_retorno, tipo_retorno):
+            error = SemanticError(
+                f"Tipo de retorno incompatible: esperado {self.funcion_actual.tipo_retorno.value}, encontrado {tipo_retorno.value}",
+                nodo.linea,
+                nodo.columna
+            )
+            self.error_manager.agregar_error(error)
+
+        self.resultados.append(f"Sentencia 'return' válida")
+        return tipo_retorno
+
+    def visitar_llamada_funcion(self, nodo: NodoAST) -> Optional[TipoDato]:
+        """Visita el nodo de llamada a función."""
+        nombre = nodo.valor
+
+        # Buscar la función
+        if nombre not in self.tabla_funciones:
+            error = SemanticError(
+                f"Función '{nombre}' no declarada",
+                nodo.linea,
+                nodo.columna
+            )
+            self.error_manager.agregar_error(error)
+            return TipoDato.UNKNOWN
+
+        funcion = self.tabla_funciones[nombre]
+
+        # Validar número de argumentos (excepto para intArrayOf que es varargs)
+        if nombre != 'intArrayOf':
+            if len(nodo.hijos) != len(funcion.parametros):
+                error = SemanticError(
+                    f"Función '{nombre}' espera {len(funcion.parametros)} argumentos, recibió {len(nodo.hijos)}",
+                    nodo.linea,
+                    nodo.columna
+                )
+                self.error_manager.agregar_error(error)
+                return funcion.tipo_retorno
+
+        # Validar tipo de cada argumento
+        for i, arg_nodo in enumerate(nodo.hijos):
+            tipo_arg = self.visitar(arg_nodo)
+
+            if nombre == 'intArrayOf':
+                # Para intArrayOf, todos los argumentos deben ser Int
+                if not self.tipos_compatibles(TipoDato.INT, tipo_arg):
+                    error = SemanticError(
+                        f"Argumento {i+1} de 'intArrayOf' debe ser Int, encontrado {tipo_arg.value}",
+                        nodo.linea,
+                        nodo.columna
+                    )
+                    self.error_manager.agregar_error(error)
+            elif i < len(funcion.parametros):
+                param = funcion.parametros[i]
+                if not self.tipos_compatibles(param.tipo, tipo_arg):
+                    error = SemanticError(
+                        f"Argumento {i+1} de '{nombre}' debe ser {param.tipo.value}, encontrado {tipo_arg.value}",
+                        nodo.linea,
+                        nodo.columna
+                    )
+                    self.error_manager.agregar_error(error)
+
+        self.resultados.append(f"Llamada a función: {nombre}()")
+        return funcion.tipo_retorno
 
     def obtener_resumen(self) -> str:
         """Genera un resumen del análisis semántico."""

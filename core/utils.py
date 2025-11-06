@@ -151,6 +151,9 @@ class TipoDato(Enum):
     STRING = "String"
     BOOLEAN = "Boolean"
     VOID = "Unit"
+    ARRAY_INT = "IntArray"
+    ARRAY_DOUBLE = "DoubleArray"
+    ARRAY_STRING = "Array<String>"
     UNKNOWN = "Unknown"
 
     @staticmethod
@@ -161,9 +164,40 @@ class TipoDato(Enum):
             "Double": TipoDato.DOUBLE,
             "String": TipoDato.STRING,
             "Boolean": TipoDato.BOOLEAN,
-            "Unit": TipoDato.VOID
+            "Unit": TipoDato.VOID,
+            "IntArray": TipoDato.ARRAY_INT,
+            "DoubleArray": TipoDato.ARRAY_DOUBLE,
+            "Array<String>": TipoDato.ARRAY_STRING
         }
         return mapeo.get(tipo_str, TipoDato.UNKNOWN)
+
+
+@dataclass
+class Parametro:
+    """Representa un parámetro de función."""
+    nombre: str
+    tipo: TipoDato
+    linea: int = None
+    columna: int = None
+
+    def __repr__(self):
+        return f"{self.nombre}: {self.tipo.value}"
+
+
+@dataclass
+class FuncionInfo:
+    """Información sobre una función declarada."""
+    nombre: str
+    parametros: List[Parametro]
+    tipo_retorno: TipoDato
+    cuerpo: 'NodoAST' = None
+    linea: int = None
+    columna: int = None
+    es_builtin: bool = False
+
+    def __repr__(self):
+        params_str = ", ".join(str(p) for p in self.parametros)
+        return f"fun {self.nombre}({params_str}): {self.tipo_retorno.value}"
 
 
 @dataclass

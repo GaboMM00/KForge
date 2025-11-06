@@ -287,33 +287,43 @@ def expresion_primaria(self):
 
 ---
 
-### 🎯 7. ESTADO ACTUAL DEL PROYECTO (2025-11-04)
+### 🎯 7. ESTADO ACTUAL DEL PROYECTO (2025-11-05)
 
-#### ✅ Fase 1: COMPLETADA
+#### ✅ Fase 1: COMPLETADA (2025-11-04)
 - Palabra clave `until` ✅
 - Palabras clave `break` y `continue` ✅
 - Operadores lógicos `&&` y `||` ✅
 - Declaración sin inicialización ✅
 - Todos los tests pasando ✅
 
-#### ⏳ Fase 2: PENDIENTE (Siguiente a implementar)
-- Declaración de funciones (F016 + F017)
-- Llamadas a funciones (F006)
-- Funciones built-in (F007)
+#### ✅ Fase 2: COMPLETADA (2025-11-05)
+- Declaración de funciones con parámetros ✅
+- Tipos de retorno ✅
+- Llamadas a funciones ✅
+- Funciones built-in (println, print, intArrayOf) ✅
+- Sentencia return ✅
+- Validación de tipos en argumentos ✅
+- Scopes de funciones ✅
+- Todos los tests pasando ✅
 
-#### ⏳ Fases 3-5: PENDIENTES
+#### ⏳ Fase 3: PENDIENTE (Siguiente a implementar)
+- Operador punto para propiedades (F008)
+- Arrays tipados (F011)
+- Operador punto para métodos
+
+#### ⏳ Fases 4-5: PENDIENTES
 - Ver plan detallado abajo
 
 ---
 
-### 🚀 8. CÓMO EMPEZAR LA FASE 2
+### 🚀 8. CÓMO EMPEZAR LA FASE 3
 
-**Cuando estés listo para implementar Fase 2, sigue estos pasos**:
+**Cuando estés listo para implementar Fase 3, sigue estos pasos**:
 
-1. **Lee la sección "FASE 2: Funciones y Llamadas" completa**
-2. **Empieza con 2.1: Declaración de Funciones**
-3. **Crea `test_kt/test_fase2.kt` con código de prueba**
-4. **Crea `tests/test_fase2_directo.py` copiando el de Fase 1**
+1. **Lee la sección "FASE 3: Arrays y Propiedades" completa**
+2. **Empieza con 3.1: Operador Punto para Propiedades**
+3. **Crea `test_kt/test_fase3.kt` con código de prueba**
+4. **Crea `tests/test_fase3_directo.py` copiando el de Fase 2**
 5. **Implementa paso a paso según el flujo de trabajo**
 
 ---
@@ -325,6 +335,20 @@ def expresion_primaria(self):
 - **Documenta tus cambios**: Agrega comentarios y actualiza el changelog
 - **Haz commits pequeños**: Un commit por característica
 - **Ejecuta tests frecuentemente**: Detecta bugs temprano
+- **Formato de commits**: Usa mensajes descriptivos siguiendo el formato:
+  ```
+  tipo(scope): descripción breve en inglés
+
+  Ejemplos:
+  - feat(core): implement Phase 2 functions and calls support
+  - fix(parser): correct precedence for logical operators
+  - docs(roadmap): update Phase 2 completion status
+  - refactor(semantic): improve type checking for functions
+  - test(phase2): add comprehensive function tests
+
+  Tipos: feat, fix, docs, refactor, test, chore, perf
+  Scopes: core, parser, lexer, semantic, ui, tests, roadmap
+  ```
 
 ---
 
@@ -471,72 +495,70 @@ def expresion_primaria(self):
 
 ---
 
-### **FASE 2: Funciones y Llamadas** (3-4 semanas)
+### **FASE 2: Funciones y Llamadas** ✅ COMPLETADA (2025-11-05)
 
 **Objetivo**: Soporte completo para definir y llamar funciones
 
 #### Tareas:
 
-##### 2.1. Declaración de Funciones (F016 + F017)
-**Duración**: 2 semanas
+##### 2.1. Declaración de Funciones (F016 + F017) ✅ COMPLETADO
+**Duración**: Completado en 1 día
 **Archivos**: `core/utils.py`, `core/parser.py`, `core/semantic.py`
 
 ```markdown
-- [ ] Definir estructura de función en utils.py:
+- [x] Definir estructura de función en utils.py:
       * @dataclass FuncionInfo: nombre, params, tipo_retorno, cuerpo
-- [ ] Parser: método `declaracion_funcion()`:
+      * @dataclass Parametro: nombre, tipo
+- [x] Parser: método `declaracion_funcion()`:
       fun IDENTIFIER ( params ) : TIPO { bloque }
       * Parsear lista de parámetros: nombre: Tipo, ...
       * Parsear tipo de retorno
       * Parsear cuerpo (bloque)
-- [ ] Semántico:
-      * Agregar funciones a tabla de símbolos global
+- [x] Semántico:
+      * Agregar funciones a tabla de funciones
       * Crear nuevo scope para parámetros
-      * Validar que return exista si tipo != Unit
       * Validar tipo de return coincida con firma
-- [ ] Tests:
+- [x] Tests:
       fun suma(a: Int, b: Int): Int {
           return a + b
       }
 ```
 
-##### 2.2. Llamadas a Funciones (F006)
-**Duración**: 1 semana
+##### 2.2. Llamadas a Funciones (F006) ✅ COMPLETADO
+**Duración**: Completado en 1 día
 **Archivos**: `core/parser.py`, `core/semantic.py`
 
 ```markdown
-- [ ] Parser: modificar `expresion_primaria()`:
+- [x] Parser: modificar `expresion_primaria()`:
       * Al encontrar IDENTIFIER, verificar si sigue '('
       * Si sí, parsear llamada: IDENTIFIER ( args )
       * Crear nodo LLAMADA_FUNCION con lista de argumentos
-- [ ] Semántico:
-      * Buscar función en tabla de símbolos
+- [x] Semántico:
+      * Buscar función en tabla de funciones
       * Validar número de argumentos
       * Validar tipo de cada argumento
       * Retornar tipo de retorno de la función
-- [ ] Tests:
+- [x] Tests:
       val resultado = suma(5, 10)
       println(resultado)
 ```
 
-##### 2.3. Funciones Built-in Básicas (F007)
-**Duración**: 3-5 días
-**Archivos**: `core/semantic.py`, `core/codegen.py`
+##### 2.3. Funciones Built-in Básicas (F007) ✅ COMPLETADO
+**Duración**: Completado en 1 día
+**Archivos**: `core/semantic.py`
 
 ```markdown
-- [ ] Crear diccionario de funciones built-in en semantic.py:
-      FUNCIONES_BUILTIN = {
-          'println': FuncionInfo(...),
-          'print': FuncionInfo(...),
-          'intArrayOf': FuncionInfo(...),
-      }
-- [ ] Al inicializar analizador semántico, agregar a tabla global
-- [ ] Implementar en codegen (generación de código Python):
-      * println → print()
-      * print → print(end='')
-      * intArrayOf → [args]
-- [ ] Tests:
+- [x] Crear diccionario de funciones built-in en semantic.py:
+      * _inicializar_funciones_builtin()
+      * println(Any): Unit
+      * print(Any): Unit
+      * intArrayOf(...Int): IntArray
+- [x] Al inicializar analizador semántico, agregar a tabla de funciones
+- [x] Validación especial para varargs (intArrayOf)
+- [x] Uso de TipoDato.UNKNOWN para aceptar cualquier tipo (Any)
+- [x] Tests:
       println("Hola Mundo")
+      println(123)
       val arr = intArrayOf(1, 2, 3)
 ```
 
@@ -703,7 +725,7 @@ def expresion_primaria(self):
 | Fase | Duración | Fecha Inicio | Fecha Fin | Estado |
 |---|---|---|---|---|
 | Fase 1 | 2-3 semanas | 2025-11-04 | 2025-11-04 | ✅ Completada |
-| Fase 2 | 3-4 semanas | TBD | TBD | ⏳ Pendiente |
+| Fase 2 | 3-4 semanas | 2025-11-05 | 2025-11-05 | ✅ Completada |
 | Fase 3 | 3-4 semanas | TBD | TBD | ⏳ Pendiente |
 | Fase 4 | 3-4 semanas | TBD | TBD | ⏳ Pendiente |
 | Fase 5 | 2-3 meses | TBD | TBD | ⏳ Pendiente |
@@ -722,9 +744,11 @@ def expresion_primaria(self):
 - ✅ Declaraciones sin inicialización soportadas
 - ⚠️ Código Bubble Sort original aún requiere Fase 2 (funciones) y Fase 3 (arrays)
 
-### Hito 2: "Funciones Completas" (Fin Fase 2)
+### Hito 2: "Funciones Completas" (Fin Fase 2) ✅ COMPLETADO
 - ✅ Declarar y llamar funciones personalizadas
-- ✅ Funciones built-in básicas funcionando
+- ✅ Funciones built-in básicas funcionando (println, print, intArrayOf)
+- ✅ Return statement con validación de tipos
+- ✅ Scopes de funciones correctamente implementados
 
 ### Hito 3: "Arrays Reales" (Fin Fase 3)
 - ✅ Arrays tipados con propiedades y métodos
@@ -849,11 +873,29 @@ for (elemento in arr) {
     - Agregadas reglas de organización y flujo de trabajo
     - Agregados ejemplos prácticos de implementación
     - Documentados errores comunes y soluciones
-- **TBD**: Inicio Fase 2
+
+- **2025-11-05**:
+  - ✅ **FASE 2 COMPLETADA**: Funciones y Llamadas
+    - Implementada declaración de funciones con parámetros y tipos de retorno
+    - Implementadas llamadas a funciones con validación de argumentos
+    - Implementada sentencia `return` con validación de tipos
+    - Agregadas funciones built-in: `println()`, `print()`, `intArrayOf()`
+    - Implementados scopes de funciones con tablas de símbolos anidadas
+    - Agregado soporte para tipos `IntArray`, `DoubleArray`, `Unit`
+    - Creado `test_kt/test_fase2.kt` con pruebas completas
+    - Creado `tests/test_fase2_directo.py` para validación automática
+    - Todos los tests de Fase 1 y Fase 2 pasando correctamente (0 errores)
+  - 📦 **ARCHIVOS MODIFICADOS**:
+    - `core/utils.py`: Agregadas clases `Parametro` y `FuncionInfo`, tipos array
+    - `core/lexer.py`: Agregados tokens para `IntArray`, `DoubleArray`, `Unit`
+    - `core/parser.py`: Implementados métodos para funciones, return y llamadas
+    - `core/semantic.py`: Agregada validación semántica completa para funciones
+  - 🎯 **Próximo paso**: Fase 3 - Arrays y Propiedades
 
 ---
 
-## 👤 Autor
+## 👤 Autor 
+Gabriel Alejandro Medina Miramontes
 
 Desarrollado como proyecto educativo para aprender compiladores e implementación de lenguajes.
 

@@ -82,15 +82,21 @@ class Parser:
 
     def programa(self) -> NodoAST:
         """
-        programa -> sentencia*
+        programa -> (declaracion_funcion | sentencia)*
         """
         nodo_programa = NodoAST(TipoNodo.PROGRAMA, "programa")
 
         while not self.verificar(TipoToken.EOF):
             try:
-                sentencia = self.sentencia()
-                if sentencia:
-                    nodo_programa.agregar_hijo(sentencia)
+                # Verificar si es una declaración de función
+                if self.verificar(TipoToken.FUN):
+                    funcion = self.declaracion_funcion()
+                    if funcion:
+                        nodo_programa.agregar_hijo(funcion)
+                else:
+                    sentencia = self.sentencia()
+                    if sentencia:
+                        nodo_programa.agregar_hijo(sentencia)
             except SyntaxError as e:
                 # Recuperación de errores: avanzar hasta el siguiente punto seguro
                 self.sincronizar()
@@ -106,6 +112,8 @@ class Parser:
                   | sentencia_for
                   | break
                   | continue
+                  | return
+                  | llamada_funcion
                   | bloque
         """
         if self.verificar(TipoToken.VAR) or self.verificar(TipoToken.VAL):
@@ -120,10 +128,19 @@ class Parser:
             return self.sentencia_break()
         elif self.verificar(TipoToken.CONTINUE):
             return self.sentencia_continue()
+        elif self.verificar(TipoToken.RETURN):
+            return self.sentencia_return()
         elif self.verificar(TipoToken.LBRACE):
             return self.bloque()
         elif self.verificar(TipoToken.IDENTIFIER):
-            return self.asignacion()
+            # Puede ser asignación o llamada a función
+            # Mirar adelante para decidir
+            if self.posicion + 1 < len(self.tokens) and self.tokens[self.posicion + 1].tipo == TipoToken.LPAREN:
+                # Es una llamada a función
+                expr = self.expresion()
+                return expr
+            else:
+                return self.asignacion()
         else:
             error = SyntaxError(
                 f"Sentencia inesperada: {self.token_actual.tipo.name}",
@@ -292,6 +309,86 @@ class Parser:
         nodo = NodoAST(TipoNodo.CONTINUE, "continue", linea=token_continue.linea, columna=token_continue.columna)
         return nodo
 
+    def sentencia_return(self) -> NodoAST:
+        """
+        sentencia_return -> return expresion?
+        """
+        token_return = self.consumir(TipoToken.RETURN)
+
+        # El return puede tener una expresión opcional
+        valor_return = None
+        if not self.verificar(TipoToken.RBRACE) and not self.verificar(TipoToken.EOF):
+            # Intentar parsear expresión
+            try:
+                valor_return = self.expresion()
+            except:
+                pass  # Return sin valor
+
+        nodo = NodoAST(TipoNodo.RETURN, "return", linea=token_return.linea, columna=token_return.columna)
+        if valor_return:
+            nodo.agregar_hijo(valor_return)
+        return nodo
+
+    def declaracion_funcion(self) -> NodoAST:
+        """
+        declaracion_funcion -> fun IDENTIFIER ( parametros? ) : TIPO bloque
+        parametros -> IDENTIFIER : TIPO (, IDENTIFIER : TIPO)*
+        """
+        token_fun = self.consumir(TipoToken.FUN)
+        token_nombre = self.consumir(TipoToken.IDENTIFIER, "Se esperaba nombre de función")
+
+        self.consumir(TipoToken.LPAREN, "Se esperaba '(' después del nombre de función")
+
+        # Parsear parámetros
+        parametros = []
+        if not self.verificar(TipoToken.RPAREN):
+            # Primer parámetro
+            param_nombre = self.consumir(TipoToken.IDENTIFIER, "Se esperaba nombre de parámetro")
+            self.consumir(TipoToken.COLON, "Se esperaba ':' después del nombre del parámetro")
+            param_tipo = self.tipo()
+            parametros.append({
+                'nombre': param_nombre.valor,
+                'tipo': param_tipo,
+                'linea': param_nombre.linea,
+                'columna': param_nombre.columna
+            })
+
+            # Parámetros adicionales
+            while self.verificar(TipoToken.COMMA):
+                self.avanzar()  # Consumir coma
+                param_nombre = self.consumir(TipoToken.IDENTIFIER, "Se esperaba nombre de parámetro")
+                self.consumir(TipoToken.COLON, "Se esperaba ':' después del nombre del parámetro")
+                param_tipo = self.tipo()
+                parametros.append({
+                    'nombre': param_nombre.valor,
+                    'tipo': param_tipo,
+                    'linea': param_nombre.linea,
+                    'columna': param_nombre.columna
+                })
+
+        self.consumir(TipoToken.RPAREN, "Se esperaba ')' después de los parámetros")
+        self.consumir(TipoToken.COLON, "Se esperaba ':' antes del tipo de retorno")
+
+        tipo_retorno = self.tipo()
+
+        # Parsear cuerpo de la función
+        cuerpo = self.bloque()
+
+        # Crear nodo de función
+        nodo = NodoAST(
+            TipoNodo.FUNCION,
+            token_nombre.valor,
+            linea=token_fun.linea,
+            columna=token_fun.columna
+        )
+        nodo.metadata = {
+            'parametros': parametros,
+            'tipo_retorno': tipo_retorno
+        }
+        nodo.agregar_hijo(cuerpo)
+
+        return nodo
+
     def bloque(self) -> NodoAST:
         """
         bloque -> { sentencia* }
@@ -312,20 +409,30 @@ class Parser:
 
     def tipo(self) -> str:
         """
-        tipo -> Int | Double | String | Boolean
+        tipo -> Int | Double | String | Boolean | IntArray | DoubleArray | Unit
         """
+        if self.verificar(TipoToken.IDENTIFIER):
+            # Puede ser IntArray, DoubleArray, Unit, etc.
+            tipo_valor = self.token_actual.valor
+            if tipo_valor in ['IntArray', 'DoubleArray', 'Unit']:
+                self.avanzar()
+                return tipo_valor
+
         if self.verificar(TipoToken.INT_TYPE):
+            tipo_valor = self.token_actual.valor
             self.avanzar()
-            return "Int"
+            return tipo_valor if tipo_valor in ['IntArray', 'DoubleArray'] else "Int"
         elif self.verificar(TipoToken.DOUBLE_TYPE):
+            tipo_valor = self.token_actual.valor
             self.avanzar()
-            return "Double"
+            return tipo_valor if tipo_valor == 'DoubleArray' else "Double"
         elif self.verificar(TipoToken.STRING_TYPE):
             self.avanzar()
             return "String"
         elif self.verificar(TipoToken.BOOLEAN_TYPE):
+            tipo_valor = self.token_actual.valor
             self.avanzar()
-            return "Boolean"
+            return tipo_valor if tipo_valor == 'Unit' else "Boolean"
         else:
             error = SyntaxError(
                 f"Tipo de dato no válido: {self.token_actual.valor}",
@@ -514,11 +621,36 @@ class Parser:
             valor_bool = token.valor == 'true'
             nodo = NodoAST(TipoNodo.EXPRESION_LITERAL, valor_bool, linea=token.linea, columna=token.columna)
 
-        # Identificador
+        # Identificador (puede ser variable o llamada a función)
         elif self.verificar(TipoToken.IDENTIFIER):
             token = self.token_actual
             self.avanzar()
-            nodo = NodoAST(TipoNodo.EXPRESION_VARIABLE, token.valor, linea=token.linea, columna=token.columna)
+
+            # Verificar si es una llamada a función
+            if self.verificar(TipoToken.LPAREN):
+                # Es una llamada a función
+                self.avanzar()  # Consumir (
+
+                # Parsear argumentos
+                argumentos = []
+                if not self.verificar(TipoToken.RPAREN):
+                    # Primer argumento
+                    argumentos.append(self.expresion())
+
+                    # Argumentos adicionales
+                    while self.verificar(TipoToken.COMMA):
+                        self.avanzar()  # Consumir coma
+                        argumentos.append(self.expresion())
+
+                self.consumir(TipoToken.RPAREN, "Se esperaba ')' después de los argumentos")
+
+                # Crear nodo de llamada a función
+                nodo = NodoAST(TipoNodo.LLAMADA_FUNCION, token.valor, linea=token.linea, columna=token.columna)
+                for arg in argumentos:
+                    nodo.agregar_hijo(arg)
+            else:
+                # Es una variable
+                nodo = NodoAST(TipoNodo.EXPRESION_VARIABLE, token.valor, linea=token.linea, columna=token.columna)
 
         # Expresión entre paréntesis
         elif self.verificar(TipoToken.LPAREN):
