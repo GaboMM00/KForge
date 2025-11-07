@@ -3,9 +3,6 @@
 // ============================================
 // Este archivo contiene errores léxicos que el analizador
 // léxico de KForge detecta actualmente.
-//
-// Nota: Ver docs/errores_lexicos_pendientes.md para una lista completa
-// de errores léxicos pendientes de implementación.
 
 fun main() {
     // ERROR 1: Caracter '@' no reconocido
@@ -17,7 +14,7 @@ fun main() {
     // ERROR 3: Caracter '#' no reconocido
     var dato: Int = 10 # 5
 
-    // ERROR 4: Caracter '$' no reconocido
+    // ERROR 4: Caracter '$' no reconocido (pero '\$' en string es válido)
     var precio: Double = $19.99
 
     // ERROR 5: Caracter '&' no reconocido (el lexer espera '&&')
@@ -31,4 +28,24 @@ fun main() {
 
     // ERROR 8: Caracter '|' no reconocido (el lexer espera '||')
     var resultado: Boolean = true | false
+
+    // ERROR 9: Comentario de bloque sin cerrar
+    /* Este es un comentario
+       que nunca se cierra
+    var y: Int = 10
+
+    // ERROR 10: Sufijo de tipo inválido en número
+    var largo: Int = 100L
+
+    // ERROR 11: Sufijo de tipo inválido en decimal
+    var flotante: Double = 3.14f
+
+    // ERROR 12: Secuencia de escape inválida en string
+    var texto1: String = "Hola\kMundo"
+
+    // ERROR 13: Secuencia de escape unicode incompleta
+    var texto2: String = "Unicode\u12"
+
+    // ERROR 14: Secuencia de escape no reconocida
+    var texto3: String = "Test\x"
 }

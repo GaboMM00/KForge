@@ -134,6 +134,28 @@ fun test20() {
     }
 }
 
+// ERROR 21: Reasignación de val (constante)
+fun test21() {
+    val constante: Int = 10
+    constante = 20
+}
+
+// ERROR 22: No todas las rutas retornan un valor (solo if sin else)
+fun absoluto(x: Int): Int {
+    if (x > 0) {
+        return x
+    }
+}
+
+// ERROR 23: No todas las rutas retornan un valor (if-else pero solo una rama retorna)
+fun comparar(a: Int, b: Int): Int {
+    if (a > b) {
+        return 1
+    } else {
+        var x: Int = 0
+    }
+}
+
 fun main() {
     println("Test de errores semanticos")
 }
