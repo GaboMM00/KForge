@@ -173,6 +173,21 @@ class Parser:
         if self.verificar(TipoToken.ASSIGN):
             self.avanzar()  # Consumir =
             valor = self.expresion()
+        else:
+            # Si no hay '=', verificar que no venga un identificador o expresión EN LA MISMA LÍNEA
+            # Esto detecta errores como: var x: Int intArrayOf(...)
+            # Pero permite: var x: Int\ncounter = 0 (siguiente línea)
+            if self.token_actual and self.token_actual.linea == token_id.linea:
+                if self.verificar(TipoToken.IDENTIFIER) or self.verificar(TipoToken.INT_LITERAL) or \
+                   self.verificar(TipoToken.DOUBLE_LITERAL) or self.verificar(TipoToken.STRING_LITERAL) or \
+                   self.verificar(TipoToken.BOOLEAN_LITERAL) or self.verificar(TipoToken.LPAREN):
+                    self.error_manager.agregar_error(
+                        SyntaxError(
+                            f"Se esperaba '=' para asignar valor a '{token_id.valor}', o fin de sentencia",
+                            self.token_actual.linea,
+                            self.token_actual.columna
+                        )
+                    )
 
         # Crear nodo
         nodo = NodoAST(
