@@ -702,6 +702,8 @@ Caracteres: {chars}"""
         if hasattr(self, 'editor_panel'):
             for filename, editor in self.editor_panel.editors.items():
                 editor.text.config(font=font)
+                # Reconfigurar tags de sintaxis con nueva fuente
+                editor._configure_syntax_tags()
                 # Redibujar números de línea con nueva fuente (Canvas no soporta config font)
                 editor._update_line_numbers()
 
