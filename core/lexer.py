@@ -39,7 +39,11 @@ class Lexer:
 
     # Especificación de tokens mediante expresiones regulares
     ESPECIFICACION_TOKENS = [
-        # Comentarios (se ignoran)
+        # Comentarios de bloque (con validación de cierre)
+        ('BLOCK_COMMENT', r'/\*.*?\*/'),
+        ('UNCLOSED_BLOCK_COMMENT', r'/\*'),
+
+        # Comentarios de línea (se ignoran)
         ('COMMENT', r'//.*'),
 
         # Literales
@@ -137,8 +141,21 @@ class Lexer:
             columna = coincidencia.start() - codigo.rfind('\n', 0, coincidencia.start())
 
             # Procesa el token según su tipo
-            if tipo == 'COMMENT' or tipo == 'WHITESPACE':
+            if tipo == 'COMMENT' or tipo == 'WHITESPACE' or tipo == 'BLOCK_COMMENT':
                 # Ignorar comentarios y espacios en blanco
+                # Contar saltos de línea en comentarios de bloque
+                if tipo == 'BLOCK_COMMENT':
+                    self.linea_actual += valor.count('\n')
+                continue
+
+            elif tipo == 'UNCLOSED_BLOCK_COMMENT':
+                # Comentario de bloque sin cerrar
+                error = LexicalError(
+                    f"Comentario de bloque sin cerrar: falta '*/'",
+                    self.linea_actual,
+                    columna
+                )
+                self.error_manager.agregar_error(error)
                 continue
 
             elif tipo == 'NEWLINE':
@@ -163,17 +180,69 @@ class Lexer:
                     tipo_token = self.PALABRAS_CLAVE[valor]
                 else:
                     tipo_token = TipoToken.IDENTIFIER
+
+                    # Detectar sufijos de tipo inválidos (L, f, F, d, D)
+                    # si el token anterior era un número
+                    if self.tokens and valor in ['L', 'f', 'F', 'd', 'D']:
+                        ultimo_token = self.tokens[-1]
+                        if ultimo_token.tipo in [TipoToken.INT_LITERAL, TipoToken.DOUBLE_LITERAL]:
+                            error = LexicalError(
+                                f"Sufijo de tipo '{valor}' no soportado en literales numéricos",
+                                self.linea_actual,
+                                columna
+                            )
+                            self.error_manager.agregar_error(error)
+                            continue
+
                 token = Token(tipo_token, valor, self.linea_actual, columna)
 
             elif tipo == 'INT_LITERAL':
-                token = Token(TipoToken.INT_LITERAL, int(valor), self.linea_actual, columna)
+                # Validar que no sea un número demasiado grande
+                try:
+                    valor_int = int(valor)
+                    token = Token(TipoToken.INT_LITERAL, valor_int, self.linea_actual, columna)
+                except ValueError:
+                    error = LexicalError(
+                        f"Número entero fuera de rango: '{valor}'",
+                        self.linea_actual,
+                        columna
+                    )
+                    self.error_manager.agregar_error(error)
+                    continue
 
             elif tipo == 'DOUBLE_LITERAL':
-                token = Token(TipoToken.DOUBLE_LITERAL, float(valor), self.linea_actual, columna)
+                # Validar formato de número decimal
+                if valor.count('.') > 1:
+                    error = LexicalError(
+                        f"Número decimal con formato inválido: múltiples puntos decimales",
+                        self.linea_actual,
+                        columna
+                    )
+                    self.error_manager.agregar_error(error)
+                    continue
+
+                try:
+                    valor_float = float(valor)
+                    token = Token(TipoToken.DOUBLE_LITERAL, valor_float, self.linea_actual, columna)
+                except ValueError:
+                    error = LexicalError(
+                        f"Número decimal inválido: '{valor}'",
+                        self.linea_actual,
+                        columna
+                    )
+                    self.error_manager.agregar_error(error)
+                    continue
 
             elif tipo == 'STRING_LITERAL':
                 # Remover comillas
                 valor_string = valor[1:-1]
+
+                # Validar secuencias de escape
+                if not self._validar_escape_sequences(valor_string, self.linea_actual, columna):
+                    # Si hay errores, ya fueron reportados en _validar_escape_sequences
+                    # Pero aún creamos el token para continuar parseando
+                    pass
+
                 token = Token(TipoToken.STRING_LITERAL, valor_string, self.linea_actual, columna)
 
             else:
@@ -206,3 +275,71 @@ class Lexer:
             resumen += f"{i:3d}. {token.tipo.name:20s} | {str(token.valor):20s} | Línea {token.linea:3d}, Col {token.columna:3d}\n"
 
         return resumen
+
+    def _validar_escape_sequences(self, string_content: str, linea: int, columna: int) -> bool:
+        """
+        Valida las secuencias de escape en un string.
+
+        Secuencias válidas en Kotlin:
+        - \\t (tab)
+        - \\n (newline)
+        - \\r (carriage return)
+        - \\" (comillas dobles)
+        - \\' (comilla simple)
+        - \\\\ (backslash)
+        - \\$ (signo de dólar)
+        - \\uXXXX (unicode con 4 dígitos hexadecimales)
+
+        Returns:
+            True si todas las secuencias son válidas, False si hay errores
+        """
+        i = 0
+        todas_validas = True
+        secuencias_validas = {'t', 'n', 'r', '"', "'", '\\', '$'}
+
+        while i < len(string_content):
+            if string_content[i] == '\\' and i + 1 < len(string_content):
+                siguiente = string_content[i + 1]
+
+                # Verificar si es una secuencia válida
+                if siguiente in secuencias_validas:
+                    i += 2
+                elif siguiente == 'u':
+                    # Validar unicode: \\uXXXX
+                    if i + 5 < len(string_content):
+                        hex_digits = string_content[i+2:i+6]
+                        try:
+                            int(hex_digits, 16)  # Verificar que son dígitos hex
+                            i += 6
+                        except ValueError:
+                            error = LexicalError(
+                                f"Secuencia de escape unicode inválida: '\\u{hex_digits}' (requiere 4 dígitos hexadecimales)",
+                                linea,
+                                columna + i
+                            )
+                            self.error_manager.agregar_error(error)
+                            todas_validas = False
+                            i += 2
+                    else:
+                        error = LexicalError(
+                            f"Secuencia de escape unicode incompleta: '\\u' (requiere 4 dígitos hexadecimales)",
+                            linea,
+                            columna + i
+                        )
+                        self.error_manager.agregar_error(error)
+                        todas_validas = False
+                        i += 2
+                else:
+                    # Secuencia de escape no reconocida
+                    error = LexicalError(
+                        f"Secuencia de escape no reconocida: '\\{siguiente}'",
+                        linea,
+                        columna + i
+                    )
+                    self.error_manager.agregar_error(error)
+                    todas_validas = False
+                    i += 2
+            else:
+                i += 1
+
+        return todas_validas

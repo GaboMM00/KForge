@@ -210,6 +210,7 @@ class Simbolo:
     linea: int
     columna: int
     valor: Any = None
+    inicializada: bool = False  # True si la variable tiene un valor asignado
 
     def __repr__(self):
         return f"Simbolo({self.nombre}, {self.tipo.value}, {'val' if self.es_constante else 'var'})"

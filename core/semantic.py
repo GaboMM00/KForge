@@ -120,7 +120,9 @@ class AnalizadorSemantico:
 
         # Crear símbolo
         tipo_dato = TipoDato.desde_string(tipo_str)
-        simbolo = Simbolo(nombre, tipo_dato, es_constante, nodo.linea, nodo.columna)
+        # La variable está inicializada si tiene un valor de inicialización
+        inicializada = len(nodo.hijos) > 0
+        simbolo = Simbolo(nombre, tipo_dato, es_constante, nodo.linea, nodo.columna, inicializada=inicializada)
 
         # Verificar tipo de la expresión de inicialización
         if nodo.hijos:
@@ -175,6 +177,8 @@ class AnalizadorSemantico:
                     )
                     self.error_manager.agregar_error(error)
 
+            # Marcar variable como inicializada
+            simbolo.inicializada = True
             self.resultados.append(f"Asignación válida: {nombre}")
         else:
             # Nuevo formato: hijos[0] = lado izquierdo, hijos[1] = valor
@@ -217,6 +221,10 @@ class AnalizadorSemantico:
                     nodo.columna
                 )
                 self.error_manager.agregar_error(error)
+
+            # Marcar variable como inicializada (si es asignación simple, no a índice)
+            if nodo_izq.tipo != TipoNodo.EXPRESION_INDICE and simbolo:
+                simbolo.inicializada = True
 
             self.resultados.append(f"Asignación válida: {nombre}")
 
@@ -275,9 +283,9 @@ class AnalizadorSemantico:
         tabla_anterior = self.tabla_simbolos_actual
         self.tabla_simbolos_actual = TablaSimbolos(tabla_anterior)
 
-        # Declarar variable del for (implícitamente de tipo Int)
+        # Declarar variable del for (implícitamente de tipo Int y siempre inicializada)
         nombre_variable = nodo.valor
-        simbolo = Simbolo(nombre_variable, TipoDato.INT, True, nodo.linea, nodo.columna)
+        simbolo = Simbolo(nombre_variable, TipoDato.INT, True, nodo.linea, nodo.columna, inicializada=True)
         self.tabla_simbolos_actual.declarar(simbolo)
 
         # Verificar rango
@@ -470,6 +478,15 @@ class AnalizadorSemantico:
             )
             self.error_manager.agregar_error(error)
             return TipoDato.UNKNOWN
+
+        # Verificar si la variable está inicializada antes de usarla
+        if not simbolo.inicializada:
+            error = SemanticError(
+                f"Variable '{nombre}' usada antes de ser inicializada",
+                nodo.linea,
+                nodo.columna
+            )
+            self.error_manager.agregar_error(error)
 
         return simbolo.tipo
 
@@ -672,13 +689,24 @@ class AnalizadorSemantico:
                 tipo=param.tipo,
                 es_constante=False,
                 linea=param.linea or nodo.linea,
-                columna=param.columna or nodo.columna
+                columna=param.columna or nodo.columna,
+                inicializada=True  # Los parámetros siempre están inicializados
             )
             self.tabla_simbolos_actual.declarar(simbolo)
 
         # Visitar cuerpo de la función
         if nodo.hijos:
             self.visitar(nodo.hijos[0])
+
+        # Verificar que todas las rutas retornen si la función no es Unit
+        if tipo_retorno != TipoDato.VOID and tipo_retorno != TipoDato.UNKNOWN:
+            if nodo.hijos and not self._todas_las_rutas_retornan(nodo.hijos[0]):
+                error = SemanticError(
+                    f"No todas las rutas de ejecución de la función '{nombre}' retornan un valor de tipo {tipo_retorno.value}",
+                    nodo.linea,
+                    nodo.columna
+                )
+                self.error_manager.agregar_error(error)
 
         # Restaurar contexto
         self.tabla_simbolos_actual = tabla_anterior
@@ -776,6 +804,46 @@ class AnalizadorSemantico:
 
         self.resultados.append(f"Llamada a función: {nombre}()")
         return funcion.tipo_retorno
+
+    def _todas_las_rutas_retornan(self, nodo: NodoAST) -> bool:
+        """
+        Verifica recursivamente si todas las rutas de ejecución de un bloque retornan un valor.
+
+        Args:
+            nodo: Nodo del AST a analizar (generalmente un bloque)
+
+        Returns:
+            True si todas las rutas retornan, False en caso contrario
+        """
+        if not nodo:
+            return False
+
+        # Si el nodo es un return, esta ruta retorna
+        if nodo.tipo == TipoNodo.RETURN:
+            return True
+
+        # Si es un bloque, revisar todas las sentencias
+        if nodo.tipo == TipoNodo.BLOQUE:
+            # Si alguna sentencia retorna, el bloque retorna
+            for hijo in nodo.hijos:
+                if self._todas_las_rutas_retornan(hijo):
+                    return True
+            return False
+
+        # Si es un if, verificar ambas ramas
+        if nodo.tipo == TipoNodo.IF:
+            # Un if completo retorna si:
+            # 1. Tiene rama else
+            # 2. Ambas ramas (then y else) retornan
+            if len(nodo.hijos) >= 3:  # Tiene else
+                rama_then = nodo.hijos[1]
+                rama_else = nodo.hijos[2]
+                return self._todas_las_rutas_retornan(rama_then) and self._todas_las_rutas_retornan(rama_else)
+            return False
+
+        # Los loops (while, for) no garantizan ejecución, así que no cuentan
+        # como que todas las rutas retornan
+        return False
 
     def obtener_resumen(self) -> str:
         """Genera un resumen del análisis semántico."""
