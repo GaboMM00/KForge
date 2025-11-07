@@ -608,6 +608,14 @@ class AnalizadorSemantico:
             es_builtin=True
         )
 
+        # doubleArrayOf(varargs): DoubleArray - acepta múltiples argumentos Double
+        self.tabla_funciones['doubleArrayOf'] = FuncionInfo(
+            nombre='doubleArrayOf',
+            parametros=[],  # Varargs, validación especial
+            tipo_retorno=TipoDato.ARRAY_DOUBLE,
+            es_builtin=True
+        )
+
     def visitar_funcion(self, nodo: NodoAST):
         """Visita el nodo de declaración de función."""
         nombre = nodo.valor
@@ -723,8 +731,8 @@ class AnalizadorSemantico:
 
         funcion = self.tabla_funciones[nombre]
 
-        # Validar número de argumentos (excepto para intArrayOf que es varargs)
-        if nombre != 'intArrayOf':
+        # Validar número de argumentos (excepto para funciones varargs)
+        if nombre not in ['intArrayOf', 'doubleArrayOf']:
             if len(nodo.hijos) != len(funcion.parametros):
                 error = SemanticError(
                     f"Función '{nombre}' espera {len(funcion.parametros)} argumentos, recibió {len(nodo.hijos)}",
@@ -743,6 +751,15 @@ class AnalizadorSemantico:
                 if not self.tipos_compatibles(TipoDato.INT, tipo_arg):
                     error = SemanticError(
                         f"Argumento {i+1} de 'intArrayOf' debe ser Int, encontrado {tipo_arg.value}",
+                        nodo.linea,
+                        nodo.columna
+                    )
+                    self.error_manager.agregar_error(error)
+            elif nombre == 'doubleArrayOf':
+                # Para doubleArrayOf, todos los argumentos deben ser Double o Int (conversión implícita)
+                if not self.tipos_compatibles(TipoDato.DOUBLE, tipo_arg):
+                    error = SemanticError(
+                        f"Argumento {i+1} de 'doubleArrayOf' debe ser Double o Int, encontrado {tipo_arg.value}",
                         nodo.linea,
                         nodo.columna
                     )

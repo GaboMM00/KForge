@@ -2,7 +2,7 @@
 
 // 1. Test de arrays básicos
 var numeros: IntArray = intArrayOf(1, 2, 3, 4, 5)
-var decimales: IntArray = intArrayOf(10, 20, 30)
+var decimales: DoubleArray = doubleArrayOf(1.5, 2.5, 3.5)
 
 // 2. Test de acceso a propiedad .size en arrays
 var tamano: Int = numeros.size

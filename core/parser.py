@@ -4,7 +4,7 @@ Genera un árbol sintáctico abstracto (AST) a partir de los tokens.
 """
 
 from typing import List, Optional
-from core.utils import Token, TipoToken, NodoAST, TipoNodo
+from core.utils import Token, TipoToken, NodoAST, TipoNodo, TipoDato
 from core.errors import SyntaxError, ErrorManager
 
 
@@ -367,9 +367,25 @@ class Parser:
                 })
 
         self.consumir(TipoToken.RPAREN, "Se esperaba ')' después de los parámetros")
-        self.consumir(TipoToken.COLON, "Se esperaba ':' antes del tipo de retorno")
 
-        tipo_retorno = self.tipo()
+        # El tipo de retorno es OPCIONAL solo para la función main()
+        # Para todas las demás funciones es obligatorio
+        if self.verificar(TipoToken.COLON):
+            self.avanzar()  # Consumir ':'
+            tipo_retorno = self.tipo()
+        elif token_nombre.valor == 'main':
+            # Solo main() puede omitir el tipo de retorno, se infiere como Unit
+            tipo_retorno = TipoDato.VOID
+        else:
+            # Para cualquier otra función, el tipo de retorno es obligatorio
+            self.error_manager.agregar_error(
+                SyntaxError(
+                    "Se esperaba ':' antes del tipo de retorno",
+                    self.token_actual.linea if self.token_actual else 0,
+                    self.token_actual.columna if self.token_actual else 0
+                )
+            )
+            tipo_retorno = TipoDato.UNKNOWN
 
         # Parsear cuerpo de la función
         cuerpo = self.bloque()
