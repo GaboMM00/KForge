@@ -1,4 +1,4 @@
-# KForge - Compilador Kotlin
+# 🔨 KForge - Compilador Kotlin
 
 <div align="center">
 
@@ -6,108 +6,148 @@
 
 *Desarrollado en Python con interfaz gráfica Tkinter*
 
+**Versión 1.0** - ¡Primera versión funcional! 🎉
+
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
+[![Kotlin](https://img.shields.io/badge/Kotlin-Subset-purple.svg)](https://kotlinlang.org/)
+[![License](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
+
 </div>
 
 ---
 
 ## 📋 Descripción
 
-KForge es un compilador modular para el lenguaje Kotlin que implementa las fases fundamentales del proceso de compilación: análisis léxico, sintáctico y semántico. Diseñado con una arquitectura limpia y desacoplada, permite la fácil extensión y modificación de reglas del lenguaje.
+KForge es un **compilador modular** para el lenguaje Kotlin que implementa las fases fundamentales del proceso de compilación: análisis léxico, sintáctico y semántico. Diseñado con una arquitectura limpia y modular, puede compilar algoritmos completos como Bubble Sort.
+
+### 🎯 Versión 1.0 - Características Principales
+
+El compilador KForge v1.0 puede compilar exitosamente:
+- ✅ **Variables y tipos básicos** (Int, Double, String, Boolean)
+- ✅ **Operadores** (aritméticos, lógicos, comparación)
+- ✅ **Estructuras de control** (if/else, for, while, break, continue)
+- ✅ **Funciones** (declaración, parámetros, retorno, llamadas)
+- ✅ **Arrays tipados** (IntArray, DoubleArray)
+- ✅ **Propiedades** (.size para arrays, .length para strings)
+- ✅ **Algoritmos completos** (test final: Bubble Sort)
+
+---
 
 ## ✨ Características
 
-- ✅ **Análisis Léxico**: Tokenización del código fuente con detección de errores
-- ✅ **Análisis Sintáctico**: Generación de AST (Árbol Sintáctico Abstracto)
-- ✅ **Análisis Semántico**: Verificación de tipos y símbolos
-- 🔜 **Generación de Código Intermedio**: Preparado para implementación futura
-- 🎨 **Dos Interfaces Gráficas**:
-  - **Clásica**: Editor simple y funcional (legacy)
-  - **Moderna**: Interfaz modular tipo JetBrains/VSCode ⭐ **NUEVO**
-- 🏗️ **Arquitectura Modular**: Fácil extensión y mantenimiento
-- 🔍 **Resaltado de Sintaxis**: Avanzado con keywords.json compartido
-- 🌍 **Multilenguaje**: Español e Inglés
-- 🎨 **Temas**: Oscuro (Darcula) y Claro
+### Compilador
+- 🔤 **Análisis Léxico**: Tokenización completa de Kotlin
+- 🌳 **Análisis Sintáctico**: Generación de AST (Árbol Sintáctico Abstracto)
+- ✔️ **Análisis Semántico**: Validación de tipos, scopes y tabla de símbolos
+- 📊 **Soporte de Kotlin**:
+  - Fase 1: Fundamentos (variables, operadores, estructuras de control)
+  - Fase 2: Funciones (declaración, llamadas, parámetros, retorno)
+  - Fase 3: Arrays y Propiedades (arrays tipados, acceso, propiedades)
 
-## 🚀 Instalación y Ejecución
+### Interfaz de Usuario
+- 🎨 **UI Moderna**: Diseño tipo JetBrains/VSCode
+- 📝 **Editor con Pestañas**: Múltiples archivos simultáneos
+- 🎨 **Resaltado de Sintaxis**: Para Kotlin con temas personalizables
+- 📊 **Consola Multi-pestaña**: Salida, Errores, AST, Tokens
+- 🌓 **Temas**: Dark (Darcula) y Light
+- ⚙️ **Configuración**: Tamaño de fuente ajustable
+- 📏 **Numeración de Líneas**: Sincronizada con scroll
+
+---
+
+## 🚀 Inicio Rápido
 
 ### Requisitos
 
 - Python 3.8 o superior
 - Tkinter (incluido en la mayoría de instalaciones de Python)
 
-### Ejecución
+### Instalación y Ejecución
 
 ```bash
 # Clonar o descargar el proyecto
 cd KForge
 
-# Interfaz MODERNA (recomendada) ⭐
+# Ejecutar el compilador
 python main_modern.py
-
-# Interfaz CLÁSICA (legacy)
-python main.py
 ```
 
-### Estructura del Proyecto
+### Ejecutar Tests
+
+```bash
+# Test individual de fase
+python tests/test_fase1_directo.py
+python tests/test_fase2_directo.py
+python tests/test_fase3_directo.py
+
+# Test final v1.0 (Bubble Sort)
+python tests/test_v1_final.py
+```
+
+---
+
+## 📖 Documentación
+
+- 📘 **[README.md](README.md)** (este archivo) - Inicio rápido y características
+- 🗺️ **[ROADMAP.md](ROADMAP.md)** - Plan de desarrollo y estado actual
+- 📋 **[CONTRIBUTING.md](CONTRIBUTING.md)** - Reglas de trabajo y desarrollo
+- 📝 **[CHANGELOG.md](CHANGELOG.md)** - Historial de cambios por versión
+
+---
+
+## 📂 Estructura del Proyecto
 
 ```
 KForge/
-├── main.py                      # Punto de entrada (interfaz clásica)
-├── main_modern.py              # Punto de entrada (interfaz moderna) ⭐
-├── core/                        # Lógica del compilador
+├── core/                         # Módulos del compilador
 │   ├── __init__.py
-│   ├── controller.py            # Controlador principal
-│   ├── lexer.py                 # Analizador léxico
-│   ├── parser.py                # Analizador sintáctico
-│   ├── semantic.py              # Analizador semántico
-│   ├── codegen.py               # Generación de código (placeholder)
-│   ├── errors.py                # Manejo de errores
-│   └── utils.py                 # Utilidades y estructuras de datos
-├── ui/                          # Interfaces gráficas
+│   ├── lexer.py                  # Analizador léxico
+│   ├── parser.py                 # Analizador sintáctico
+│   ├── semantic.py               # Analizador semántico
+│   ├── controller.py             # Controlador principal
+│   ├── errors.py                 # Sistema de manejo de errores
+│   ├── utils.py                  # Definiciones (Token, AST, TipoDato)
+│   └── codegen.py                # Generación de código (futuro)
+├── ui/                           # Interfaz gráfica moderna
 │   ├── __init__.py
-│   ├── app_ui.py                # 🆕 Aplicación moderna integrada
-│   ├── theme_manager.py         # 🆕 Gestión de temas y lenguajes
-│   ├── editor_panel.py          # 🆕 Editor con pestañas
-│   ├── console_panel.py         # 🆕 Consola multi-pestaña
-│   ├── sidebar.py               # 🆕 Barra lateral tipo VSCode
-│   ├── phases_panel.py          # 🆕 Panel de fases animado
-│   ├── status_bar.py            # 🆕 Barra de estado
-│   ├── splash_screen.py         # 🆕 Pantalla de inicio
-│   ├── interfaz.py              # Interfaz clásica (legacy)
-│   ├── editor.py                # Editor clásico (legacy)
-│   └── consola.py               # Consola clásica (legacy)
-├── resources/                   # 🆕 Recursos compartidos
-│   ├── keywords.json            # 🆕 Palabras clave y colores
-│   └── lang.json                # 🆕 Traducciones ES/EN
-├── tests/                       # Archivos de prueba
-│   └── ejemplo_kotlin.txt       # Código Kotlin de ejemplo
-├── README.md                    # Este archivo
-└── UI_MODERNA_README.md        # 🆕 Documentación de UI moderna
+│   ├── app_ui.py                 # Aplicación principal
+│   ├── editor_panel.py           # Editor con pestañas
+│   ├── console_panel.py          # Consola multi-pestaña
+│   ├── sidebar.py                # Barra lateral
+│   ├── theme_manager.py          # Gestión de temas
+│   ├── phases_panel.py           # Panel de fases
+│   ├── status_bar.py             # Barra de estado
+│   └── splash_screen.py          # Pantalla de inicio
+├── test_kt/                      # Tests en Kotlin
+│   ├── test_fase1.kt             # Test Fase 1
+│   ├── test_fase2.kt             # Test Fase 2
+│   ├── test_fase3.kt             # Test Fase 3
+│   └── test_v1_final.kt          # Test final (Bubble Sort)
+├── tests/                        # Scripts de test Python
+│   ├── test_compilador.py        # Test general CLI
+│   ├── test_fase1_directo.py     # Test Fase 1
+│   ├── test_fase2_directo.py     # Test Fase 2
+│   ├── test_fase3_directo.py     # Test Fase 3
+│   ├── test_main_sin_tipo.py     # Test main() sin tipo
+│   └── test_v1_final.py          # Test final v1.0
+├── main_modern.py                # Punto de entrada de la aplicación
+├── README.md                     # Este archivo
+├── ROADMAP.md                    # Plan de desarrollo
+├── CONTRIBUTING.md               # Guía de contribución
+├── CHANGELOG.md                  # Historial de cambios
+└── LICENSE                       # Licencia del proyecto
 ```
 
-## 📖 Uso
+---
 
-### Interfaz Moderna (Recomendada) ⭐
+## 💡 Uso
+
+### Interfaz Gráfica
 
 1. **Abrir**: `python main_modern.py`
-2. **Características exclusivas**:
-   - Splash screen animado al inicio
-   - Editor con pestañas para múltiples archivos
-   - Consola con 4 pestañas (Salida, Errores, Tokens, AST)
-   - Panel de fases con animaciones
-   - Barra lateral tipo VSCode
-   - Barra de estado con info en tiempo real
-   - Temas oscuro/claro
-   - Soporte multilenguaje (ES/EN)
-
-**Ver documentación completa**: [UI_MODERNA_README.md](UI_MODERNA_README.md)
-
-### Interfaz Clásica (Legacy)
-
-1. **Abrir**: `python main.py`
-2. **Escribir código**: En el editor superior
-3. **Compilar**: Usar el menú `Compilador` o atajos de teclado
-4. **Ver resultados**: En la consola inferior
+2. **Escribir código Kotlin** en el editor
+3. **Compilar**: Usar botón "Compilar" o `Ctrl+Enter`
+4. **Ver resultados**: En las pestañas de la consola
 
 ### Atajos de Teclado
 
@@ -117,287 +157,309 @@ KForge/
 | `Ctrl + O` | Abrir archivo |
 | `Ctrl + S` | Guardar |
 | `Ctrl + Shift + S` | Guardar como |
-| `F5` | Análisis Léxico |
-| `F6` | Análisis Sintáctico |
-| `F7` | Análisis Semántico |
-| `F8` | Compilación Completa |
-| `F9` | Código Intermedio |
+| `Ctrl + Enter` | Compilar |
 
 ### Uso Programático
 
 ```python
 from core.controller import CompiladorController
+from core.errors import ErrorManager
 
 # Crear controlador
-controlador = CompiladorController()
+error_manager = ErrorManager()
+controlador = CompiladorController(error_manager)
 
 # Código Kotlin
 codigo = """
-var a: Int = 5
-var b: Int = 10
-if (a < b) {
-    a = a + 1
+fun main() {
+    var arr: IntArray = intArrayOf(3, 1, 2)
+    var n: Int = arr.size
+    println("Array creado")
 }
 """
 
 # Ejecutar compilación
-resultado = controlador.ejecutar(codigo)
+exito = controlador.ejecutar_completo(codigo)
 
-# Verificar éxito
-if resultado["exito"]:
-    print("Compilación exitosa")
-    print("Tokens:", resultado["tokens"])
-    print("AST:", resultado["arbol"])
-    print("Semántico:", resultado["semantico"])
+# Verificar resultados
+if error_manager.tiene_errores():
+    for error in error_manager.errores:
+        print(error)
 else:
-    print("Errores:", resultado["errores"])
+    print("Compilación exitosa!")
 ```
+
+---
 
 ## 🎯 Sintaxis Soportada
 
-### Declaración de Variables
+### Variables y Tipos
 
 ```kotlin
-// Variable mutable
-var nombre: Int = 10
+// Variables mutables
+var edad: Int = 25
+var precio: Double = 19.99
+var nombre: String = "KForge"
+var activo: Boolean = true
 
-// Variable inmutable
-val PI: Double = 3.14
+// Sin inicialización
+var contador: Int
 ```
-
-### Tipos de Datos
-
-- `Int` - Enteros
-- `Double` - Números decimales
-- `String` - Cadenas de texto
-- `Boolean` - Valores lógicos (true/false)
 
 ### Operadores
 
-**Aritméticos**: `+`, `-`, `*`, `/`, `%`
+```kotlin
+// Aritméticos: + - * / %
+var suma: Int = 10 + 5
+var resta: Int = 10 - 5
 
-**Comparación**: `==`, `!=`, `<`, `<=`, `>`, `>=`
+// Comparación: == != < > <= >=
+var mayor: Boolean = 10 > 5
 
-**Asignación**: `=`
+// Lógicos: && || !
+var resultado: Boolean = true && false
+```
 
 ### Estructuras de Control
 
-#### Condicional If-Else
-
 ```kotlin
-if (a < b) {
-    a = a + 1
+// If-Else
+if (edad >= 18) {
+    println("Mayor de edad")
 } else {
-    b = b - 1
+    println("Menor de edad")
+}
+
+// While
+var i: Int = 0
+while (i < 10) {
+    i = i + 1
+}
+
+// For con rangos
+for (i in 0..10) {
+    println(i)
+}
+
+for (i in 0 until 10) {
+    println(i)
+}
+
+// Break y Continue
+for (i in 0..10) {
+    if (i == 5) break
+    if (i == 3) continue
+    println(i)
 }
 ```
 
-#### Ciclo While
+### Funciones
 
 ```kotlin
-while (contador < 10) {
-    contador = contador + 1
+// Función con retorno explícito
+fun suma(a: Int, b: Int): Int {
+    return a + b
+}
+
+// Función main sin tipo de retorno
+fun main() {
+    var resultado: Int = suma(5, 3)
+    println(resultado)
+}
+
+// Funciones built-in
+println("Hola Mundo")
+print("Sin salto de línea")
+```
+
+### Arrays y Propiedades
+
+```kotlin
+// Crear arrays
+var numeros: IntArray = intArrayOf(1, 2, 3, 4, 5)
+var decimales: DoubleArray = doubleArrayOf(1.5, 2.5, 3.5)
+
+// Acceso a elementos
+var primero: Int = numeros[0]
+numeros[1] = 10
+
+// Propiedades
+var tamano: Int = numeros.size
+var longitud: Int = "Hola".length
+
+// Uso en expresiones
+for (i in 0 until numeros.size) {
+    println(numeros[i])
 }
 ```
 
-#### Ciclo For
+### Ejemplo Completo: Bubble Sort
 
 ```kotlin
-for (i in 1..10) {
-    suma = suma + i
+fun main() {
+    var arr: IntArray = intArrayOf(64, 34, 25, 12, 22, 11, 90)
+    var n: Int = arr.size
+    var swapped: Boolean
+
+    for (i in 0 until n - 1) {
+        swapped = false
+
+        for (j in 0 until n - i - 1) {
+            if (arr[j] > arr[j + 1]) {
+                var temp: Int = arr[j]
+                arr[j] = arr[j + 1]
+                arr[j + 1] = temp
+                swapped = true
+            }
+        }
+
+        if (!swapped) {
+            break
+        }
+    }
+
+    println("Array ordenado")
 }
 ```
 
-### Comentarios
-
-```kotlin
-// Comentario de una línea
-```
+---
 
 ## 🏗️ Arquitectura
 
 ### Principios de Diseño
 
-1. **Separación de Responsabilidades**: La interfaz está completamente desacoplada de la lógica del compilador
-2. **Modularidad**: Cada fase (léxico, sintáctico, semántico) es independiente
-3. **Extensibilidad**: Fácil añadir nuevas reglas gramaticales
-4. **Manejo Centralizado de Errores**: Todos los errores pasan por `ErrorManager`
+1. **Separación de Responsabilidades**: UI desacoplada de la lógica del compilador
+2. **Modularidad**: Cada fase es independiente
+3. **Extensibilidad**: Fácil añadir nuevas características
+4. **Manejo Centralizado de Errores**: Todos los errores usan `ErrorManager`
 
 ### Flujo de Compilación
 
 ```
-Código Fuente
+Código Kotlin
     ↓
 [Análisis Léxico] → Tokens
     ↓
 [Análisis Sintáctico] → AST
     ↓
-[Análisis Semántico] → Validación
+[Análisis Semántico] → Validación de Tipos
     ↓
-[Generación de Código] → Código Intermedio (futuro)
+✅ Compilación Exitosa
 ```
 
-### Componentes Principales
+---
 
-#### 1. Analizador Léxico (`lexer.py`)
+## 🧪 Tests
 
-- Convierte el código fuente en tokens
-- Usa expresiones regulares para reconocer patrones
-- Ignora espacios en blanco y comentarios
-
-#### 2. Analizador Sintáctico (`parser.py`)
-
-- Genera un AST a partir de los tokens
-- Implementa gramática descendente recursiva
-- Cada regla sintáctica es una función independiente
-
-#### 3. Analizador Semántico (`semantic.py`)
-
-- Verifica tipos de datos
-- Valida declaración de variables
-- Gestiona tabla de símbolos con scopes
-
-#### 4. Controlador (`controller.py`)
-
-- Coordina todas las fases
-- Proporciona interfaz unificada
-- Gestiona errores de todas las fases
-
-## 🔧 Extensión del Compilador
-
-### Añadir Nuevas Palabras Clave
-
-1. Agregar en `core/utils.py` → `TipoToken`
-2. Agregar en `core/lexer.py` → `PALABRAS_CLAVE`
-3. Implementar regla en `core/parser.py`
-
-### Añadir Nuevas Estructuras
-
-```python
-# En parser.py
-def sentencia_when(self) -> NodoAST:
-    """
-    sentencia_when -> when ( expresion ) { caso* }
-    """
-    token_when = self.consumir(TipoToken.WHEN)
-    # ... implementación
-    return nodo
-```
-
-### Implementar Generación de Código
-
-Modificar `core/codegen.py`:
-
-```python
-def generar(self, ast: NodoAST) -> str:
-    self.limpiar()
-    self.visitar(ast)
-    return self.obtener_codigo()
-
-def visitar(self, nodo: NodoAST):
-    if nodo.tipo == TipoNodo.DECLARACION_VARIABLE:
-        # Generar código para declaración
-        pass
-    # ... más casos
-```
-
-## 🧪 Pruebas
-
-### Archivo de Ejemplo
-
-Usar el archivo `tests/ejemplo_kotlin.txt` para probar todas las características soportadas.
-
-### Ejecutar Pruebas
+### Ejecutar Todos los Tests
 
 ```bash
-# Abrir archivo de prueba desde la interfaz
-Archivo → Abrir → tests/ejemplo_kotlin.txt
+# Fase 1: Fundamentos
+python tests/test_fase1_directo.py
 
-# Ejecutar compilación completa
-F8 o Compilador → Compilación Completa
+# Fase 2: Funciones
+python tests/test_fase2_directo.py
+
+# Fase 3: Arrays y Propiedades
+python tests/test_fase3_directo.py
+
+# Test final v1.0
+python tests/test_v1_final.py
 ```
 
-## 📚 Ejemplos de Código
+### Resultado Esperado
 
-### Ejemplo 1: Variables y Operaciones
-
-```kotlin
-var a: Int = 10
-var b: Int = 20
-var resultado: Int = 0
-
-resultado = a + b
-resultado = resultado * 2
+```
+Total de errores: 0
+✓ ¡VERSIÓN 1.0 DEL COMPILADOR COMPLETADA!
 ```
 
-### Ejemplo 2: Condicionales
+---
 
-```kotlin
-var edad: Int = 18
+## 🚧 Limitaciones Actuales
 
-if (edad >= 18) {
-    var mensaje: String = "Mayor de edad"
-} else {
-    var mensaje: String = "Menor de edad"
-}
-```
+La versión 1.0 NO incluye:
+- ❌ String templates (`"Resultado: ${x}"`)
+- ❌ Método `.joinToString()` para arrays
+- ❌ Inmutabilidad completa con `val`
+- ❌ When expression
+- ❌ Null safety (`?`, `!!`, `?.`)
+- ❌ Lambdas y funciones de orden superior
+- ❌ Clases y objetos (POO)
+- ❌ Generación de código ejecutable
 
-### Ejemplo 3: Ciclos
+**Ver [ROADMAP.md](ROADMAP.md) para plan de versión 1.1+**
 
-```kotlin
-// Suma de 1 a 10
-var suma: Int = 0
-for (i in 1..10) {
-    suma = suma + i
-}
+---
 
-// Contador con while
-var contador: Int = 0
-while (contador < 5) {
-    contador = contador + 1
-}
-```
+## 🔮 Futuras Mejoras
 
-## ⚠️ Limitaciones Actuales
+### Versión 1.1 (Planeada)
+- [ ] String templates con interpolación
+- [ ] Método `.joinToString()` para arrays
+- [ ] Soporte completo de `val` con inmutabilidad
+- [ ] When expression
 
-- No soporta funciones definidas por el usuario
-- No soporta arrays o colecciones
-- No soporta clases u objetos
-- No soporta imports
-- Generación de código intermedio no implementada
-- Sin optimizaciones
+### Versión 2.0 (Futuro)
+- [ ] Null safety básico
+- [ ] Lambdas y funciones anónimas
+- [ ] Clases y objetos (POO básica)
+- [ ] Generación de código Python
 
-## 🚀 Mejoras Futuras
-
-- [ ] Soporte para funciones (`fun`)
-- [ ] Arrays y colecciones
-- [ ] Clases y objetos
-- [ ] Expresiones lambda
-- [ ] Operador `when` (switch)
-- [ ] Try-catch para manejo de excepciones
-- [ ] Generación de bytecode o código intermedio
-- [ ] Optimizaciones del compilador
-- [ ] Mejor manejo de errores con sugerencias
-- [ ] Autocompletado en el editor
+---
 
 ## 🤝 Contribuciones
 
-Este es un proyecto académico. Las sugerencias y mejoras son bienvenidas.
+Para contribuir al proyecto:
+
+1. Lee [CONTRIBUTING.md](CONTRIBUTING.md) para reglas de trabajo
+2. Revisa [ROADMAP.md](ROADMAP.md) para características planeadas
+3. Ejecuta todos los tests antes de hacer commit
+4. Sigue el formato de commits: `tipo(scope): descripción`
+
+---
 
 ## 📄 Licencia
 
-Proyecto académico - Uso educativo
+**GNU General Public License v3.0 (GPL-3.0)**
 
-## 👥 Autores
+Este proyecto está licenciado bajo la GNU General Public License v3.0. Esto significa que:
 
-Desarrollado como proyecto de compiladores.
+- ✅ Puedes usar el código libremente
+- ✅ Puedes modificar el código
+- ✅ Puedes distribuir el código
+- ⚠️ **PERO**: Cualquier trabajo derivado DEBE ser de código abierto bajo la misma licencia
+- ⚠️ **PERO**: Debes mantener los créditos del autor original
+- ⚠️ **PERO**: Debes compartir tus modificaciones bajo GPL-3.0
+
+Ver el archivo [LICENSE](LICENSE) para más detalles.
+
+---
+
+## 👤 Autor
+
+**Gabriel Alejandro Medina Miramontes**
+
+Creador y desarrollador principal de KForge.
+
+Compilador modular de Kotlin desarrollado para demostrar implementación profesional de lenguajes de programación.
+
+---
+
+## 🙏 Agradecimientos
+
+- Documentación oficial de Kotlin
+- Comunidad de compiladores y lenguajes de programación
+- Recursos sobre compiladores (Dragon Book, Crafting Interpreters)
 
 ---
 
 <div align="center">
 
-**KForge** - Compilador Kotlin Modular
+**KForge v1.0** - Compilador Kotlin Modular
 
-*Hecho con Python y Tkinter*
+*Hecho con ❤️ usando Python y Tkinter*
+
+[Reportar Bug](https://github.com/usuario/kforge/issues) · [Solicitar Característica](https://github.com/usuario/kforge/issues) · [Documentación](ROADMAP.md)
 
 </div>
