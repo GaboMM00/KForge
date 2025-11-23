@@ -7,6 +7,68 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [1.1.0] - 2025-11-22
+
+### Added - Generación de Código Intermedio (TAC) y Bytecode
+- **Fase 4: Three-Address Code (TAC) Generator**
+  - Nuevo módulo `core/tac.py` con clases `TACInstruction` y `TACGenerator`
+  - Operaciones TAC: ASSIGN, ADD, SUB, MUL, DIV, MOD, LT, GT, LE, GE, EQ, NE, AND, OR, NOT, NEG
+  - Control de flujo: LABEL, GOTO, IF_FALSE
+  - Funciones: PARAM, CALL, RETURN
+  - Arrays: ARRAY_LOAD, ARRAY_STORE
+  - Formato de salida humanizado con numeración de líneas
+  - Tests completos: `tests/test_tac_generator.py` (11 tests, 100% passing)
+
+- **Fase 5: Bytecode Assembly Generator**
+  - Nuevo módulo `core/bytecode.py` con clases `BytecodeInstruction` y `BytecodeGenerator`
+  - Arquitectura de pila (stack-based) con instrucciones: PUSH, LOAD, STORE, ADD, SUB, MUL, DIV, etc.
+  - Salida en formato assembly con comentarios descriptivos
+  - Tests completos: `tests/test_bytecode_generator.py` (10 tests, 100% passing)
+
+- **Fase 6: Integración con UI**
+  - Nueva pestaña "Código" en `ui/console_panel.py` con clase `CodeTab`
+  - Botones "Ver TAC" y "Ver Bytecode" para alternar visualización
+  - Botón "Guardar Código" para exportar a archivos .tac o .asm
+  - Syntax highlighting para TAC y Bytecode (comentarios, labels, instrucciones)
+  - Soporte de temas (dark/light) para código generado
+  - Integración en métodos `_run_semantic()`, `_run_complete()` y `_run_codegen()` de `ui/app_ui.py`
+
+- **Documentación**
+  - Nuevo archivo `docs/ARQUITECTURA_CODEGEN.md` con diseño del pipeline de generación de código
+  - Script de prueba `test_ui_integration.py` para validar integración completa
+
+### Changed
+- `core/controller.py` ahora incluye generadores TAC y Bytecode en el pipeline
+- Resultado de compilación incluye campos: `codigo_intermedio`, `bytecode`, `tac`, `bytecode_instructions`
+- Generación automática de TAC y Bytecode después del análisis semántico exitoso
+- `ConsolePanel` ahora muestra estadísticas de código generado en la pestaña "Salida"
+
+### Fixed
+- Corrección de encoding en salida de tests (reemplazo de caracteres Unicode → ASCII)
+- Corrección de atributo de tema: `button_hover_bg` → `button_hover`
+
+---
+
+## [1.0.1] - 2025-11-22
+
+### Added - Validación Avanzada de Errores
+- **Comentarios de bloque**: Soporte `/* */` con detección de comentarios sin cerrar
+- **Validación de números**: Detección de múltiples puntos decimales, overflow y sufijos inválidos (L, f, F, d, D)
+- **Validación de escape sequences**: Secuencias en strings (`\n`, `\t`, `\uXXXX`, `\k`, etc.)
+- **Variables no inicializadas**: Detección de uso antes de asignación
+- **Return path analysis**: Validación de que funciones no-Unit retornen en todos los caminos
+- Documentación: `docs/errores_pendientes_implementacion.md`
+
+### Changed
+- Estructura `Simbolo` ahora incluye campo `inicializada` para tracking
+- Variables de loop (`for`) y parámetros marcados como inicializados automáticamente
+- Tests de errores ampliados: léxicos (+6 casos), semánticos (+3 casos, total 21)
+
+### Fixed
+- Inmutabilidad de `val` ahora se valida correctamente (ya estaba implementada, verificada)
+
+---
+
 ## [1.0.0] - 2025-11-06
 
 ### 🎉 Lanzamiento de la Versión 1.0

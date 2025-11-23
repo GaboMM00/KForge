@@ -6,7 +6,7 @@
 
 *Desarrollado en Python con interfaz gráfica Tkinter*
 
-**Versión 1.0** - ¡Primera versión funcional! 🎉
+**Versión 1.1.0** - Generación de Código Intermedio (TAC + Bytecode)
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
 [![Kotlin](https://img.shields.io/badge/Kotlin-Subset-purple.svg)](https://kotlinlang.org/)
@@ -20,9 +20,9 @@
 
 KForge es un **compilador modular** para el lenguaje Kotlin que implementa las fases fundamentales del proceso de compilación: análisis léxico, sintáctico y semántico. Diseñado con una arquitectura limpia y modular, puede compilar algoritmos completos como Bubble Sort.
 
-### 🎯 Versión 1.0 - Características Principales
+### 🎯 Versión 1.1.0 - Características Principales
 
-El compilador KForge v1.0 puede compilar exitosamente:
+El compilador KForge v1.1.0 puede compilar exitosamente:
 - ✅ **Variables y tipos básicos** (Int, Double, String, Boolean)
 - ✅ **Operadores** (aritméticos, lógicos, comparación)
 - ✅ **Estructuras de control** (if/else, for, while, break, continue)
@@ -30,25 +30,44 @@ El compilador KForge v1.0 puede compilar exitosamente:
 - ✅ **Arrays tipados** (IntArray, DoubleArray)
 - ✅ **Propiedades** (.size para arrays, .length para strings)
 - ✅ **Algoritmos completos** (test final: Bubble Sort)
+- ✅ **Validación avanzada de errores** (40+ tipos de errores detectados)
+- ✅ **Generación de código TAC** (Three-Address Code)
+- ✅ **Generación de Bytecode** (Stack-based assembly)
+- ✅ **Exportación de código** (.tac / .asm)
 
 ---
 
 ## ✨ Características
 
 ### Compilador
-- 🔤 **Análisis Léxico**: Tokenización completa de Kotlin
+- 🔤 **Análisis Léxico**: Tokenización completa de Kotlin con comentarios de bloque
 - 🌳 **Análisis Sintáctico**: Generación de AST (Árbol Sintáctico Abstracto)
-- ✔️ **Análisis Semántico**: Validación de tipos, scopes y tabla de símbolos
+- ✔️ **Análisis Semántico**: Validación de tipos, scopes, inicialización y return paths
+- 🔧 **Generación de Código Intermedio (v1.1)**:
+  - **TAC (Three-Address Code)**: Representación intermedia de 3 direcciones
+  - **Bytecode Assembly**: Código stack-based con formato assembly
+  - Operaciones: Aritméticas, lógicas, control de flujo, funciones, arrays
+  - Formato humanizado con comentarios y numeración de líneas
+- 🛡️ **Detección de 40+ Errores**:
+  - Léxicos: Caracteres inválidos, strings sin cerrar, números mal formados, escape sequences
+  - Sintácticos: Gramática completa, validación de estructura
+  - Semánticos: Tipos, scopes, inicialización, return paths
 - 📊 **Soporte de Kotlin**:
   - Fase 1: Fundamentos (variables, operadores, estructuras de control)
   - Fase 2: Funciones (declaración, llamadas, parámetros, retorno)
   - Fase 3: Arrays y Propiedades (arrays tipados, acceso, propiedades)
+  - Fase 4-6: Generación de código (TAC, Bytecode, UI)
 
 ### Interfaz de Usuario
 - 🎨 **UI Moderna**: Diseño tipo JetBrains/VSCode
 - 📝 **Editor con Pestañas**: Múltiples archivos simultáneos
 - 🎨 **Resaltado de Sintaxis**: Para Kotlin con temas personalizables
-- 📊 **Consola Multi-pestaña**: Salida, Errores, AST, Tokens
+- 📊 **Consola Multi-pestaña**: Salida, Errores, AST, Tokens, **Código (v1.1)**
+- 💾 **Pestaña Código (v1.1)**:
+  - Visualización de TAC y Bytecode
+  - Botones para alternar entre TAC/Bytecode
+  - Exportación a archivos .tac y .asm
+  - Syntax highlighting para código generado
 - 🌓 **Temas**: Dark (Darcula) y Light
 - ⚙️ **Configuración**: Tamaño de fuente ajustable
 - 📏 **Numeración de Líneas**: Sincronizada con scroll
@@ -378,15 +397,16 @@ Total de errores: 0
 
 ## 🚧 Limitaciones Actuales
 
-La versión 1.0 NO incluye:
+La versión 1.0.1 NO incluye:
+- ❌ Generación de código intermedio (planeado para v1.1)
 - ❌ String templates (`"Resultado: ${x}"`)
 - ❌ Método `.joinToString()` para arrays
-- ❌ Inmutabilidad completa con `val`
 - ❌ When expression
+- ❌ Operadores compuestos (+=, -=, *=, /=)
+- ❌ Incremento/decremento (++, --)
 - ❌ Null safety (`?`, `!!`, `?.`)
 - ❌ Lambdas y funciones de orden superior
 - ❌ Clases y objetos (POO)
-- ❌ Generación de código ejecutable
 
 **Ver [ROADMAP.md](ROADMAP.md) para plan de versión 1.1+**
 
@@ -394,17 +414,26 @@ La versión 1.0 NO incluye:
 
 ## 🔮 Futuras Mejoras
 
-### Versión 1.1 (Planeada)
-- [ ] String templates con interpolación
-- [ ] Método `.joinToString()` para arrays
-- [ ] Soporte completo de `val` con inmutabilidad
-- [ ] When expression
+### Versión 1.1 - Generación de Código Intermedio (En Desarrollo)
+- [ ] **Código de 3 Direcciones (TAC)**: Representación intermedia profesional
+- [ ] **Bytecode Stack-Based**: Formato assembly-like para presentación
+- [ ] **Integración UI**: Nueva pestaña "Código" con exportación a archivos
 
-### Versión 2.0 (Futuro)
+### Versión 1.2 - Optimizaciones (Planeada)
+- [ ] Constant Folding
+- [ ] Dead Code Elimination
+- [ ] Copy Propagation
+
+### Versión 1.3 - Backend C Ejecutable (Planeada)
+- [ ] Generador de código C
+- [ ] Integración con gcc
+- [ ] Ejecutables nativos desde Kotlin
+
+### Versión 2.0 - Nivel Profesional (Futuro)
+- [ ] Backend LLVM IR
 - [ ] Null safety básico
-- [ ] Lambdas y funciones anónimas
+- [ ] Lambdas y funciones de orden superior
 - [ ] Clases y objetos (POO básica)
-- [ ] Generación de código Python
 
 ---
 

@@ -566,11 +566,18 @@ Caracteres: {chars}"""
                 self.console_panel.show_ast(resultado_sintactico["arbol"])
                 self.phases_panel.set_phase_completed("syntactic", True)
 
-            # 3. Ejecutar análisis semántico
+            # 3. Ejecutar análisis semántico (incluye TAC y Bytecode en v1.1)
             resultado = self.controller.ejecutar_semantico(code)
             self.console_panel.show_results(resultado)
-            # Cambiar a la pestaña de Salida
-            self.console_panel.select(self.console_panel.output_tab)
+
+            # 4. Mostrar código generado si está disponible (v1.1)
+            if resultado.get("codigo_intermedio") or resultado.get("bytecode"):
+                tac_code = resultado.get("codigo_intermedio", "")
+                bytecode_code = resultado.get("bytecode", "")
+                self.console_panel.show_code(tac_code, bytecode_code)
+            else:
+                # Cambiar a la pestaña de Salida si no hay código
+                self.console_panel.select(self.console_panel.output_tab)
 
             if resultado["exito"]:
                 self.phases_panel.set_phase_completed("semantic", True)
@@ -592,7 +599,7 @@ Caracteres: {chars}"""
             editor.highlight_syntax()
 
     def _run_codegen(self):
-        """Ejecuta generación de código."""
+        """Ejecuta generación de código (v1.1: TAC + Bytecode)."""
         code = self.editor_panel.get_current_text()
         if not code.strip():
             messagebox.showwarning("Advertencia", "El editor está vacío")
@@ -618,22 +625,27 @@ Caracteres: {chars}"""
                 self.console_panel.show_ast(resultado_sintactico["arbol"])
                 self.phases_panel.set_phase_completed("syntactic", True)
 
-            # 3. Ejecutar análisis semántico
-            resultado_semantico = self.controller.ejecutar_semantico(code)
-            self.console_panel.show_results(resultado_semantico)
-            if resultado_semantico["exito"]:
+            # 3. Ejecutar análisis semántico (v1.1: incluye TAC y Bytecode)
+            resultado = self.controller.ejecutar_semantico(code)
+            self.console_panel.show_results(resultado)
+
+            if resultado["exito"]:
                 self.phases_panel.set_phase_completed("semantic", True)
 
-            # 4. Ejecutar generación de código
-            resultado = self.controller.ejecutar_codegen(code)
-            if resultado.get("codigo_intermedio"):
-                self.console_panel.write_output("\n=== Código Intermedio ===", "info")
-                self.console_panel.write_output(resultado["codigo_intermedio"])
-            # Cambiar a la pestaña de Salida
-            self.console_panel.select(self.console_panel.output_tab)
-
-            self.phases_panel.set_phase_completed("codegen", resultado.get("exito", False))
-            self.status_bar.set_status("Generación de código completada", "completed")
+                # 4. Mostrar código generado en la nueva pestaña (v1.1)
+                if resultado.get("codigo_intermedio") or resultado.get("bytecode"):
+                    tac_code = resultado.get("codigo_intermedio", "")
+                    bytecode_code = resultado.get("bytecode", "")
+                    self.console_panel.show_code(tac_code, bytecode_code)
+                    self.phases_panel.set_phase_completed("codegen", True)
+                    self.status_bar.set_status("Generación de código completada", "completed")
+                else:
+                    self.phases_panel.set_phase_completed("codegen", False)
+                    self.status_bar.set_status("No se generó código intermedio", "error")
+            else:
+                self.phases_panel.set_phase_completed("semantic", False)
+                self.phases_panel.set_phase_completed("codegen", False)
+                self.status_bar.set_status("Error en análisis semántico", "error")
         except Exception as e:
             self.console_panel.write_error(str(e))
             self.phases_panel.set_phase_completed("codegen", False)
@@ -687,6 +699,7 @@ Caracteres: {chars}"""
         """Aplica el tema a la consola."""
         colors = self.theme.get_colors()
         if hasattr(self, 'console_panel'):
+            # Aplicar tema a pestañas normales
             for tab in [self.console_panel.output_tab, self.console_panel.errors_tab,
                         self.console_panel.tokens_tab, self.console_panel.ast_tab]:
                 tab.text.config(
@@ -695,6 +708,20 @@ Caracteres: {chars}"""
                     insertbackground=colors.console_fg,
                     selectbackground=colors.editor_selection_bg
                 )
+
+            # Aplicar tema a pestaña de código (v1.1)
+            if hasattr(self.console_panel, 'code_tab'):
+                self.console_panel.code_tab.text.config(
+                    bg=colors.console_bg,
+                    fg=colors.console_fg,
+                    insertbackground=colors.console_fg,
+                    selectbackground=colors.editor_selection_bg
+                )
+                # Reconfigurar tags de syntax highlighting
+                self.console_panel.code_tab.text.tag_config("keyword", foreground=colors.syntax_keyword)
+                self.console_panel.code_tab.text.tag_config("comment", foreground=colors.syntax_comment)
+                self.console_panel.code_tab.text.tag_config("label", foreground=colors.syntax_string)
+                self.console_panel.code_tab.text.tag_config("instruction", foreground=colors.syntax_function)
 
     def _apply_font_to_editors(self):
         """Aplica la fuente seleccionada a todos los editores."""

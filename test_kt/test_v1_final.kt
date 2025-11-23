@@ -1,11 +1,3 @@
-// ============================================================
-// TEST FINAL VERSIÓN 1.0 DEL COMPILADOR KFORGE
-// Algoritmo: Bubble Sort (Ordenamiento de Burbuja)
-// ============================================================
-// Basado en el código original propuesto por el usuario
-// Adaptado para usar solo las características implementadas
-// ============================================================
-
 fun main() {
     var arr: IntArray = intArrayOf(64, 34, 25, 12, 22, 11, 90)
     var n: Int = arr.size
@@ -19,9 +11,7 @@ fun main() {
         println(arr[i])
     }
 
-    // ============================================================
-    // ALGORITMO BUBBLE SORT
-    // ============================================================
+
     for (i in 0 until n - 1) {
         swapped = false
 

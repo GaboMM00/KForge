@@ -3,11 +3,13 @@ Controlador del compilador de Kotlin.
 Coordina todas las fases del análisis: léxico, sintáctico, semántico y generación de código.
 """
 
-from typing import Dict, Any
+from typing import Dict, Any, List
 from core.lexer import Lexer
 from core.parser import Parser
 from core.semantic import AnalizadorSemantico
 from core.codegen import CodeGenerator
+from core.tac import TACGenerator, TACInstruction
+from core.bytecode import BytecodeGenerator, BytecodeInstruction
 from core.errors import ErrorManager
 
 
@@ -26,11 +28,15 @@ class CompiladorController:
         self.parser = None
         self.semantic_analyzer = None
         self.code_generator = None
+        self.tac_generator = None  # Generador de código TAC (v1.1)
+        self.bytecode_generator = None  # Generador de bytecode (v1.1)
 
         # Resultados de cada fase
         self.tokens = []
         self.ast = None
         self.resultados_semanticos = []
+        self.tac_instructions: List[TACInstruction] = []  # Código TAC generado
+        self.bytecode_instructions: List[BytecodeInstruction] = []  # Bytecode generado
 
     def ejecutar(self, codigo: str) -> Dict[str, Any]:
         """
@@ -92,6 +98,24 @@ class CompiladorController:
             self.resultados_semanticos = self.semantic_analyzer.analizar(self.ast)
         except Exception as e:
             self.error_manager.agregar_error(Exception(f"Error en análisis semántico: {str(e)}"))
+
+        # Fase 4: Generación de Código TAC (v1.1)
+        # Solo si no hay errores semánticos
+        if not self.error_manager.tiene_errores():
+            try:
+                self.tac_generator = TACGenerator()
+                self.tac_instructions = self.tac_generator.generate(self.ast)
+            except Exception as e:
+                self.error_manager.agregar_error(Exception(f"Error en generación de TAC: {str(e)}"))
+
+        # Fase 5: Generación de Bytecode (v1.1)
+        # Solo si TAC fue generado exitosamente
+        if not self.error_manager.tiene_errores() and self.tac_instructions:
+            try:
+                self.bytecode_generator = BytecodeGenerator()
+                self.bytecode_instructions = self.bytecode_generator.generate(self.tac_instructions)
+            except Exception as e:
+                self.error_manager.agregar_error(Exception(f"Error en generación de bytecode: {str(e)}"))
 
         # Retornar resultados
         return self._construir_resultado()
@@ -210,11 +234,24 @@ class CompiladorController:
 
     def _construir_resultado(self) -> Dict[str, Any]:
         """Construye el diccionario de resultados."""
+        # Formatear código TAC si existe
+        tac_code = ""
+        if self.tac_generator and self.tac_instructions:
+            tac_code = self.tac_generator.format_output()
+
+        # Formatear bytecode si existe
+        bytecode_assembly = ""
+        if self.bytecode_generator and self.bytecode_instructions:
+            bytecode_assembly = self.bytecode_generator.format_output(show_comments=True)
+
         return {
             "tokens": self.tokens,
             "arbol": self.ast,
             "semantico": self.resultados_semanticos,
-            "codigo_intermedio": "",
+            "codigo_intermedio": tac_code,      # Código TAC formateado
+            "bytecode": bytecode_assembly,       # Bytecode assembly formateado
+            "tac": self.tac_instructions,        # Lista de instrucciones TAC
+            "bytecode_instructions": self.bytecode_instructions,  # Lista de instrucciones bytecode
             "errores": [str(e) for e in self.error_manager.obtener_errores()],
             "exito": not self.error_manager.tiene_errores()
         }
@@ -234,10 +271,14 @@ class CompiladorController:
         self.tokens = []
         self.ast = None
         self.resultados_semanticos = []
+        self.tac_instructions = []
+        self.bytecode_instructions = []
         self.lexer = None
         self.parser = None
         self.semantic_analyzer = None
         self.code_generator = None
+        self.tac_generator = None
+        self.bytecode_generator = None
 
     def obtener_resumen_completo(self) -> str:
         """

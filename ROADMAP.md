@@ -1,8 +1,8 @@
 # 🗺️ KForge Compiler - Roadmap de Desarrollo
 
 **Compilador Educativo de Kotlin**
-**Versión actual**: v1.0 - ¡VERSIÓN 1.0 COMPLETADA! 🎉
-**Objetivo**: Compilador de Kotlin casi completo
+**Versión actual**: v1.1.0 - ¡GENERACIÓN DE CÓDIGO COMPLETADA! 🎉
+**Objetivo**: Compilador de Kotlin con backend TAC y Bytecode
 
 ---
 
@@ -93,45 +93,138 @@ python tests/test_v1_final.py
 - [x] **Fase 3**: Arrays y Propiedades (arrays tipados, acceso, propiedades)
 - [x] **Test Final**: Algoritmo Bubble Sort completo
 
-### 🔮 Versión 1.1 - Características Avanzadas (Futuro)
+### ✅ Versión 1.0.1 - Validación Avanzada - COMPLETADA
 
-#### Fase 4: Expresiones Avanzadas
-- [ ] **String Templates**: Interpolación `"Resultado: ${variable}"`
-- [ ] **Método .joinToString()**: Para arrays y listas
+- [x] **Comentarios de bloque** `/* */` con detección de sin cerrar
+- [x] **Validación de números**: Múltiples puntos, overflow, sufijos inválidos
+- [x] **Validación de escape sequences** en strings
+- [x] **Detección de variables no inicializadas**
+- [x] **Validación de return en todas las rutas**
+- [x] **Tests de errores ampliados** (léxicos +6, semánticos +3)
+
+### ✅ Versión 1.1 - Generación de Código Intermedio - COMPLETADA
+
+**📘 Ver**: [docs/ARQUITECTURA_CODEGEN.md](docs/ARQUITECTURA_CODEGEN.md)
+
+**Objetivo**: Backend con TAC y Bytecode para requisitos académicos
+
+#### Fase 4: Código Intermedio TAC ✅
+- [x] **TACGenerator**: Generador de código de 3 direcciones
+  - [x] Operaciones básicas: ASSIGN, ADD, SUB, MUL, DIV, MOD
+  - [x] Comparaciones: LT, GT, LE, GE, EQ, NE
+  - [x] Lógicos: AND, OR, NOT, NEG
+  - [x] Control de flujo: LABEL, GOTO, IF_FALSE
+  - [x] Funciones: PARAM, CALL, RETURN
+  - [x] Arrays: ARRAY_LOAD, ARRAY_STORE
+- [x] **Tests TAC**: Cobertura completa de generación (11/11 tests passing)
+- [x] **Módulo**: `core/tac.py` con clases `TACInstruction` y `TACGenerator`
+
+#### Fase 5: Bytecode Stack-Based ✅
+- [x] **BytecodeGenerator**: Traductor TAC → Bytecode
+  - [x] Stack: PUSH, LOAD, STORE
+  - [x] Aritmética: ADD, SUB, MUL, DIV, MOD
+  - [x] Comparaciones: EQ, LT, GT, LE, GE, NE
+  - [x] Lógicos: AND, OR, NOT, NEG
+  - [x] Control: JUMP, JUMPF, CALL, RET, HALT
+  - [x] Arrays: ALOAD, ASTORE
+- [x] **Formateador Assembly**: Output legible con comentarios
+- [x] **Tests Bytecode**: Verificación TAC → Bytecode (10/10 tests passing)
+- [x] **Módulo**: `core/bytecode.py` con clases `BytecodeInstruction` y `BytecodeGenerator`
+
+#### Fase 6: Integración con UI ✅
+- [x] **Nueva pestaña "Código"** en ConsolePanel
+  - [x] Botón "Ver TAC"
+  - [x] Botón "Ver Bytecode"
+  - [x] Botón "Guardar Código" (.tac / .asm)
+- [x] **Actualizar controller.py**: Pipeline integrado automáticamente
+- [x] **Temas**: Syntax highlighting aplicado a código generado
+- [x] **CodeTab**: Nueva clase con visualización y exportación
+- [x] **Integración**: Métodos `_run_semantic()`, `_run_complete()` y `_run_codegen()` actualizados
+
+**Entregable**: ✅ "Código ensamblador" visible y exportable en UI
+
+---
+
+### ⚡ Versión 1.2 - Optimizaciones (PLANEADA)
+
+**Objetivo**: Mejorar calidad del código TAC generado
+
+#### Fase 7: Optimizador de TAC
+- [ ] **Constant Folding**: `t1 = 2 + 3` → `t1 = 5`
+- [ ] **Dead Code Elimination**: Código inalcanzable
+- [ ] **Copy Propagation**: `t1 = x; t2 = t1` → `t2 = x`
+- [ ] **Common Subexpression Elimination**
+- [ ] **Tests de Optimización**: Verificar mejoras
+
+**Entregable**: Compilador con optimizaciones medibles
+
+---
+
+### 🚀 Versión 1.3 - Backend C Ejecutable (PLANEADA)
+
+**Objetivo**: Generar código C ejecutable
+
+#### Fase 8: Generador de C
+- [ ] **C Backend**: TAC → C
+  - [ ] Variables y expresiones
+  - [ ] Control de flujo (if, while, for)
+  - [ ] Funciones y llamadas
+  - [ ] Arrays
+- [ ] **Integración gcc**: Compilar automáticamente
+- [ ] **Ejecutor**: Correr desde UI
+- [ ] **Tests de Ejecución**: Verificar salida
+
+**Entregable**: Ejecutables nativos desde Kotlin
+
+---
+
+### 🎯 Versión 1.4 - Más Características Kotlin (PLANEADA)
+
+**Objetivo**: Expandir lenguaje soportado
+
+#### Expresiones y Operadores
+- [ ] **String Templates**: `"$variable"`
 - [ ] **Operadores Compuestos**: `+=`, `-=`, `*=`, `/=`
 - [ ] **Incremento/Decremento**: `++`, `--`
-- [ ] **Soporte completo para `val`**: Constantes con inmutabilidad
 
-#### Fase 5: Estructuras Avanzadas
-- [ ] **When Expression**: Switch mejorado de Kotlin
+#### Estructuras
+- [ ] **When Expression**: Switch mejorado
 - [ ] **Ranges Avanzados**: `downTo`, `step`
-- [ ] **Null Safety**: `?`, `!!`, `?.`
-- [ ] **Elvis Operator**: `?:`
 
-#### Fase 6: Programación Funcional
+**Entregable**: Más features de Kotlin real
+
+---
+
+### 🌟 Versión 2.0 - Nivel Profesional (FUTURO)
+
+**Objetivo**: Compilador industrial
+
+#### Backend LLVM
+- [ ] **LLVM IR Generator**
+- [ ] **Optimizaciones LLVM**
+- [ ] **Ejecutables nativos optimizados**
+
+#### Características Avanzadas
 - [ ] **Lambdas**: `{ x -> x * 2 }`
-- [ ] **Higher-Order Functions**: `map`, `filter`, `reduce`
-- [ ] **Extension Functions**: Funciones de extensión
+- [ ] **Higher-Order Functions**: map, filter, reduce
+- [ ] **Null Safety**: `?`, `!!`, `?.`, `?:`
+- [ ] **Clases y Objetos**: POO básica
 
-#### Fase 7: Generación de Código
-- [ ] **Code Generator**: Traducción de AST a Python
-- [ ] **Optimizaciones**: Plegado de constantes, eliminación de código muerto
-- [ ] **Ejecución**: Ejecutar código Kotlin traducido
+**Entregable**: Compilador profesional
 
 ---
 
 ## 📅 Cronograma de Implementación
 
-| Fase | Descripción | Estado | Fecha Completada |
-|------|-------------|--------|------------------|
-| **Fase 1** | Fundamentos | ✅ Completada | 2025-11-03 |
-| **Fase 2** | Funciones | ✅ Completada | 2025-11-04 |
-| **Fase 3** | Arrays y Propiedades | ✅ Completada | 2025-11-05 |
-| **v1.0 Final** | Test Bubble Sort | ✅ Completada | 2025-11-06 |
-| **Fase 4** | Expresiones Avanzadas | 📝 Planeada | Pendiente |
-| **Fase 5** | Estructuras Avanzadas | 📝 Planeada | Pendiente |
-| **Fase 6** | Prog. Funcional | 📝 Planeada | Pendiente |
-| **Fase 7** | Generación de Código | 📝 Planeada | Pendiente |
+| Versión | Descripción | Estado | Fecha |
+|---------|-------------|--------|-------|
+| **v1.0.0** | Frontend Completo | ✅ Completada | 2025-11-06 |
+| **v1.0.1** | Validación Avanzada | ✅ Completada | 2025-11-22 |
+| **v1.1** | Código Intermedio (TAC + Bytecode) | 🔄 En Desarrollo | Dic 2025 |
+| **v1.2** | Optimizaciones de TAC | 📝 Planeada | Ene 2026 |
+| **v1.3** | Backend C Ejecutable | 📝 Planeada | Feb 2026 |
+| **v1.4** | Más Features Kotlin | 📝 Planeada | Mar 2026 |
+| **v2.0** | Backend LLVM + Avanzado | 🔮 Futuro | 2026+ |
 
 ---
 
@@ -141,6 +234,7 @@ Ver [CHANGELOG.md](CHANGELOG.md) para historial detallado de cambios.
 
 ### Hitos Principales
 
+- **2025-11-22**: ✨ **v1.0.1 Lanzada** - Validación avanzada de errores
 - **2025-11-06**: 🎉 **v1.0 Lanzada** - Compilador funcional con test final
 - **2025-11-05**: ✅ Fase 3 completada - Arrays y propiedades
 - **2025-11-04**: ✅ Fase 2 completada - Funciones y llamadas
@@ -149,25 +243,33 @@ Ver [CHANGELOG.md](CHANGELOG.md) para historial detallado de cambios.
 
 ---
 
-## 🎯 Características Faltantes (para v1.1+)
+## 📊 Resumen de Estado Actual
 
-### Prioridad Alta
-- String templates con `${expresión}`
-- Método `.joinToString()` para arrays
-- Soporte completo de `val` con inmutabilidad
-- When expression (similar a switch)
+### ✅ Implementado (v1.0.1)
+- **Frontend Completo**: Lexer, Parser, Semantic Analyzer
+- **Detección de 40+ tipos de errores**:
+  - Léxicos: Caracteres inválidos, strings sin cerrar, números mal formados, escape sequences
+  - Sintácticos: Gramática completa, validación de estructura
+  - Semánticos: Tipos, scopes, inicialización, return paths
+- **Características del Lenguaje**:
+  - Variables (var/val), tipos básicos
+  - Operadores completos (aritméticos, lógicos, comparación)
+  - Control de flujo (if, while, for, break, continue)
+  - Funciones con parámetros y return
+  - Arrays tipados con propiedades
+  - Comentarios de línea y bloque
+- **UI Moderna**: Editor multi-pestaña, consola, temas, configuración
 
-### Prioridad Media
-- Operadores compuestos (`+=`, `-=`, etc.)
-- Incremento/decremento (`++`, `--`)
-- Null safety básico (`?`, `!!`, `?.`)
-- Ranges con `downTo` y `step`
+### 🔄 En Desarrollo (v1.1)
+- **Generación de Código Intermedio**: TAC + Bytecode
+- **Integración con UI**: Pestaña de código, exportación
+- **Tests de Generación**: Cobertura completa
 
-### Prioridad Baja
-- Lambdas y funciones anónimas
-- Higher-order functions
-- Extension functions
-- Clases y objetos (POO completa)
+### 📝 Pendiente
+- **v1.2**: Optimizaciones (constant folding, dead code)
+- **v1.3**: Backend C ejecutable
+- **v1.4+**: Más características de Kotlin
+- **v2.0**: LLVM backend profesional
 
 ---
 
