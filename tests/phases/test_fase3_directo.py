@@ -1,12 +1,12 @@
 """
-Script de prueba directo para la Fase 2: Funciones y Llamadas
+Script de prueba directo para la Fase 3: Arrays y Propiedades
 """
 import sys
 import io
 from pathlib import Path
 
 # Agregar el directorio raíz al path para poder importar 'core'
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
@@ -15,24 +15,31 @@ from core.parser import Parser
 from core.semantic import AnalizadorSemantico
 from core.errors import ErrorManager
 
-# Código de prueba para Fase 2
+# Código de prueba para Fase 3
 codigo = """
-// Test de funciones
-fun suma(a: Int, b: Int): Int {
-    return a + b
+// Test de arrays y propiedades
+var numeros: IntArray = intArrayOf(1, 2, 3, 4, 5)
+var tamano: Int = numeros.size
+
+var mensaje: String = "Hola"
+var longitud: Int = mensaje.length
+
+var primero: Int = numeros[0]
+numeros[1] = 10
+
+for (i in 0 until numeros.size) {
+    var elem: Int = numeros[i]
 }
 
-fun resta(x: Int, y: Int): Int {
-    return x - y
+fun obtenerTamano(arr: IntArray): Int {
+    return arr.size
 }
 
-var resultado1: Int = suma(5, 3)
-var resultado2: Int = resta(10, 4)
+var tam: Int = obtenerTamano(numeros)
 
-// Test de funciones built-in
-var arr: IntArray = intArrayOf(1, 2, 3)
-println("Resultado:")
-println(resultado1)
+if (numeros.size > 3) {
+    println("Array grande")
+}
 """
 
 # Crear gestor de errores
@@ -107,13 +114,14 @@ print("RESUMEN")
 print("=" * 60)
 print(f"Total de errores: {len(error_manager.errores)}")
 if not error_manager.tiene_errores():
-    print("✓ ¡FASE 2 IMPLEMENTADA CORRECTAMENTE!")
+    print("✓ ¡FASE 3 IMPLEMENTADA CORRECTAMENTE!")
     print("\nCaracterísticas probadas:")
-    print("  ✓ Declaración de funciones con parámetros")
-    print("  ✓ Tipos de retorno")
-    print("  ✓ Llamadas a funciones")
-    print("  ✓ Funciones built-in (intArrayOf, println)")
-    print("  ✓ Return statement")
+    print("  ✓ Operador punto para propiedades")
+    print("  ✓ Propiedad .size para arrays")
+    print("  ✓ Propiedad .length para strings")
+    print("  ✓ Acceso a elementos de array con []")
+    print("  ✓ Modificación de elementos de array")
+    print("  ✓ Uso de propiedades en expresiones")
 else:
     print("✗ Hay errores que corregir")
     print("\nERRORES PENDIENTES:")

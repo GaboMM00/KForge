@@ -1,16 +1,19 @@
-# 🔨 KForge - Compilador Kotlin
+# 🔨 KForge - Compilador Profesional Kotlin → JVM
 
 <div align="center">
 
-**Compilador modular y extensible para el lenguaje Kotlin**
+**Compilador de Kotlin a JVM Bytecode Real**
 
-*Desarrollado en Python con interfaz gráfica Tkinter*
+*Genera archivos .class ejecutables en cualquier Java Virtual Machine*
 
-**Versión 1.1.0** - Generación de Código Intermedio (TAC + Bytecode)
+**Versión Actual: 1.1.0 ✅** | **Objetivo: v2.0 - JVM Bytecode Real**
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
 [![Kotlin](https://img.shields.io/badge/Kotlin-Subset-purple.svg)](https://kotlinlang.org/)
-[![License](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
+[![JVM](https://img.shields.io/badge/Target-JVM%20Bytecode-orange.svg)](https://docs.oracle.com/javase/specs/jvms/se8/html/)
+[![License](https://img.shields.io/badge/License-GPL--3.0-green.svg)](LICENSE)
+
+[Documentación](#-documentación) • [Inicio Rápido](#-inicio-rápido) • [Características](#-características) • [Roadmap](#-roadmap)
 
 </div>
 
@@ -18,59 +21,72 @@
 
 ## 📋 Descripción
 
-KForge es un **compilador modular** para el lenguaje Kotlin que implementa las fases fundamentales del proceso de compilación: análisis léxico, sintáctico y semántico. Diseñado con una arquitectura limpia y modular, puede compilar algoritmos completos como Bubble Sort.
+**KForge** es un compilador profesional que traduce un subconjunto de Kotlin a **JVM bytecode real** ejecutable. El proyecto implementa un pipeline completo de compilación desde análisis léxico hasta generación de archivos `.class` compatibles con el estándar JVM.
 
-### 🎯 Versión 1.1.0 - Características Principales
+### 🎯 Objetivo del Proyecto
 
-El compilador KForge v1.1.0 puede compilar exitosamente:
-- ✅ **Variables y tipos básicos** (Int, Double, String, Boolean)
-- ✅ **Operadores** (aritméticos, lógicos, comparación)
-- ✅ **Estructuras de control** (if/else, for, while, break, continue)
-- ✅ **Funciones** (declaración, parámetros, retorno, llamadas)
-- ✅ **Arrays tipados** (IntArray, DoubleArray)
-- ✅ **Propiedades** (.size para arrays, .length para strings)
-- ✅ **Algoritmos completos** (test final: Bubble Sort)
-- ✅ **Validación avanzada de errores** (40+ tipos de errores detectados)
-- ✅ **Generación de código TAC** (Three-Address Code)
-- ✅ **Generación de Bytecode** (Stack-based assembly)
-- ✅ **Exportación de código** (.tac / .asm)
+Generar archivos `.class` ejecutables compatibles con JVM (Java 8+), permitiendo:
+
+- ✅ Ejecutar programas Kotlin en cualquier JVM estándar
+- ✅ Interoperabilidad con el ecosistema Java
+- ✅ Compatibilidad con herramientas JVM (javap, jd-gui)
+- ✅ Demostración de implementación profesional de compiladores
 
 ---
 
-## ✨ Características
+## 🚀 Estado Actual
 
-### Compilador
-- 🔤 **Análisis Léxico**: Tokenización completa de Kotlin con comentarios de bloque
-- 🌳 **Análisis Sintáctico**: Generación de AST (Árbol Sintáctico Abstracto)
-- ✔️ **Análisis Semántico**: Validación de tipos, scopes, inicialización y return paths
-- 🔧 **Generación de Código Intermedio (v1.1)**:
-  - **TAC (Three-Address Code)**: Representación intermedia de 3 direcciones
-  - **Bytecode Assembly**: Código stack-based con formato assembly
-  - Operaciones: Aritméticas, lógicas, control de flujo, funciones, arrays
-  - Formato humanizado con comentarios y numeración de líneas
-- 🛡️ **Detección de 40+ Errores**:
-  - Léxicos: Caracteres inválidos, strings sin cerrar, números mal formados, escape sequences
-  - Sintácticos: Gramática completa, validación de estructura
-  - Semánticos: Tipos, scopes, inicialización, return paths
-- 📊 **Soporte de Kotlin**:
-  - Fase 1: Fundamentos (variables, operadores, estructuras de control)
-  - Fase 2: Funciones (declaración, llamadas, parámetros, retorno)
-  - Fase 3: Arrays y Propiedades (arrays tipados, acceso, propiedades)
-  - Fase 4-6: Generación de código (TAC, Bytecode, UI)
+### ✅ Versión 1.1.0 - COMPLETADA
 
-### Interfaz de Usuario
-- 🎨 **UI Moderna**: Diseño tipo JetBrains/VSCode
-- 📝 **Editor con Pestañas**: Múltiples archivos simultáneos
-- 🎨 **Resaltado de Sintaxis**: Para Kotlin con temas personalizables
-- 📊 **Consola Multi-pestaña**: Salida, Errores, AST, Tokens, **Código (v1.1)**
-- 💾 **Pestaña Código (v1.1)**:
-  - Visualización de TAC y Bytecode
-  - Botones para alternar entre TAC/Bytecode
-  - Exportación a archivos .tac y .asm
-  - Syntax highlighting para código generado
-- 🌓 **Temas**: Dark (Darcula) y Light
-- ⚙️ **Configuración**: Tamaño de fuente ajustable
-- 📏 **Numeración de Líneas**: Sincronizada con scroll
+**Pipeline Implementado:**
+```
+Kotlin → Lexer → Parser → Semantic → TAC → Bytecode Stack-Based (educativo)
+```
+
+**Componentes Funcionales:**
+
+| Componente | Estado | Tests | Descripción |
+|------------|--------|-------|-------------|
+| **Lexer** | ✅ Completo | ✅ Integrado | Tokenización con 40+ errores detectados |
+| **Parser** | ✅ Completo | ✅ Integrado | Generación de AST |
+| **Semantic** | ✅ Completo | ✅ Integrado | Tipos, scopes, return paths |
+| **TAC Generator** | ✅ Completo | ✅ 11/11 | Three-Address Code |
+| **Bytecode (educativo)** | ✅ Completo | ✅ 10/10 | Stack-based assembly |
+| **UI Moderna** | ✅ Completo | ✅ Manual | Editor + consola multi-pestaña |
+
+**Subconjunto de Kotlin Soportado:**
+- Variables: `var`, `val` con tipos `Int`, `Double`, `String`, `Boolean`
+- Operadores: Aritméticos, lógicos, comparación
+- Control: `if`/`else`, `while`, `for..in`, `break`, `continue`
+- Funciones: Declaración, parámetros, retorno, llamadas
+- Arrays: `IntArray`, `DoubleArray`, acceso `[]`, propiedad `.size`
+- Built-ins: `println()`, `print()`, `intArrayOf()`, `doubleArrayOf()`
+
+### 🎯 Versión 2.0 - EN DESARROLLO
+
+**Pipeline Objetivo:**
+```
+Kotlin → Lexer → Parser → Semantic → TAC → JVM Bytecode → .class → Ejecución
+```
+
+**Plan de Implementación (8 semanas):**
+
+| Fase | Componente | Duración | Estado |
+|------|-----------|----------|--------|
+| **7** | ClassFile + Constant Pool | 2 semanas | 📝 Siguiente |
+| **8** | JVM Instruction Set | 2 semanas | 📝 Planeada |
+| **9** | Stack Map Frames | 1 semana | 📝 Planeada |
+| **10** | Attributes + Metadata | 1 semana | 📝 Planeada |
+| **11** | Runtime Support | 1 semana | 📝 Planeada |
+| **12** | Integration + Testing | 1 semana | 📝 Planeada |
+
+**Entregable v2.0:**
+- Archivos `.class` ejecutables (`java ClassName`)
+- Debugging info (SourceFile, LineNumberTable)
+- I/O completo (`println`, `print`)
+- Arrays con inicialización
+
+Ver **[ROADMAP.md](ROADMAP.md)** para el plan completo.
 
 ---
 
@@ -78,84 +94,92 @@ El compilador KForge v1.1.0 puede compilar exitosamente:
 
 ### Requisitos
 
-- Python 3.8 o superior
-- Tkinter (incluido en la mayoría de instalaciones de Python)
+- **Python 3.8+** (con Tkinter incluido)
+- **JDK 8+** (para v2.0 - ejecutar .class files)
 
-### Instalación y Ejecución
+### Instalación
 
 ```bash
-# Clonar o descargar el proyecto
+# Clonar el repositorio
+git clone <repository-url>
 cd KForge
 
-# Ejecutar el compilador
+# Verificar Python
+python --version  # Debe ser 3.8+
+
+# El proyecto no requiere dependencias externas
+```
+
+### Ejecutar el Compilador
+
+```bash
+# Lanzar interfaz gráfica
 python main_modern.py
 ```
 
 ### Ejecutar Tests
 
 ```bash
-# Test individual de fase
-python tests/test_fase1_directo.py
-python tests/test_fase2_directo.py
-python tests/test_fase3_directo.py
+# Tests completos v1.1
+python tests/test_tac_generator.py       # 11/11 tests TAC
+python tests/test_bytecode_generator.py  # 10/10 tests Bytecode
+python tests/test_v1_final.py            # Bubble Sort completo
 
-# Test final v1.0 (Bubble Sort)
-python tests/test_v1_final.py
+# Tests de fases
+python tests/test_fase1_directo.py       # Fundamentos
+python tests/test_fase2_directo.py       # Funciones
+python tests/test_fase3_directo.py       # Arrays
 ```
 
 ---
 
-## 📖 Documentación
+## ✨ Características
 
-- 📘 **[README.md](README.md)** (este archivo) - Inicio rápido y características
-- 🗺️ **[ROADMAP.md](ROADMAP.md)** - Plan de desarrollo y estado actual
-- 📋 **[CONTRIBUTING.md](CONTRIBUTING.md)** - Reglas de trabajo y desarrollo
-- 📝 **[CHANGELOG.md](CHANGELOG.md)** - Historial de cambios por versión
+### 🔤 Frontend de Compilación (v1.0)
 
----
+- **Análisis Léxico**: Tokenización completa con comentarios de bloque (`//`, `/* */`)
+- **Análisis Sintáctico**: Parser recursivo descendente con generación de AST
+- **Análisis Semántico**:
+  - Type checking (validación de tipos)
+  - Scope analysis (análisis de alcance)
+  - Detección de variables no inicializadas
+  - Return path analysis
+  - Validación de inmutabilidad (`val` vs `var`)
+- **Detección de 40+ Errores**: Léxicos, sintácticos y semánticos
 
-## 📂 Estructura del Proyecto
+### 🔧 Generación de Código (v1.1)
 
-```
-KForge/
-├── core/                         # Módulos del compilador
-│   ├── __init__.py
-│   ├── lexer.py                  # Analizador léxico
-│   ├── parser.py                 # Analizador sintáctico
-│   ├── semantic.py               # Analizador semántico
-│   ├── controller.py             # Controlador principal
-│   ├── errors.py                 # Sistema de manejo de errores
-│   ├── utils.py                  # Definiciones (Token, AST, TipoDato)
-│   └── codegen.py                # Generación de código (futuro)
-├── ui/                           # Interfaz gráfica moderna
-│   ├── __init__.py
-│   ├── app_ui.py                 # Aplicación principal
-│   ├── editor_panel.py           # Editor con pestañas
-│   ├── console_panel.py          # Consola multi-pestaña
-│   ├── sidebar.py                # Barra lateral
-│   ├── theme_manager.py          # Gestión de temas
-│   ├── phases_panel.py           # Panel de fases
-│   ├── status_bar.py             # Barra de estado
-│   └── splash_screen.py          # Pantalla de inicio
-├── test_kt/                      # Tests en Kotlin
-│   ├── test_fase1.kt             # Test Fase 1
-│   ├── test_fase2.kt             # Test Fase 2
-│   ├── test_fase3.kt             # Test Fase 3
-│   └── test_v1_final.kt          # Test final (Bubble Sort)
-├── tests/                        # Scripts de test Python
-│   ├── test_compilador.py        # Test general CLI
-│   ├── test_fase1_directo.py     # Test Fase 1
-│   ├── test_fase2_directo.py     # Test Fase 2
-│   ├── test_fase3_directo.py     # Test Fase 3
-│   ├── test_main_sin_tipo.py     # Test main() sin tipo
-│   └── test_v1_final.py          # Test final v1.0
-├── main_modern.py                # Punto de entrada de la aplicación
-├── README.md                     # Este archivo
-├── ROADMAP.md                    # Plan de desarrollo
-├── CONTRIBUTING.md               # Guía de contribución
-├── CHANGELOG.md                  # Historial de cambios
-└── LICENSE                       # Licencia del proyecto
-```
+- **TAC Generator**:
+  - Three-Address Code (representación intermedia)
+  - Operaciones: ASSIGN, ADD, SUB, MUL, DIV, MOD, comparaciones, lógicas
+  - Control de flujo: LABEL, GOTO, IF_FALSE
+  - Funciones: PARAM, CALL, RETURN
+  - Arrays: ARRAY_LOAD, ARRAY_STORE
+  - Soporte para código global y break/continue
+
+- **Bytecode Generator** (educativo):
+  - Stack-based assembly (NO JVM real)
+  - Formato texto .asm con comentarios
+  - Instrucciones: PUSH, LOAD, STORE, operadores, saltos, llamadas
+  - Visualización con syntax highlighting
+
+### 🎨 Interfaz de Usuario
+
+- **Editor Moderno**:
+  - Múltiples pestañas para archivos
+  - Syntax highlighting para Kotlin
+  - Numeración de líneas sincronizada
+  - Atajos de teclado (`Ctrl+N`, `Ctrl+O`, `Ctrl+S`, `Ctrl+Enter`)
+
+- **Consola Multi-Pestaña**:
+  - **Salida**: Resumen de compilación
+  - **Errores**: Detalle de errores detectados
+  - **Tokens**: Lista de tokens generados
+  - **AST**: Árbol sintáctico abstracto
+  - **Código**: TAC y Bytecode con alternador y exportación
+
+- **Temas**: Dark (Darcula) y Light
+- **Configuración**: Fuentes y tamaños ajustables
 
 ---
 
@@ -163,154 +187,51 @@ KForge/
 
 ### Interfaz Gráfica
 
-1. **Abrir**: `python main_modern.py`
-2. **Escribir código Kotlin** en el editor
-3. **Compilar**: Usar botón "Compilar" o `Ctrl+Enter`
-4. **Ver resultados**: En las pestañas de la consola
+```bash
+python main_modern.py
+```
 
-### Atajos de Teclado
-
-| Atajo | Acción |
-|-------|--------|
-| `Ctrl + N` | Nuevo archivo |
-| `Ctrl + O` | Abrir archivo |
-| `Ctrl + S` | Guardar |
-| `Ctrl + Shift + S` | Guardar como |
-| `Ctrl + Enter` | Compilar |
+1. Escribir código Kotlin en el editor
+2. Presionar **"Compilar"** o `Ctrl+Enter`
+3. Ver resultados en las pestañas de la consola:
+   - ✅ Compilación exitosa → Ver TAC/Bytecode en pestaña "Código"
+   - ❌ Errores → Ver detalles en pestaña "Errores"
 
 ### Uso Programático
 
 ```python
 from core.controller import CompiladorController
-from core.errors import ErrorManager
 
 # Crear controlador
-error_manager = ErrorManager()
-controlador = CompiladorController(error_manager)
+controller = CompiladorController()
 
 # Código Kotlin
 codigo = """
+fun suma(a: Int, b: Int): Int {
+    return a + b
+}
+
 fun main() {
-    var arr: IntArray = intArrayOf(3, 1, 2)
-    var n: Int = arr.size
-    println("Array creado")
+    val resultado: Int = suma(10, 20)
+    println(resultado)
 }
 """
 
-# Ejecutar compilación
-exito = controlador.ejecutar_completo(codigo)
+# Compilar (incluye TAC y Bytecode en v1.1)
+resultado = controller.ejecutar_semantico(codigo)
 
-# Verificar resultados
-if error_manager.tiene_errores():
-    for error in error_manager.errores:
-        print(error)
+if resultado['exito']:
+    print("✅ Compilación exitosa")
+    print(f"TAC: {len(resultado['codigo_intermedio'])} caracteres")
+    print(f"Bytecode: {len(resultado['bytecode'])} caracteres")
 else:
-    print("Compilación exitosa!")
+    for error in resultado['errores']:
+        print(f"❌ {error}")
 ```
 
 ---
 
 ## 🎯 Sintaxis Soportada
-
-### Variables y Tipos
-
-```kotlin
-// Variables mutables
-var edad: Int = 25
-var precio: Double = 19.99
-var nombre: String = "KForge"
-var activo: Boolean = true
-
-// Sin inicialización
-var contador: Int
-```
-
-### Operadores
-
-```kotlin
-// Aritméticos: + - * / %
-var suma: Int = 10 + 5
-var resta: Int = 10 - 5
-
-// Comparación: == != < > <= >=
-var mayor: Boolean = 10 > 5
-
-// Lógicos: && || !
-var resultado: Boolean = true && false
-```
-
-### Estructuras de Control
-
-```kotlin
-// If-Else
-if (edad >= 18) {
-    println("Mayor de edad")
-} else {
-    println("Menor de edad")
-}
-
-// While
-var i: Int = 0
-while (i < 10) {
-    i = i + 1
-}
-
-// For con rangos
-for (i in 0..10) {
-    println(i)
-}
-
-for (i in 0 until 10) {
-    println(i)
-}
-
-// Break y Continue
-for (i in 0..10) {
-    if (i == 5) break
-    if (i == 3) continue
-    println(i)
-}
-```
-
-### Funciones
-
-```kotlin
-// Función con retorno explícito
-fun suma(a: Int, b: Int): Int {
-    return a + b
-}
-
-// Función main sin tipo de retorno
-fun main() {
-    var resultado: Int = suma(5, 3)
-    println(resultado)
-}
-
-// Funciones built-in
-println("Hola Mundo")
-print("Sin salto de línea")
-```
-
-### Arrays y Propiedades
-
-```kotlin
-// Crear arrays
-var numeros: IntArray = intArrayOf(1, 2, 3, 4, 5)
-var decimales: DoubleArray = doubleArrayOf(1.5, 2.5, 3.5)
-
-// Acceso a elementos
-var primero: Int = numeros[0]
-numeros[1] = 10
-
-// Propiedades
-var tamano: Int = numeros.size
-var longitud: Int = "Hola".length
-
-// Uso en expresiones
-for (i in 0 until numeros.size) {
-    println(numeros[i])
-}
-```
 
 ### Ejemplo Completo: Bubble Sort
 
@@ -341,110 +262,236 @@ fun main() {
 }
 ```
 
+**Resultado**: ✅ Compilación exitosa (0 errores)
+
+Ver más ejemplos en [test_kt/](test_kt/)
+
 ---
 
 ## 🏗️ Arquitectura
 
-### Principios de Diseño
-
-1. **Separación de Responsabilidades**: UI desacoplada de la lógica del compilador
-2. **Modularidad**: Cada fase es independiente
-3. **Extensibilidad**: Fácil añadir nuevas características
-4. **Manejo Centralizado de Errores**: Todos los errores usan `ErrorManager`
-
-### Flujo de Compilación
+### Pipeline del Compilador
 
 ```
-Código Kotlin
-    ↓
-[Análisis Léxico] → Tokens
-    ↓
-[Análisis Sintáctico] → AST
-    ↓
-[Análisis Semántico] → Validación de Tipos
-    ↓
-✅ Compilación Exitosa
+┌─────────────────────────────────────────────────────────────┐
+│                    CÓDIGO FUENTE KOTLIN                      │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+                         ▼
+          ┌──────────────────────────────┐
+          │  FRONTEND (v1.0 ✅)          │
+          ├──────────────────────────────┤
+          │  1. Lexer → Tokens           │
+          │  2. Parser → AST             │
+          │  3. Semantic → Validación    │
+          └────────────┬─────────────────┘
+                       │
+                       ▼
+          ┌──────────────────────────────┐
+          │  BACKEND (v1.1 ✅)           │
+          ├──────────────────────────────┤
+          │  4. TAC → Código intermedio  │
+          │  5. Bytecode → Assembly      │
+          └────────────┬─────────────────┘
+                       │
+          ┌────────────┴────────────┐
+          ▼                         ▼
+    ┌──────────┐          ┌──────────────────┐
+    │ Bytecode │          │  JVM Bytecode    │
+    │ (v1.1 ✅)│          │  (v2.0 📝)       │
+    │ .asm     │          │  .class files    │
+    └──────────┘          └────────┬─────────┘
+                                   │
+                                   ▼
+                          ┌─────────────────┐
+                          │  java ClassName │
+                          │  (Ejecutable)   │
+                          └─────────────────┘
 ```
+
+### Estructura de Archivos
+
+```
+KForge/
+├── core/                    # Núcleo del compilador
+│   ├── lexer.py            # ✅ Análisis léxico
+│   ├── parser.py           # ✅ Análisis sintáctico
+│   ├── semantic.py         # ✅ Análisis semántico
+│   ├── tac.py              # ✅ Generador TAC
+│   ├── bytecode.py         # ✅ Bytecode educativo
+│   ├── controller.py       # ✅ Orquestador
+│   ├── errors.py           # ✅ Manejo de errores
+│   ├── utils.py            # ✅ Token, AST, tipos
+│   └── jvm/                # 📝 v2.0 - JVM Bytecode Real
+│       ├── classfile.py
+│       ├── constant_pool.py
+│       ├── descriptors.py
+│       ├── instructions.py
+│       ├── jvm_generator.py
+│       ├── stackmaps.py
+│       ├── attributes.py
+│       └── runtime.py
+│
+├── ui/                      # Interfaz gráfica
+│   ├── app_ui.py
+│   ├── editor_panel.py
+│   ├── console_panel.py
+│   └── ...
+│
+├── tests/                   # Tests del compilador
+│   ├── test_tac_generator.py
+│   ├── test_bytecode_generator.py
+│   ├── phases/              # Tests de fases
+│   │   ├── test_fase1_directo.py
+│   │   ├── test_fase2_directo.py
+│   │   └── test_fase3_directo.py
+│   ├── integration/         # Tests de integración
+│   └── jvm/                 # 📝 v2.0 - Tests JVM
+│
+├── test_kt/                 # Código Kotlin de prueba
+├── docs/                    # Documentación técnica
+├── main_modern.py           # Punto de entrada
+└── ...
+```
+
+Ver **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** para arquitectura completa.
 
 ---
 
-## 🧪 Tests
+## 📖 Documentación
 
-### Ejecutar Todos los Tests
+### Documentación Principal
+
+- 📘 **[README.md](README.md)** - Este archivo
+- 🗺️ **[ROADMAP.md](ROADMAP.md)** - Plan de desarrollo v2.0 (Fases 7-12)
+- 📝 **[CHANGELOG.md](CHANGELOG.md)** - Historial de cambios
+- 🤝 **[CONTRIBUTING.md](CONTRIBUTING.md)** - Guía de contribución
+
+### Documentación Técnica
+
+- 🏗️ **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Arquitectura completa del compilador
+- 🔧 **[docs/JVM_BYTECODE_GUIDE.md](docs/JVM_BYTECODE_GUIDE.md)** - Guía de implementación JVM
+- 📋 **[docs/PROJECT_REORGANIZATION.md](docs/PROJECT_REORGANIZATION.md)** - Reorganización v1.1 → v2.0
+
+---
+
+## 🧪 Testing
+
+### Tests Actuales (v1.1)
 
 ```bash
-# Fase 1: Fundamentos
-python tests/test_fase1_directo.py
+# TAC Generator (11 tests)
+python tests/test_tac_generator.py
+# ✅ test_simple_assignment
+# ✅ test_arithmetic_operations
+# ✅ test_if_statement
+# ✅ test_while_loop
+# ✅ test_for_loop
+# ✅ test_break_continue
+# ✅ test_function_declaration
+# ✅ test_function_call
+# ✅ test_array_creation
+# ✅ test_array_access
+# ✅ test_bubble_sort
 
-# Fase 2: Funciones
-python tests/test_fase2_directo.py
+# Bytecode Generator (10 tests)
+python tests/test_bytecode_generator.py
+# ✅ test_simple_assignment
+# ✅ test_arithmetic
+# ✅ test_comparisons
+# ✅ test_if_statement
+# ✅ test_while_loop
+# ✅ test_for_loop
+# ✅ test_function
+# ✅ test_function_call
+# ✅ test_arrays
+# ✅ test_bubble_sort
 
-# Fase 3: Arrays y Propiedades
-python tests/test_fase3_directo.py
-
-# Test final v1.0
+# Test final
 python tests/test_v1_final.py
+# ✅ Bubble Sort completo (0 errores)
 ```
 
-### Resultado Esperado
+### Coverage
 
-```
-Total de errores: 0
-✓ ¡VERSIÓN 1.0 DEL COMPILADOR COMPLETADA!
-```
+- ✅ Análisis Léxico: Cubierto por tests de fases
+- ✅ Análisis Sintáctico: Cubierto por tests de fases
+- ✅ Análisis Semántico: Cubierto por tests de fases
+- ✅ TAC Generation: 11/11 tests passing
+- ✅ Bytecode Generation: 10/10 tests passing
+- ✅ Integración completa: Bubble Sort
 
 ---
 
 ## 🚧 Limitaciones Actuales
 
-La versión 1.0.1 NO incluye:
-- ❌ Generación de código intermedio (planeado para v1.1)
+### NO Implementado (v1.1)
+
+- ❌ Generación de JVM bytecode real (.class)
 - ❌ String templates (`"Resultado: ${x}"`)
-- ❌ Método `.joinToString()` para arrays
 - ❌ When expression
-- ❌ Operadores compuestos (+=, -=, *=, /=)
-- ❌ Incremento/decremento (++, --)
+- ❌ Operadores compuestos (`+=`, `-=`, `*=`, `/=`)
+- ❌ Incremento/decremento (`++`, `--`)
 - ❌ Null safety (`?`, `!!`, `?.`)
 - ❌ Lambdas y funciones de orden superior
 - ❌ Clases y objetos (POO)
 
-**Ver [ROADMAP.md](ROADMAP.md) para plan de versión 1.1+**
+### Planeado para v2.0+
 
----
-
-## 🔮 Futuras Mejoras
-
-### Versión 1.1 - Generación de Código Intermedio (En Desarrollo)
-- [ ] **Código de 3 Direcciones (TAC)**: Representación intermedia profesional
-- [ ] **Bytecode Stack-Based**: Formato assembly-like para presentación
-- [ ] **Integración UI**: Nueva pestaña "Código" con exportación a archivos
-
-### Versión 1.2 - Optimizaciones (Planeada)
-- [ ] Constant Folding
-- [ ] Dead Code Elimination
-- [ ] Copy Propagation
-
-### Versión 1.3 - Backend C Ejecutable (Planeada)
-- [ ] Generador de código C
-- [ ] Integración con gcc
-- [ ] Ejecutables nativos desde Kotlin
-
-### Versión 2.0 - Nivel Profesional (Futuro)
-- [ ] Backend LLVM IR
-- [ ] Null safety básico
-- [ ] Lambdas y funciones de orden superior
-- [ ] Clases y objetos (POO básica)
+- ✅ **v2.0** (8 semanas): JVM Bytecode real
+- 📝 **v2.1+**: Características adicionales de Kotlin
 
 ---
 
 ## 🤝 Contribuciones
 
-Para contribuir al proyecto:
+### Para Contribuir
 
-1. Lee [CONTRIBUTING.md](CONTRIBUTING.md) para reglas de trabajo
-2. Revisa [ROADMAP.md](ROADMAP.md) para características planeadas
-3. Ejecuta todos los tests antes de hacer commit
-4. Sigue el formato de commits: `tipo(scope): descripción`
+1. Lee **[CONTRIBUTING.md](CONTRIBUTING.md)** para reglas de desarrollo
+2. Revisa **[ROADMAP.md](ROADMAP.md)** para la fase actual
+3. Lee **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** para entender la arquitectura
+4. Ejecuta todos los tests antes de hacer commit
+5. Sigue el formato de commits: `tipo(scope): descripción`
+
+### Estado Actual del Desarrollo
+
+**Fase Actual**: Preparación para Fase 7 (ClassFile + Constant Pool)
+
+**Próximos Pasos**:
+1. Implementar `core/jvm/classfile.py`
+2. Implementar `core/jvm/constant_pool.py`
+3. Implementar `core/jvm/descriptors.py`
+
+Ver **[docs/JVM_BYTECODE_GUIDE.md](docs/JVM_BYTECODE_GUIDE.md)** para guía de implementación.
+
+---
+
+## 📚 Recursos Técnicos
+
+### Especificaciones
+
+- **JVM Specification SE 8**: https://docs.oracle.com/javase/specs/jvms/se8/html/
+- **Kotlin Language Spec**: https://kotlinlang.org/spec/
+- **Class File Format**: https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html
+
+### Herramientas
+
+```bash
+# Verificar bytecode JVM (v2.0)
+javap -c -v MyClass.class
+
+# Ejecutar bytecode
+java MyClass
+
+# Decompilador gráfico
+jd-gui MyClass.class
+```
+
+### Referencias
+
+- **Dragon Book**: Compilers: Principles, Techniques, and Tools
+- **Crafting Interpreters**: https://craftinginterpreters.com/
+- **ASM Library**: https://asm.ow2.io/ (para Stack Map Frames)
 
 ---
 
@@ -452,16 +499,16 @@ Para contribuir al proyecto:
 
 **GNU General Public License v3.0 (GPL-3.0)**
 
-Este proyecto está licenciado bajo la GNU General Public License v3.0. Esto significa que:
+Este proyecto está licenciado bajo GPL-3.0:
 
-- ✅ Puedes usar el código libremente
-- ✅ Puedes modificar el código
-- ✅ Puedes distribuir el código
-- ⚠️ **PERO**: Cualquier trabajo derivado DEBE ser de código abierto bajo la misma licencia
-- ⚠️ **PERO**: Debes mantener los créditos del autor original
-- ⚠️ **PERO**: Debes compartir tus modificaciones bajo GPL-3.0
+- ✅ Uso libre del código
+- ✅ Modificación permitida
+- ✅ Distribución permitida
+- ⚠️ Trabajos derivados deben ser open source bajo GPL-3.0
+- ⚠️ Créditos del autor original deben mantenerse
+- ⚠️ Modificaciones deben compartirse bajo la misma licencia
 
-Ver el archivo [LICENSE](LICENSE) para más detalles.
+Ver [LICENSE](LICENSE) para más detalles.
 
 ---
 
@@ -469,26 +516,28 @@ Ver el archivo [LICENSE](LICENSE) para más detalles.
 
 **Gabriel Alejandro Medina Miramontes**
 
-Creador y desarrollador principal de KForge.
+Proyecto profesional de compilador Kotlin → JVM Bytecode.
 
-Compilador modular de Kotlin desarrollado para demostrar implementación profesional de lenguajes de programación.
+Desarrollado para demostrar implementación completa de un compilador real con generación de bytecode ejecutable.
 
 ---
 
 ## 🙏 Agradecimientos
 
-- Documentación oficial de Kotlin
+- **JVM Specification** - Oracle
+- **Kotlin Language** - JetBrains
+- **Dragon Book** - Aho, Sethi, Ullman
+- **Crafting Interpreters** - Robert Nystrom
 - Comunidad de compiladores y lenguajes de programación
-- Recursos sobre compiladores (Dragon Book, Crafting Interpreters)
 
 ---
 
 <div align="center">
 
-**KForge v1.0** - Compilador Kotlin Modular
+**KForge v1.1.0** → **v2.0 (JVM Bytecode Real)**
 
-*Hecho con ❤️ usando Python y Tkinter*
+*Hecho con ❤️ para demostrar implementación profesional de compiladores*
 
-[Reportar Bug](https://github.com/usuario/kforge/issues) · [Solicitar Característica](https://github.com/usuario/kforge/issues) · [Documentación](ROADMAP.md)
+[Documentación](ROADMAP.md) • [Contribuir](CONTRIBUTING.md) • [Changelog](CHANGELOG.md) • [Arquitectura](docs/ARCHITECTURE.md)
 
 </div>

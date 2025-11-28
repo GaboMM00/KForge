@@ -1,8 +1,11 @@
 # 🤝 Guía de Contribución - KForge Compiler
 
-**Compilador Educativo de Kotlin**
+**Compilador Profesional Kotlin → JVM Bytecode**
 
 Esta guía define las reglas y mejores prácticas para contribuir al desarrollo de KForge.
+
+**Versión Actual**: v1.1.0 ✅ COMPLETADA
+**En Desarrollo**: v2.0 - JVM Bytecode Real
 
 ---
 
@@ -38,39 +41,70 @@ Esta guía define las reglas y mejores prácticas para contribuir al desarrollo 
 
 ---
 
-## 🗂️ Estructura del Proyecto
+## 🗂️ Estructura del Proyecto (v2.0)
 
 ```
 KForge/
-├── core/                    # Módulos del compilador
-│   ├── lexer.py            # Analizador léxico (tokens)
-│   ├── parser.py           # Analizador sintáctico (AST)
-│   ├── semantic.py         # Analizador semántico (tipos, scopes)
-│   ├── codegen.py          # Generador de código (futuro)
-│   ├── utils.py            # Definiciones: Token, NodoAST, TipoDato
-│   ├── errors.py           # Sistema de manejo de errores
-│   └── controller.py       # Controlador principal del compilador
-├── ui/                      # Interfaz gráfica Tkinter
-│   ├── app_ui.py           # Ventana principal
-│   ├── editor_panel.py     # Editor con pestañas
-│   ├── console_panel.py    # Consola con múltiples pestañas
-│   ├── sidebar.py          # Barra lateral funcional
-│   └── theme_manager.py    # Gestión de temas
-├── test_kt/                 # Tests con código Kotlin (.kt)
-│   ├── test_fase1.kt       # Test de Fase 1
-│   ├── test_fase2.kt       # Test de Fase 2
-│   ├── test_fase3.kt       # Test de Fase 3
-│   └── test_v1_final.kt    # Test final v1.0
-├── tests/                   # Scripts de test Python
-│   ├── test_fase1_directo.py
-│   ├── test_fase2_directo.py
-│   ├── test_fase3_directo.py
-│   └── test_v1_final.py
-├── main_modern.py          # Lanzador de la UI
-├── README.md               # Documentación principal
-├── ROADMAP.md              # Plan de desarrollo
-├── CONTRIBUTING.md         # Este archivo
-└── CHANGELOG.md            # Historial de cambios
+├── core/                         # Núcleo del compilador
+│   ├── lexer.py                  # ✅ Análisis léxico
+│   ├── parser.py                 # ✅ Análisis sintáctico
+│   ├── semantic.py               # ✅ Análisis semántico
+│   ├── tac.py                    # ✅ Generación TAC (v1.1)
+│   ├── bytecode.py               # ✅ Bytecode educativo (v1.1)
+│   ├── controller.py             # ✅ Orquestador del pipeline
+│   ├── errors.py                 # ✅ Sistema de manejo de errores
+│   ├── utils.py                  # ✅ Token, AST, TipoDato
+│   └── jvm/                      # 📝 JVM Bytecode Real (v2.0)
+│       ├── classfile.py          # Escritor de .class
+│       ├── constant_pool.py      # Constant Pool Manager
+│       ├── descriptors.py        # Type descriptors JVM
+│       ├── instructions.py       # JVM Instruction Set
+│       ├── jvm_generator.py      # TAC → JVM Bytecode
+│       ├── stackmaps.py          # Stack Map Frames
+│       ├── attributes.py         # Attributes (SourceFile, etc.)
+│       └── runtime.py            # Runtime support (println, arrays)
+│
+├── ui/                           # Interfaz gráfica Tkinter
+│   ├── app_ui.py                 # Ventana principal
+│   ├── editor_panel.py           # Editor con pestañas
+│   ├── console_panel.py          # Consola multi-pestaña
+│   ├── sidebar.py                # Barra lateral
+│   ├── theme_manager.py          # Gestión de temas
+│   ├── phases_panel.py           # Panel de fases
+│   ├── status_bar.py             # Barra de estado
+│   └── splash_screen.py          # Pantalla de inicio
+│
+├── tests/                        # Scripts de test Python
+│   ├── test_tac_generator.py     # ✅ 11 tests TAC
+│   ├── test_bytecode_generator.py # ✅ 10 tests Bytecode
+│   ├── test_fase1_directo.py     # ✅ Tests Fase 1
+│   ├── test_fase2_directo.py     # ✅ Tests Fase 2
+│   ├── test_fase3_directo.py     # ✅ Tests Fase 3
+│   ├── test_v1_final.py          # ✅ Test Bubble Sort
+│   └── jvm/                       # 📝 Tests JVM (v2.0)
+│       ├── test_classfile.py     # Tests ClassFile
+│       ├── test_jvm_generation.py # Tests generación
+│       └── test_execution.py     # Tests ejecución JVM
+│
+├── test_kt/                      # Código Kotlin de prueba
+│   ├── test_fase1.kt             # Test Fase 1
+│   ├── test_fase2.kt             # Test Fase 2
+│   ├── test_fase3.kt             # Test Fase 3
+│   └── test_v1_final.kt          # Test Bubble Sort
+│
+├── docs/                         # Documentación técnica
+│   ├── ARCHITECTURE.md           # Arquitectura completa del compilador
+│   ├── JVM_BYTECODE_GUIDE.md     # Guía implementación JVM
+│   ├── ARQUITECTURA_CODEGEN.md   # Diseño del pipeline de código
+│   ├── errores_lexicos_pendientes.md
+│   └── errores_pendientes_implementacion.md
+│
+├── main_modern.py                # Punto de entrada de la UI
+├── README.md                     # Documentación principal
+├── ROADMAP.md                    # Plan de desarrollo v2.0
+├── CONTRIBUTING.md               # Este archivo
+├── CHANGELOG.md                  # Historial de cambios
+└── LICENSE                       # GPL-3.0
 ```
 
 ---
@@ -100,7 +134,8 @@ KForge/
 | `core/lexer.py` | Al agregar palabras clave u operadores | Palabras en `PALABRAS_CLAVE` y patrones regex |
 | `core/parser.py` | Al implementar nueva sintaxis | Métodos de parseo para nuevas construcciones |
 | `core/semantic.py` | Al agregar validación de tipos/scopes | Métodos `visitar_*` para nuevos nodos |
-| `core/codegen.py` | Al implementar generación de código | Métodos para traducir AST a código destino |
+| `core/tac.py` | Al modificar generación TAC | Métodos `_generate_*` para nuevas construcciones |
+| `core/jvm/*.py` | Al implementar JVM bytecode (v2.0) | Ver `docs/JVM_BYTECODE_GUIDE.md` |
 
 ### 🧪 Regla de Testing
 
@@ -253,23 +288,67 @@ python tests/test_fase1_directo.py
 
 ### Mensajes de Commit
 
-Formato: `tipo(scope): descripción corta`
+⚠️ **REGLA OBLIGATORIA**: Cada cambio relevante en el proyecto DEBE incluir un commit descriptivo siguiendo este formato.
+
+**Formato**: `tipo(scope): descripción corta`
 
 **Tipos**:
-- `feat`: Nueva característica
+- `feat`: Nueva característica o funcionalidad
 - `fix`: Corrección de bug
 - `docs`: Cambios en documentación
 - `refactor`: Refactorización sin cambios funcionales
 - `test`: Agregar o modificar tests
 - `chore`: Tareas de mantenimiento
+- `style`: Cambios de formato sin afectar funcionalidad
 
-**Ejemplos**:
+**Scopes Comunes**:
+- `lexer`, `parser`, `semantic`: Componentes del frontend
+- `tac`, `bytecode`, `jvm`: Generadores de código
+- `ui`: Interfaz gráfica
+- `docs`: Documentación
+- `tests`: Sistema de tests
+- `v2.0`: Cambios relacionados con versión 2.0
+
+**Estructura del Mensaje**:
 ```
+tipo(scope): descripción corta (max 72 caracteres)
+
+- Detalle de cambio 1
+- Detalle de cambio 2
+- Detalle de cambio 3
+
+Archivos modificados: archivo1.py, archivo2.py
+Tests: X/X passing
+```
+
+**Ejemplos Reales del Proyecto**:
+```bash
+# Característica nueva
 feat(parser): add main() return type inference
+
+# Corrección de bug
 fix(ui): sync font size for syntax highlighting tags
+
+# Documentación
 docs(readme): update with v1.0 features
+
+# Tests
 test(phase3): add comprehensive array tests
+
+# Generación de código
+feat(codegen): implement TAC and Stack-Based Bytecode generation with UI integration
+
+# Versión 2.0
+docs(v2.0): complete project reorganization for JVM bytecode implementation
 ```
+
+**Cuándo Hacer Commit**:
+- ✅ Después de completar una característica funcional
+- ✅ Después de arreglar un bug y verificar con tests
+- ✅ Después de actualizar documentación importante
+- ✅ Al finalizar una fase del ROADMAP
+- ❌ NO hacer commits de código que no compila
+- ❌ NO hacer commits sin ejecutar tests relevantes
 
 ---
 

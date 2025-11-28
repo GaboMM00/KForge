@@ -7,7 +7,7 @@ from typing import Dict, Any, List
 from core.lexer import Lexer
 from core.parser import Parser
 from core.semantic import AnalizadorSemantico
-from core.codegen import CodeGenerator
+# from core.codegen import CodeGenerator  # Obsoleto - ver tac.py y bytecode.py
 from core.tac import TACGenerator, TACInstruction
 from core.bytecode import BytecodeGenerator, BytecodeInstruction
 from core.errors import ErrorManager
@@ -220,15 +220,8 @@ class CompiladorController:
         # Ejecutar análisis completo
         resultado = self.ejecutar(codigo)
 
-        # Si no hay errores, generar código intermedio
-        if resultado["exito"]:
-            try:
-                self.code_generator = CodeGenerator()
-                codigo_intermedio = self.code_generator.generar(self.ast)
-                resultado["codigo_intermedio"] = codigo_intermedio
-            except Exception as e:
-                resultado["errores"].append(f"Error en generación de código: {str(e)}")
-                resultado["exito"] = False
+        # Nota: La generación de código intermedio se hace en ejecutar_semantico()
+        # que usa TAC y Bytecode generators (v1.1)
 
         return resultado
 

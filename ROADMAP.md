@@ -1,304 +1,380 @@
 # 🗺️ KForge Compiler - Roadmap de Desarrollo
 
-**Compilador Educativo de Kotlin**
-**Versión actual**: v1.1.0 - ¡GENERACIÓN DE CÓDIGO COMPLETADA! 🎉
-**Objetivo**: Compilador de Kotlin con backend TAC y Bytecode
+**Compilador Profesional de Kotlin → JVM Bytecode**
+**Versión actual**: v1.1.0 ✅
+**Objetivo**: Compilador completo con generación de JVM Bytecode ejecutable
 
 ---
 
 ## 📖 Documentación del Proyecto
 
 - 📘 **[README.md](README.md)** - Descripción general y características
-- 📋 **[CONTRIBUTING.md](CONTRIBUTING.md)** - Reglas de trabajo y flujo de desarrollo ⚠️ **LEER PRIMERO**
+- 📋 **[CONTRIBUTING.md](CONTRIBUTING.md)** - Reglas de trabajo y flujo de desarrollo
 - 📝 **[CHANGELOG.md](CHANGELOG.md)** - Historial de cambios por versión
 - 🗺️ **ROADMAP.md** (este archivo) - Plan de desarrollo y estado actual
 
 ---
 
-## 📊 Estado Actual del Proyecto - VERSIÓN 1.0 ✅
+## 📊 Estado Actual del Proyecto
 
-### ✅ Características Implementadas (v1.0)
+### ✅ Versión 1.1.0 - COMPLETADA
 
-#### Fase 1 - Fundamentos ✅
-- **Análisis Léxico**: Tokenización completa de Kotlin
-- **Análisis Sintáctico**: Parser con AST completo
-- **Análisis Semántico**: Validación de tipos, scopes y tabla de símbolos
-- **Variables**: `var` con tipos `Int`, `Double`, `String`, `Boolean`
-- **Operadores Aritméticos**: `+`, `-`, `*`, `/`, `%`
-- **Operadores de Comparación**: `==`, `!=`, `<`, `>`, `<=`, `>=`
-- **Operadores Lógicos**: `&&`, `||`, `!` (NOT)
-- **Operador Unario**: `-` (negativo)
-- **Estructuras de Control**: `if`/`else`, `while`, `for..in..`
-- **Rangos**: `0..10` (operador `..`), `0 until n` con expresiones aritméticas
-- **Sentencias**: `break`, `continue`
-- **Declaraciones sin inicialización**: `var x: Int`
+**Frontend Completo + Generación de Código Intermedio**
 
-#### Fase 2 - Funciones ✅
-- **Declaración de Funciones**: `fun nombre(params): Tipo { ... }`
-- **Función main()**: Inferencia de tipo `Unit` si se omite (solo para main)
-- **Parámetros**: Múltiples parámetros con tipos
-- **Return**: Validación de tipos de retorno
-- **Llamadas a Funciones**: Con argumentos y validación de tipos
-- **Funciones Built-in**: `println()`, `print()`, `intArrayOf()`, `doubleArrayOf()`
+#### Características del Lenguaje Soportadas
+- **Variables**: `var`, `val` con tipos `Int`, `Double`, `String`, `Boolean`
+- **Operadores**: Aritméticos (`+`, `-`, `*`, `/`, `%`), Lógicos (`&&`, `||`, `!`), Comparación (`==`, `!=`, `<`, `>`, `<=`, `>=`)
+- **Control de Flujo**: `if`/`else`, `while`, `for..in`, `break`, `continue`
+- **Funciones**: Declaración, parámetros, return, llamadas
+- **Arrays**: `IntArray`, `DoubleArray`, acceso con `[]`, propiedades (`.size`, `.length`)
+- **Built-ins**: `println()`, `print()`, `intArrayOf()`, `doubleArrayOf()`
 
-#### Fase 3 - Arrays y Propiedades ✅
-- **Arrays Tipados**: `IntArray`, `DoubleArray`
-- **Creación de Arrays**: `intArrayOf()`, `doubleArrayOf()` con varargs
-- **Acceso a Elementos**: `array[i]` con validación de tipos
-- **Modificación de Elementos**: `array[i] = value`
-- **Propiedad .size**: Para arrays (retorna Int)
-- **Propiedad .length**: Para strings (retorna Int)
-- **Operador Punto**: Acceso a propiedades con validación
-- **Índices Complejos**: `arr[j + 1]`, `arr[n - i - 1]`
-- **Encadenamiento**: `array[0].size`, propiedades en expresiones
+#### Pipeline de Compilación Actual
+```
+Código Kotlin
+    ↓
+[1] Análisis Léxico → Tokens
+    ↓
+[2] Análisis Sintáctico → AST
+    ↓
+[3] Análisis Semántico → Validación
+    ↓
+[4] Generación TAC → Three-Address Code
+    ↓
+[5] Generación Bytecode → Stack-Based Assembly (educativo)
+```
 
-#### Interfaz de Usuario ✅
-- **UI Moderna**: Tkinter con temas dark/light
-- **Editor de Código**: Resaltado de sintaxis para Kotlin
-- **Editor con Pestañas**: Múltiples archivos abiertos simultáneamente
-- **Consola Multi-pestaña**: Salida, Errores, AST, Tokens
-- **Panel de Configuración**: Temas y tamaño de fuente
-- **Barra Lateral**: Gestión de archivos y configuración
-- **Numeración de Líneas**: Sincronizada con scroll
+#### Archivos Principales
+- `core/lexer.py` - Tokenizador
+- `core/parser.py` - Parser recursivo descendente
+- `core/semantic.py` - Validador semántico
+- `core/tac.py` - Generador TAC (3-address code)
+- `core/bytecode.py` - Generador bytecode stack-based (NO JVM)
+- `core/controller.py` - Orquestador del pipeline
+- `ui/app_ui.py` - Interfaz gráfica moderna
+
+#### Tests Completos
+- ✅ 11/11 tests TAC
+- ✅ 10/10 tests Bytecode
+- ✅ Test final: Bubble Sort completo
 
 ---
 
-## 🎯 Test Final v1.0
+## 🎯 ROADMAP: Kotlin → JVM Bytecode Real
 
-**Algoritmo**: Bubble Sort (Ordenamiento de Burbuja)
+**OBJETIVO PRINCIPAL**: Generar archivos `.class` ejecutables en cualquier JVM
 
-El compilador puede compilar exitosamente un algoritmo completo de ordenamiento que demuestra todas las características de las Fases 1, 2 y 3:
+---
 
-- ✅ Función `main()` sin tipo de retorno explícito
-- ✅ Arrays con `intArrayOf()`
-- ✅ Propiedad `.size` en expresiones
-- ✅ Loops `for` anidados con expresiones aritméticas complejas
-- ✅ Acceso y modificación de elementos con índices aritméticos
-- ✅ Variables temporales y swap de elementos
-- ✅ Operador de negación `!` y sentencia `break`
+## 🚀 Versión 2.0 - JVM Bytecode Real (EN DESARROLLO)
 
-**Ejecutar test**:
+**Duración estimada**: 6-8 semanas
+**Objetivo**: Generar bytecode JVM real (.class) ejecutable
+
+---
+
+### 📅 Semana 1-2: Fundamentos JVM
+
+#### Fase 7: Estructura de Archivos .class
+**Duración**: 14 días
+**Prioridad**: 🔴 CRÍTICA
+
+- [ ] **ClassFile Writer** (`core/jvm/classfile.py`)
+  - [ ] Magic number (0xCAFEBABE)
+  - [ ] Version numbers (Java 8: 52.0)
+  - [ ] Access flags (PUBLIC, SUPER)
+  - [ ] This class, super class references
+  - [ ] Escritura binaria big-endian
+
+- [ ] **Constant Pool** (`core/jvm/constant_pool.py`)
+  - [ ] CONSTANT_Utf8 (strings)
+  - [ ] CONSTANT_Integer, CONSTANT_Double
+  - [ ] CONSTANT_Class (referencias a clases)
+  - [ ] CONSTANT_String (string literals)
+  - [ ] CONSTANT_Methodref (referencias a métodos)
+  - [ ] CONSTANT_Fieldref (referencias a campos)
+  - [ ] CONSTANT_NameAndType (descriptores)
+  - [ ] Gestión de índices (1-based)
+
+- [ ] **Method/Field Descriptors** (`core/jvm/descriptors.py`)
+  - [ ] Mapeo de tipos: Int→I, Double→D, String→Ljava/lang/String;
+  - [ ] Generación de method signatures: `(II)I`
+  - [ ] Field descriptors
+
+**Entregable**: Archivo .class vacío pero válido
+
+---
+
+### 📅 Semana 3-4: Instrucciones JVM
+
+#### Fase 8: JVM Instruction Set
+**Duración**: 14 días
+**Prioridad**: 🔴 CRÍTICA
+
+- [ ] **JVM Opcodes** (`core/jvm/instructions.py`)
+  - [ ] Load/Store tipados: `iload`, `istore`, `dload`, `dstore`, `aload`, `astore`
+  - [ ] Constantes: `iconst_0`, `iconst_1`, `bipush`, `ldc`
+  - [ ] Aritmética: `iadd`, `isub`, `imul`, `idiv`, `irem`, `dadd`, `dsub`, `dmul`, `ddiv`
+  - [ ] Comparaciones: `if_icmpeq`, `if_icmpne`, `if_icmplt`, `if_icmpge`, `if_icmpgt`, `if_icmple`
+  - [ ] Control: `goto`, `ifeq`, `ifne`
+  - [ ] Arrays: `newarray`, `iaload`, `iastore`, `daload`, `dastore`, `arraylength`
+  - [ ] Invocaciones: `invokestatic`, `invokevirtual`
+  - [ ] Return: `ireturn`, `dreturn`, `areturn`, `return`
+
+- [ ] **JVM Generator** (`core/jvm/jvm_generator.py`)
+  - [ ] Traductor TAC → JVM bytecode
+  - [ ] Mapeo de operaciones con tipos
+  - [ ] Gestión de local variable slots
+  - [ ] Cálculo de max_stack y max_locals
+
+**Entregable**: Generador básico TAC → JVM
+
+---
+
+### 📅 Semana 5: Verificación de Bytecode
+
+#### Fase 9: Stack Map Frames
+**Duración**: 7 días
+**Prioridad**: 🔴 MUY COMPLEJA
+
+**OPCIÓN A (Recomendada)**: Usar librería ASM
 ```bash
-python tests/test_v1_final.py
+pip install asm-python
+```
+- [ ] Integrar ASM para cálculo automático de frames
+- [ ] Configurar `COMPUTE_FRAMES` flag
+
+**OPCIÓN B (Avanzada)**: Implementación manual
+- [ ] Análisis de flujo de control
+- [ ] Cálculo de tipos en cada branch
+- [ ] Generación de StackMapTable attribute
+
+**Entregable**: Bytecode verificable por JVM
+
+---
+
+### 📅 Semana 6: Atributos y Metadata
+
+#### Fase 10: Class Attributes
+**Duración**: 7 días
+**Prioridad**: 🟡 MEDIA
+
+- [ ] **SourceFile Attribute**
+  - [ ] Nombre del archivo fuente .kt
+
+- [ ] **LineNumberTable**
+  - [ ] Mapeo PC offset → línea de código
+  - [ ] Para debugging
+
+- [ ] **LocalVariableTable**
+  - [ ] Nombres de variables locales
+  - [ ] Start PC, length, slot
+
+**Entregable**: Bytecode con debugging info
+
+---
+
+### 📅 Semana 7: Runtime Support
+
+#### Fase 11: Built-in Functions y Runtime
+**Duración**: 10 días
+**Prioridad**: 🔴 ALTA
+
+- [ ] **System I/O**
+  - [ ] `println(Int)` → `System.out.println`
+  - [ ] `println(Double)`
+  - [ ] `println(String)`
+  - [ ] `print()` variantes
+
+- [ ] **Array Creation**
+  - [ ] `intArrayOf()` → `newarray T_INT`
+  - [ ] `doubleArrayOf()` → `newarray T_DOUBLE`
+  - [ ] Inicialización de elementos
+
+- [ ] **Main Method**
+  - [ ] Signature: `public static void main(String[] args)`
+  - [ ] Entry point correcto
+
+**Entregable**: Programas con I/O ejecutables
+
+---
+
+### 📅 Semana 8: Integración y Testing
+
+#### Fase 12: Integración Completa
+**Duración**: 9 días
+**Prioridad**: 🔴 CRÍTICA
+
+- [ ] **Controller Integration** (`core/controller.py`)
+  - [ ] Método `ejecutar_jvm()`
+  - [ ] Pipeline: Kotlin → TAC → JVM → .class
+  - [ ] Guardar archivo .class
+
+- [ ] **UI Integration** (`ui/app_ui.py`, `ui/console_panel.py`)
+  - [ ] Botón "▶️ Ejecutar JVM"
+  - [ ] Pestaña "Bytecode JVM" (separada de stack-based)
+  - [ ] Mostrar output de ejecución
+  - [ ] Botón "Guardar .class"
+
+- [ ] **Execution Engine**
+  - [ ] Ejecutar con `java ClassName`
+  - [ ] Capturar stdout/stderr
+  - [ ] Mostrar en consola
+
+- [ ] **Tests Completos** (`tests/jvm/`)
+  - [ ] `test_simple_arithmetic.py` - val x = 5 + 3
+  - [ ] `test_functions.py` - fun suma(a, b)
+  - [ ] `test_arrays.py` - intArrayOf(1,2,3)
+  - [ ] `test_control_flow.py` - if, while, for
+  - [ ] `test_bubble_sort.py` - Algoritmo completo
+  - [ ] Verificar ejecución real con JVM
+
+**Entregable**: Compilador completo Kotlin → .class ejecutable
+
+---
+
+## 📊 Cronograma Actualizado
+
+| Semana | Fase | Componente | Estado |
+|--------|------|-----------|--------|
+| **✅ Completadas** | Fase 1-6 | Frontend + TAC + Bytecode educativo | ✅ |
+| **1-2** | Fase 7 | ClassFile + Constant Pool | 📝 Siguiente |
+| **3-4** | Fase 8 | JVM Instructions | 📝 Planeada |
+| **5** | Fase 9 | Stack Map Frames | 📝 Planeada |
+| **6** | Fase 10 | Attributes + Metadata | 📝 Planeada |
+| **7** | Fase 11 | Runtime Support | 📝 Planeada |
+| **8** | Fase 12 | Integration + Tests | 📝 Planeada |
+
+**Tiempo total estimado**: 8 semanas (~60 días)
+
+---
+
+## 🎯 Hitos del Proyecto
+
+### ✅ Hitos Completados
+
+- **2025-11-22**: v1.1.0 - Generación TAC y Bytecode stack-based
+- **2025-11-22**: v1.0.1 - Validación avanzada de errores
+- **2025-11-06**: v1.0.0 - Frontend completo con test Bubble Sort
+
+### 📅 Hitos Futuros
+
+- **Semana 2**: Primer .class válido generado
+- **Semana 4**: Primera ejecución JVM exitosa
+- **Semana 6**: Debugging info completo
+- **Semana 8**: **v2.0 RELEASE** - Compilador JVM completo
+
+---
+
+## 🛠️ Estructura de Archivos (v2.0)
+
+```
+KForge/
+├── core/
+│   ├── lexer.py              ✅ Completado
+│   ├── parser.py             ✅ Completado
+│   ├── semantic.py           ✅ Completado
+│   ├── tac.py                ✅ Completado
+│   ├── bytecode.py           ✅ Bytecode educativo
+│   ├── controller.py         ✅ Completado
+│   └── jvm/                  📝 NUEVO
+│       ├── __init__.py
+│       ├── classfile.py      📝 Fase 7
+│       ├── constant_pool.py  📝 Fase 7
+│       ├── descriptors.py    📝 Fase 7
+│       ├── instructions.py   📝 Fase 8
+│       ├── jvm_generator.py  📝 Fase 8
+│       ├── stackmaps.py      📝 Fase 9
+│       ├── attributes.py     📝 Fase 10
+│       └── runtime.py        📝 Fase 11
+├── tests/
+│   ├── test_tac_generator.py   ✅ 11/11
+│   ├── test_bytecode_generator.py ✅ 10/10
+│   └── jvm/                     📝 NUEVO
+│       ├── test_classfile.py
+│       ├── test_jvm_generation.py
+│       └── test_execution.py
+└── ui/
+    ├── app_ui.py             ✅ Actualizar Fase 12
+    └── console_panel.py      ✅ Actualizar Fase 12
 ```
 
 ---
 
-## 🚀 Plan de Implementación
+## 📚 Recursos Técnicos
 
-### ✅ Versión 1.0 - COMPLETADA
+### JVM Specification
+- **JVM Spec**: https://docs.oracle.com/javase/specs/jvms/se8/html/
+- **Class File Format**: Chapter 4
+- **Instruction Set**: Chapter 6
 
-- [x] **Fase 1**: Fundamentos (variables, operadores, estructuras de control)
-- [x] **Fase 2**: Funciones (declaración, llamadas, parámetros, retorno)
-- [x] **Fase 3**: Arrays y Propiedades (arrays tipados, acceso, propiedades)
-- [x] **Test Final**: Algoritmo Bubble Sort completo
+### Herramientas
+```bash
+# JDK (requerido)
+sudo apt install openjdk-17-jdk
 
-### ✅ Versión 1.0.1 - Validación Avanzada - COMPLETADA
+# Herramientas de análisis
+javap -c -v MyClass.class    # Desensamblar
+jd-gui MyClass.class         # Decompilador GUI
+```
 
-- [x] **Comentarios de bloque** `/* */` con detección de sin cerrar
-- [x] **Validación de números**: Múltiples puntos, overflow, sufijos inválidos
-- [x] **Validación de escape sequences** en strings
-- [x] **Detección de variables no inicializadas**
-- [x] **Validación de return en todas las rutas**
-- [x] **Tests de errores ampliados** (léxicos +6, semánticos +3)
-
-### ✅ Versión 1.1 - Generación de Código Intermedio - COMPLETADA
-
-**📘 Ver**: [docs/ARQUITECTURA_CODEGEN.md](docs/ARQUITECTURA_CODEGEN.md)
-
-**Objetivo**: Backend con TAC y Bytecode para requisitos académicos
-
-#### Fase 4: Código Intermedio TAC ✅
-- [x] **TACGenerator**: Generador de código de 3 direcciones
-  - [x] Operaciones básicas: ASSIGN, ADD, SUB, MUL, DIV, MOD
-  - [x] Comparaciones: LT, GT, LE, GE, EQ, NE
-  - [x] Lógicos: AND, OR, NOT, NEG
-  - [x] Control de flujo: LABEL, GOTO, IF_FALSE
-  - [x] Funciones: PARAM, CALL, RETURN
-  - [x] Arrays: ARRAY_LOAD, ARRAY_STORE
-- [x] **Tests TAC**: Cobertura completa de generación (11/11 tests passing)
-- [x] **Módulo**: `core/tac.py` con clases `TACInstruction` y `TACGenerator`
-
-#### Fase 5: Bytecode Stack-Based ✅
-- [x] **BytecodeGenerator**: Traductor TAC → Bytecode
-  - [x] Stack: PUSH, LOAD, STORE
-  - [x] Aritmética: ADD, SUB, MUL, DIV, MOD
-  - [x] Comparaciones: EQ, LT, GT, LE, GE, NE
-  - [x] Lógicos: AND, OR, NOT, NEG
-  - [x] Control: JUMP, JUMPF, CALL, RET, HALT
-  - [x] Arrays: ALOAD, ASTORE
-- [x] **Formateador Assembly**: Output legible con comentarios
-- [x] **Tests Bytecode**: Verificación TAC → Bytecode (10/10 tests passing)
-- [x] **Módulo**: `core/bytecode.py` con clases `BytecodeInstruction` y `BytecodeGenerator`
-
-#### Fase 6: Integración con UI ✅
-- [x] **Nueva pestaña "Código"** en ConsolePanel
-  - [x] Botón "Ver TAC"
-  - [x] Botón "Ver Bytecode"
-  - [x] Botón "Guardar Código" (.tac / .asm)
-- [x] **Actualizar controller.py**: Pipeline integrado automáticamente
-- [x] **Temas**: Syntax highlighting aplicado a código generado
-- [x] **CodeTab**: Nueva clase con visualización y exportación
-- [x] **Integración**: Métodos `_run_semantic()`, `_run_complete()` y `_run_codegen()` actualizados
-
-**Entregable**: ✅ "Código ensamblador" visible y exportable en UI
+### Librerías Python
+```bash
+pip install asm-python       # Para Stack Map Frames (recomendado)
+```
 
 ---
 
-### ⚡ Versión 1.2 - Optimizaciones (PLANEADA)
+## 🎯 Versión Actual y Fase de Desarrollo
 
-**Objetivo**: Mejorar calidad del código TAC generado
+### **📍 ESTAMOS EN:**
+- **Versión**: v1.1.0 ✅ COMPLETADA
+- **Siguiente**: v2.0.0 (JVM Bytecode Real)
+- **Fase Actual**: Transición → **Fase 7** (ClassFile + Constant Pool)
+- **Estado**: Listo para comenzar desarrollo JVM
 
-#### Fase 7: Optimizador de TAC
-- [ ] **Constant Folding**: `t1 = 2 + 3` → `t1 = 5`
-- [ ] **Dead Code Elimination**: Código inalcanzable
-- [ ] **Copy Propagation**: `t1 = x; t2 = t1` → `t2 = x`
-- [ ] **Common Subexpression Elimination**
-- [ ] **Tests de Optimización**: Verificar mejoras
+### **Pipeline Actual** (v1.1.0):
+```
+Kotlin → Lexer → Parser → Semantic → TAC → Bytecode Stack-Based → UI
+```
 
-**Entregable**: Compilador con optimizaciones medibles
-
----
-
-### 🚀 Versión 1.3 - Backend C Ejecutable (PLANEADA)
-
-**Objetivo**: Generar código C ejecutable
-
-#### Fase 8: Generador de C
-- [ ] **C Backend**: TAC → C
-  - [ ] Variables y expresiones
-  - [ ] Control de flujo (if, while, for)
-  - [ ] Funciones y llamadas
-  - [ ] Arrays
-- [ ] **Integración gcc**: Compilar automáticamente
-- [ ] **Ejecutor**: Correr desde UI
-- [ ] **Tests de Ejecución**: Verificar salida
-
-**Entregable**: Ejecutables nativos desde Kotlin
+### **Pipeline Objetivo** (v2.0.0):
+```
+Kotlin → Lexer → Parser → Semantic → TAC → JVM Bytecode → .class → Ejecutar
+```
 
 ---
 
-### 🎯 Versión 1.4 - Más Características Kotlin (PLANEADA)
+## 🔄 Cambios vs Roadmap Anterior
 
-**Objetivo**: Expandir lenguaje soportado
+### ❌ Removido (No implementado)
+- ~~v1.2 - Optimizaciones de TAC~~ (pospuesto)
+- ~~v1.3 - Backend C~~ (cancelado)
+- ~~v1.4 - Más features Kotlin~~ (pospuesto a v2.1+)
+- ~~v2.0 - LLVM Backend~~ (renombrado a v3.0)
 
-#### Expresiones y Operadores
-- [ ] **String Templates**: `"$variable"`
-- [ ] **Operadores Compuestos**: `+=`, `-=`, `*=`, `/=`
-- [ ] **Incremento/Decremento**: `++`, `--`
-
-#### Estructuras
-- [ ] **When Expression**: Switch mejorado
-- [ ] **Ranges Avanzados**: `downTo`, `step`
-
-**Entregable**: Más features de Kotlin real
-
----
-
-### 🌟 Versión 2.0 - Nivel Profesional (FUTURO)
-
-**Objetivo**: Compilador industrial
-
-#### Backend LLVM
-- [ ] **LLVM IR Generator**
-- [ ] **Optimizaciones LLVM**
-- [ ] **Ejecutables nativos optimizados**
-
-#### Características Avanzadas
-- [ ] **Lambdas**: `{ x -> x * 2 }`
-- [ ] **Higher-Order Functions**: map, filter, reduce
-- [ ] **Null Safety**: `?`, `!!`, `?.`, `?:`
-- [ ] **Clases y Objetos**: POO básica
-
-**Entregable**: Compilador profesional
+### ✅ Nuevo Enfoque (v2.0)
+- **JVM Bytecode Real** como objetivo principal
+- Generación de .class ejecutables
+- Compatibilidad con JVM estándar
+- Enfoque profesional sobre académico
 
 ---
 
-## 📅 Cronograma de Implementación
+## 📝 Notas Importantes
 
-| Versión | Descripción | Estado | Fecha |
-|---------|-------------|--------|-------|
-| **v1.0.0** | Frontend Completo | ✅ Completada | 2025-11-06 |
-| **v1.0.1** | Validación Avanzada | ✅ Completada | 2025-11-22 |
-| **v1.1** | Código Intermedio (TAC + Bytecode) | 🔄 En Desarrollo | Dic 2025 |
-| **v1.2** | Optimizaciones de TAC | 📝 Planeada | Ene 2026 |
-| **v1.3** | Backend C Ejecutable | 📝 Planeada | Feb 2026 |
-| **v1.4** | Más Features Kotlin | 📝 Planeada | Mar 2026 |
-| **v2.0** | Backend LLVM + Avanzado | 🔮 Futuro | 2026+ |
+### ⚠️ Advertencias Técnicas
+1. **Constant Pool**: Índices empiezan en 1 (no 0)
+2. **Long/Double**: Ocupan 2 slots en constant pool
+3. **Big-Endian**: Todos los valores multi-byte
+4. **Stack Map Frames**: La parte más compleja - usar ASM library
+5. **Type Checking**: JVM rechaza bytecode mal tipado
 
----
-
-## 🔄 Historial de Desarrollo
-
-Ver [CHANGELOG.md](CHANGELOG.md) para historial detallado de cambios.
-
-### Hitos Principales
-
-- **2025-11-22**: ✨ **v1.0.1 Lanzada** - Validación avanzada de errores
-- **2025-11-06**: 🎉 **v1.0 Lanzada** - Compilador funcional con test final
-- **2025-11-05**: ✅ Fase 3 completada - Arrays y propiedades
-- **2025-11-04**: ✅ Fase 2 completada - Funciones y llamadas
-- **2025-11-03**: ✅ Fase 1 completada - Fundamentos del lenguaje
-- **2025-11-02**: 🚀 Inicio del proyecto KForge
-
----
-
-## 📊 Resumen de Estado Actual
-
-### ✅ Implementado (v1.0.1)
-- **Frontend Completo**: Lexer, Parser, Semantic Analyzer
-- **Detección de 40+ tipos de errores**:
-  - Léxicos: Caracteres inválidos, strings sin cerrar, números mal formados, escape sequences
-  - Sintácticos: Gramática completa, validación de estructura
-  - Semánticos: Tipos, scopes, inicialización, return paths
-- **Características del Lenguaje**:
-  - Variables (var/val), tipos básicos
-  - Operadores completos (aritméticos, lógicos, comparación)
-  - Control de flujo (if, while, for, break, continue)
-  - Funciones con parámetros y return
-  - Arrays tipados con propiedades
-  - Comentarios de línea y bloque
-- **UI Moderna**: Editor multi-pestaña, consola, temas, configuración
-
-### 🔄 En Desarrollo (v1.1)
-- **Generación de Código Intermedio**: TAC + Bytecode
-- **Integración con UI**: Pestaña de código, exportación
-- **Tests de Generación**: Cobertura completa
-
-### 📝 Pendiente
-- **v1.2**: Optimizaciones (constant folding, dead code)
-- **v1.3**: Backend C ejecutable
-- **v1.4+**: Más características de Kotlin
-- **v2.0**: LLVM backend profesional
-
----
-
-## 🛠️ Cómo Continuar el Desarrollo
-
-1. **Lee [CONTRIBUTING.md](CONTRIBUTING.md)** - Reglas de trabajo y flujo de desarrollo
-2. **Elige una característica** de la sección "Características Faltantes"
-3. **Sigue el flujo de trabajo** definido en CONTRIBUTING.md
-4. **Crea tests** antes de implementar (TDD recomendado)
-5. **Ejecuta todos los tests** de fases anteriores antes de commit
-6. **Actualiza documentación** (ROADMAP.md y CHANGELOG.md)
-7. **Haz commit** con mensaje descriptivo
-
----
-
-## 📚 Recursos y Referencias
-
-### Kotlin Reference
-- **Documentación Oficial**: https://kotlinlang.org/docs/reference/
-- **Kotlin Grammar**: https://kotlinlang.org/docs/reference/grammar.html
-
-### Compiladores
-- **Dragon Book**: "Compilers: Principles, Techniques, and Tools"
-- **Modern Compiler Implementation**: Andrew Appel
-- **Crafting Interpreters**: https://craftinginterpreters.com/
-
-### Python y AST
-- **Python AST**: https://docs.python.org/3/library/ast.html
-- **Tokenize**: https://docs.python.org/3/library/tokenize.html
+### 💡 Recomendaciones
+- Empezar con programas simples (aritmética básica)
+- Validar .class generado con `javap` constantemente
+- Usar ASM library para Stack Map Frames
+- Testear ejecución real con JVM desde día 1
 
 ---
 
@@ -306,16 +382,10 @@ Ver [CHANGELOG.md](CHANGELOG.md) para historial detallado de cambios.
 
 **Gabriel Alejandro Medina Miramontes**
 
-Desarrollado como proyecto educativo para aprender compiladores e implementación de lenguajes.
+Proyecto profesional de compilador Kotlin → JVM Bytecode
 
-**Licencia**: MIT
-
----
-
-## 🙏 Agradecimientos
-
-Gracias a todos los recursos educativos y a la comunidad de compiladores que hacen posible proyectos como este.
+**Licencia**: GPL-3.0
 
 ---
 
-**¿Preguntas? ¿Sugerencias?** Abre un issue o contribuye siguiendo [CONTRIBUTING.md](CONTRIBUTING.md)
+**¿Listo para empezar con la Fase 7?** 🚀

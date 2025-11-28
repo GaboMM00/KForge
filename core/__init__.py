@@ -6,7 +6,6 @@ Contiene todas las fases del análisis: léxico, sintáctico, semántico y gener
 from core.lexer import Lexer
 from core.parser import Parser
 from core.semantic import AnalizadorSemantico
-from core.codegen import CodeGenerator
 from core.controller import CompiladorController
 from core.errors import (
     CompiladorError,
@@ -29,7 +28,6 @@ __all__ = [
     'Lexer',
     'Parser',
     'AnalizadorSemantico',
-    'CodeGenerator',
     'CompiladorController',
     'CompiladorError',
     'LexicalError',

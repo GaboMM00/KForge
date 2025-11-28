@@ -16,6 +16,8 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
   - Control de flujo: LABEL, GOTO, IF_FALSE
   - Funciones: PARAM, CALL, RETURN
   - Arrays: ARRAY_LOAD, ARRAY_STORE
+  - Soporte para sentencias globales (código sin funciones)
+  - Soporte para break/continue con loop_stack
   - Formato de salida humanizado con numeración de líneas
   - Tests completos: `tests/test_tac_generator.py` (11 tests, 100% passing)
 
@@ -23,6 +25,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
   - Nuevo módulo `core/bytecode.py` con clases `BytecodeInstruction` y `BytecodeGenerator`
   - Arquitectura de pila (stack-based) con instrucciones: PUSH, LOAD, STORE, ADD, SUB, MUL, DIV, etc.
   - Salida en formato assembly con comentarios descriptivos
+  - **NOTA**: Bytecode educativo, NO es JVM bytecode real
   - Tests completos: `tests/test_bytecode_generator.py` (10 tests, 100% passing)
 
 - **Fase 6: Integración con UI**
@@ -35,17 +38,25 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 - **Documentación**
   - Nuevo archivo `docs/ARQUITECTURA_CODEGEN.md` con diseño del pipeline de generación de código
-  - Script de prueba `test_ui_integration.py` para validar integración completa
+  - Scripts de prueba: `test_ui_integration.py`, `test_global_statements.py`, `test_ui_global.py`
 
 ### Changed
 - `core/controller.py` ahora incluye generadores TAC y Bytecode en el pipeline
 - Resultado de compilación incluye campos: `codigo_intermedio`, `bytecode`, `tac`, `bytecode_instructions`
 - Generación automática de TAC y Bytecode después del análisis semántico exitoso
 - `ConsolePanel` ahora muestra estadísticas de código generado en la pestaña "Salida"
+- `core/tac.py`: Agregado `loop_stack` para manejo de break/continue
+- `core/tac.py`: `_generate_program()` ahora soporta sentencias globales
 
 ### Fixed
 - Corrección de encoding en salida de tests (reemplazo de caracteres Unicode → ASCII)
 - Corrección de atributo de tema: `button_hover_bg` → `button_hover`
+- Bug en generación TAC: Código global (sin funciones) ahora se genera correctamente
+- Bug en break/continue: Implementación correcta con loop_stack
+
+### Project Status
+- **v1.1.0 COMPLETADA** - Frontend + TAC + Bytecode Educativo
+- **Próximo objetivo**: v2.0 - JVM Bytecode Real (.class files ejecutables)
 
 ---
 
