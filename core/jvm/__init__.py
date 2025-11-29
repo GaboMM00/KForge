@@ -44,6 +44,25 @@ from core.jvm.classfile import (
     create_hello_world_class
 )
 
+from core.jvm.instructions import (
+    JVMOpcode,
+    JVMInstruction,
+    ArrayType,
+    iconst,
+    iload,
+    istore,
+    dload,
+    dstore,
+    aload,
+    astore
+)
+
+from core.jvm.jvm_generator import (
+    JVMGenerator,
+    LocalVariableManager,
+    StackDepthTracker
+)
+
 __all__ = [
     # Constant Pool
     'ConstantPool',
@@ -70,5 +89,22 @@ __all__ = [
     'SourceFileAttribute',
     'AccessFlags',
     'create_minimal_class',
-    'create_hello_world_class'
+    'create_hello_world_class',
+
+    # Instructions
+    'JVMOpcode',
+    'JVMInstruction',
+    'ArrayType',
+    'iconst',
+    'iload',
+    'istore',
+    'dload',
+    'dstore',
+    'aload',
+    'astore',
+
+    # Generator
+    'JVMGenerator',
+    'LocalVariableManager',
+    'StackDepthTracker'
 ]

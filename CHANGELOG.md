@@ -7,6 +7,34 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [2.0.0-alpha.2] - 2025-11-28
+
+### Added - Fase 8: JVM Instruction Set y Generator
+
+- **JVM Instructions (`core/jvm/instructions.py`)**
+  - Enum `JVMOpcode` con 200+ opcodes JVM completos
+  - Clase `JVMInstruction` para instrucciones con conversión a bytes
+  - Helper functions optimizadas: `iconst()`, `iload()`, `istore()`, `dload()`, `dstore()`, `aload()`, `astore()`
+  - Enum `ArrayType` para tipos de arrays primitivos
+
+- **JVM Generator (`core/jvm/jvm_generator.py`)**
+  - `LocalVariableManager`: Gestión de slots con soporte double (2 slots)
+  - `StackDepthTracker`: Cálculo automático de max_stack
+  - `JVMGenerator`: Traductor completo TAC → JVM bytecode
+  - Soporte: ASSIGN, operaciones aritméticas, comparaciones, lógicos, control de flujo, return
+  - Resolución de labels y offsets en segunda pasada
+
+- **Tests Fase 8**
+  - `tests/jvm/test_instructions.py`: 10/10 tests
+  - `tests/jvm/test_jvm_generator.py`: 10/10 tests
+  - Total acumulado: 42/42 tests passing ✅
+
+### Fixed
+- Compatibilidad con estructura `TACInstruction` de core/tac.py (uso de strings para operaciones)
+- Mapeo correcto de campos TAC: LABEL usa label, GOTO usa arg1, IF_FALSE usa arg1/arg2
+
+---
+
 ## [2.0.0-alpha.1] - 2025-11-28
 
 ### Added - Fase 7: Fundamentos JVM (ClassFile + Constant Pool)

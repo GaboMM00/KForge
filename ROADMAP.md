@@ -119,27 +119,41 @@ Código Kotlin
 
 ### 📅 Semana 3-4: Instrucciones JVM
 
-#### Fase 8: JVM Instruction Set
+#### Fase 8: JVM Instruction Set ✅ COMPLETADA
 **Duración**: 14 días
 **Prioridad**: 🔴 CRÍTICA
+**Estado**: ✅ Completada - 2025-11-28
 
-- [ ] **JVM Opcodes** (`core/jvm/instructions.py`)
-  - [ ] Load/Store tipados: `iload`, `istore`, `dload`, `dstore`, `aload`, `astore`
-  - [ ] Constantes: `iconst_0`, `iconst_1`, `bipush`, `ldc`
-  - [ ] Aritmética: `iadd`, `isub`, `imul`, `idiv`, `irem`, `dadd`, `dsub`, `dmul`, `ddiv`
-  - [ ] Comparaciones: `if_icmpeq`, `if_icmpne`, `if_icmplt`, `if_icmpge`, `if_icmpgt`, `if_icmple`
-  - [ ] Control: `goto`, `ifeq`, `ifne`
-  - [ ] Arrays: `newarray`, `iaload`, `iastore`, `daload`, `dastore`, `arraylength`
-  - [ ] Invocaciones: `invokestatic`, `invokevirtual`
-  - [ ] Return: `ireturn`, `dreturn`, `areturn`, `return`
+- [x] **JVM Opcodes** (`core/jvm/instructions.py`)
+  - [x] 200+ opcodes JVM definidos (enum JVMOpcode)
+  - [x] Load/Store tipados: `iload`, `istore`, `dload`, `dstore`, `aload`, `astore` (optimizados 0-3)
+  - [x] Constantes: `iconst_m1` a `iconst_5`, `bipush`, `sipush`, `ldc`, `ldc_w`, `ldc2_w`
+  - [x] Aritmética: `iadd`, `isub`, `imul`, `idiv`, `irem`, `dadd`, `dsub`, `dmul`, `ddiv`, `ineg`, `dneg`
+  - [x] Comparaciones: `if_icmpeq`, `if_icmpne`, `if_icmplt`, `if_icmpge`, `if_icmpgt`, `if_icmple`
+  - [x] Control: `goto`, `ifeq`, `ifne`, `iflt`, `ifge`, `ifgt`, `ifle`
+  - [x] Arrays: `newarray`, `iaload`, `iastore`, `daload`, `dastore`, `arraylength`, `anewarray`
+  - [x] Invocaciones: `invokestatic`, `invokevirtual`, `invokespecial`, `invokeinterface`
+  - [x] Return: `ireturn`, `lreturn`, `dreturn`, `freturn`, `areturn`, `return`
+  - [x] Clase JVMInstruction con conversión a bytes
+  - [x] Helper functions: iconst(), iload(), istore(), dload(), dstore(), aload(), astore()
 
-- [ ] **JVM Generator** (`core/jvm/jvm_generator.py`)
-  - [ ] Traductor TAC → JVM bytecode
-  - [ ] Mapeo de operaciones con tipos
-  - [ ] Gestión de local variable slots
-  - [ ] Cálculo de max_stack y max_locals
+- [x] **JVM Generator** (`core/jvm/jvm_generator.py`)
+  - [x] Traductor TAC → JVM bytecode completo
+  - [x] LocalVariableManager: Gestión de slots con soporte para double (2 slots)
+  - [x] StackDepthTracker: Cálculo dinámico de max_stack
+  - [x] Mapeo de operaciones: ASSIGN, ADD, SUB, MUL, DIV, MOD, NEG, NOT
+  - [x] Comparaciones: LT, GT, LE, GE, EQ, NE con pattern de branch
+  - [x] Operadores lógicos: AND, OR con IAND/IOR
+  - [x] Control de flujo: LABEL, GOTO, IF_FALSE
+  - [x] Return statements (con valor y void)
+  - [x] Resolución de labels y offsets (segunda pasada)
 
-**Entregable**: Generador básico TAC → JVM
+- [x] **Tests Completos**
+  - [x] 10/10 tests Instructions
+  - [x] 10/10 tests JVM Generator
+  - [x] Total: 20 tests nuevos + 22 anteriores = 42 tests passing ✅
+
+**Entregable**: ✅ Generador TAC → JVM funcional con soporte para expresiones, control de flujo y variables locales
 
 ---
 
