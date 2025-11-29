@@ -306,3 +306,127 @@ class CompiladorController:
             resumen += "=" * 70 + "\n"
 
         return resumen
+
+    def ejecutar_jvm(self, codigo: str, class_name: str = "Main",
+                     output_path: str = None, java_version: int = 6) -> Dict[str, Any]:
+        """
+        Ejecuta compilacion completa a JVM bytecode (.class file).
+
+        Este metodo ejecuta todas las fases del frontend (lexico, sintactico,
+        semantico, TAC) y luego genera un archivo .class ejecutable.
+
+        Args:
+            codigo: Codigo fuente Kotlin
+            class_name: Nombre de la clase a generar
+            output_path: Ruta donde guardar el .class (None = no guardar)
+            java_version: Version de Java target (6, 7, 8)
+
+        Returns:
+            Diccionario con resultados:
+            {
+                "exito": bool,
+                "errores": List[str],
+                "bytecode_jvm": bytes,
+                "output_path": str,
+                "class_info": dict,
+                "tac_instructions": List[TACInstruction],
+                "resumen": str
+            }
+        """
+        from core.jvm import compile_kotlin_to_jvm
+
+        # Ejecutar frontend completo
+        resultado = self.ejecutar(codigo)
+
+        if not resultado["exito"]:
+            return {
+                "exito": False,
+                "errores": resultado["errores"],
+                "bytecode_jvm": None,
+                "output_path": None,
+                "class_info": None,
+                "tac_instructions": [],
+                "resumen": "Error en frontend - no se puede generar bytecode JVM"
+            }
+
+        # Verificar que se generaron instrucciones TAC
+        if not self.tac_instructions:
+            return {
+                "exito": False,
+                "errores": ["No se generaron instrucciones TAC"],
+                "bytecode_jvm": None,
+                "output_path": None,
+                "class_info": None,
+                "tac_instructions": [],
+                "resumen": "Error: No hay codigo intermedio TAC para compilar"
+            }
+
+        # Compilar TAC a JVM bytecode
+        try:
+            bytecode_jvm = compile_kotlin_to_jvm(
+                self.tac_instructions,
+                class_name=class_name,
+                output_path=output_path,
+                source_file=f"{class_name}.kt",
+                java_version=java_version,
+                add_debug_info=True
+            )
+
+            # Generar resumen
+            resumen = self._generar_resumen_jvm(class_name, bytecode_jvm, output_path)
+
+            return {
+                "exito": True,
+                "errores": [],
+                "bytecode_jvm": bytecode_jvm,
+                "output_path": output_path,
+                "class_info": {
+                    "class_name": class_name,
+                    "java_version": java_version,
+                    "bytecode_size": len(bytecode_jvm),
+                    "tac_instructions": len(self.tac_instructions)
+                },
+                "tac_instructions": self.tac_instructions,
+                "resumen": resumen
+            }
+
+        except Exception as e:
+            return {
+                "exito": False,
+                "errores": [f"Error en compilacion JVM: {str(e)}"],
+                "bytecode_jvm": None,
+                "output_path": None,
+                "class_info": None,
+                "tac_instructions": self.tac_instructions,
+                "resumen": f"Error durante la generacion de bytecode JVM: {str(e)}"
+            }
+
+    def _generar_resumen_jvm(self, class_name: str, bytecode: bytes, output_path: str = None) -> str:
+        """
+        Genera resumen de la compilacion JVM.
+
+        Args:
+            class_name: Nombre de la clase generada
+            bytecode: Bytecode JVM generado
+            output_path: Ruta del archivo .class (si se guardo)
+
+        Returns:
+            String con resumen de la compilacion JVM
+        """
+        resumen = "=" * 70 + "\n"
+        resumen += "COMPILACION JVM EXITOSA\n"
+        resumen += "=" * 70 + "\n\n"
+
+        resumen += f"Clase generada: {class_name}\n"
+        resumen += f"Bytecode size: {len(bytecode)} bytes\n"
+        resumen += f"Instrucciones TAC: {len(self.tac_instructions)}\n"
+
+        if output_path:
+            resumen += f"Archivo .class: {output_path}\n"
+            resumen += "\nPara ejecutar:\n"
+            resumen += f"  java {class_name}\n"
+        else:
+            resumen += "\n(Archivo .class no guardado - solo en memoria)\n"
+
+        resumen += "\n" + "=" * 70 + "\n"
+        return resumen

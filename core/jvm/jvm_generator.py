@@ -109,6 +109,11 @@ class StackDepthTracker:
         """Retorna la profundidad maxima alcanzada."""
         return self.max_depth
 
+    @property
+    def max_stack(self) -> int:
+        """Alias para max_depth (compatibilidad)."""
+        return self.max_depth
+
 
 class JVMGenerator:
     """
@@ -121,6 +126,7 @@ class JVMGenerator:
     def __init__(self, constant_pool: ConstantPool):
         self.constant_pool = constant_pool
         self.local_vars = LocalVariableManager(is_static=True)
+        self.var_manager = self.local_vars  # Alias para compatibilidad
         self.stack_tracker = StackDepthTracker()
         self.instructions: List[JVMInstruction] = []
         self.labels: Dict[str, int] = {}  # label -> instruction offset

@@ -82,6 +82,11 @@ from core.jvm.runtime import (
     generate_string_constant
 )
 
+from core.jvm.jvm_compiler import (
+    JVMCompiler,
+    compile_kotlin_to_jvm
+)
+
 __all__ = [
     # Constant Pool
     'ConstantPool',
@@ -142,5 +147,9 @@ __all__ = [
     'generate_anewarray',
     'generate_array_store_int',
     'create_main_method',
-    'generate_string_constant'
+    'generate_string_constant',
+
+    # Compiler (Integration)
+    'JVMCompiler',
+    'compile_kotlin_to_jvm'
 ]
