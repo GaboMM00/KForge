@@ -7,6 +7,70 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [2.0.0-alpha.1] - 2025-11-28
+
+### Added - Fase 7: Fundamentos JVM (ClassFile + Constant Pool)
+
+- **Estructura del Proyecto**
+  - Nueva carpeta `core/jvm/` para componentes de generación JVM
+  - Nueva carpeta `tests/jvm/` para tests de componentes JVM
+  - Reorganización: `tests/phases/` y `tests/integration/`
+  - Carpeta `deprecated/` para código obsoleto
+
+- **Constant Pool (`core/jvm/constant_pool.py`)**
+  - Implementación completa del Constant Pool JVM
+  - Soporte para todos los tipos de constantes: Utf8, Integer, Float, Long, Double, Class, String, Fieldref, Methodref, NameAndType
+  - Indexación 1-based conforme a JVM Specification
+  - Cache automático de constantes (deduplicación)
+  - Manejo especial de Long/Double (ocupan 2 slots)
+  - Gestión automática de dependencias (ej: Methodref agrega automáticamente todas sus constantes necesarias)
+  - Conversión a bytes big-endian
+
+- **Type Descriptors (`core/jvm/descriptors.py`)**
+  - Clase `TypeDescriptor` para convertir tipos Kotlin a descriptores JVM
+  - Mapeo de tipos: Int→'I', Double→'D', String→'Ljava/lang/String;', Boolean→'Z', Unit→'V'
+  - Generación de method descriptors: `(param1param2...)returnType`
+  - Descriptores predefinidos para métodos comunes (println, main)
+
+- **ClassFile Writer (`core/jvm/classfile.py`)**
+  - Clase `ClassFileWriter` para generar archivos .class válidos
+  - Magic number 0xCAFEBABE y versión Java 8 (52.0)
+  - Access flags (ACC_PUBLIC, ACC_SUPER, ACC_STATIC, etc.)
+  - Clase `MethodInfo` para definir métodos
+  - Clase `AttributeInfo` y subclases (`CodeAttribute`, `SourceFileAttribute`)
+  - Escritura binaria big-endian conforme a JVM Specification
+  - Funciones helper: `create_minimal_class()`, `create_hello_world_class()`
+  - Método `get_class_info()` para debugging
+
+- **Tests Completos JVM**
+  - `tests/jvm/test_constant_pool.py`: 8 tests completos (UTF-8, Integer, Long/Double slots, Class, Methodref, conversión a bytes)
+  - `tests/jvm/test_classfile.py`: 10 tests completos (magic number, versión, estructura, attributes, methods)
+  - `tests/jvm/test_jvm_validation.py`: 4 tests de validación (estructura bytecode, javap integration)
+  - Todos los tests: 22/22 passing ✅
+
+- **Documentación**
+  - `docs/ARCHITECTURE.md`: Arquitectura completa del compilador
+  - `docs/JVM_BYTECODE_GUIDE.md`: Guía detallada de implementación JVM (571 líneas)
+  - `docs/PROJECT_REORGANIZATION.md`: Plan de reorganización v1.1 → v2.0
+  - README.md actualizado con objetivo JVM bytecode
+  - ROADMAP.md actualizado con plan v2.0 (Fases 7-12)
+  - CONTRIBUTING.md actualizado con reglas de commit obligatorias
+
+### Changed
+- `core/__init__.py`: Removido import obsoleto de `CodeGenerator`
+- `core/controller.py`: Comentado código obsoleto de generación de código intermedio v1.1
+- `core/utils.py`: Verificado que usa `TipoDato.VOID` en lugar de `TipoDato.UNIT`
+
+### Fixed
+- Encoding UTF-8 en tests para soporte de caracteres Unicode (checkmarks)
+- Paths de importación en tests relocalizados a `tests/phases/`
+
+### Deprecated
+- `core/codegen.py` → movido a `deprecated/codegen.py.deprecated`
+- Bytecode stack-based educativo de v1.1 (mantenido para referencia)
+
+---
+
 ## [1.1.0] - 2025-11-22
 
 ### Added - Generación de Código Intermedio (TAC) y Bytecode

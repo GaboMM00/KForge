@@ -75,33 +75,45 @@ Código Kotlin
 
 ### 📅 Semana 1-2: Fundamentos JVM
 
-#### Fase 7: Estructura de Archivos .class
+#### Fase 7: Estructura de Archivos .class ✅ COMPLETADA
 **Duración**: 14 días
 **Prioridad**: 🔴 CRÍTICA
+**Estado**: ✅ Completada - 2025-11-28
 
-- [ ] **ClassFile Writer** (`core/jvm/classfile.py`)
-  - [ ] Magic number (0xCAFEBABE)
-  - [ ] Version numbers (Java 8: 52.0)
-  - [ ] Access flags (PUBLIC, SUPER)
-  - [ ] This class, super class references
-  - [ ] Escritura binaria big-endian
+- [x] **ClassFile Writer** (`core/jvm/classfile.py`)
+  - [x] Magic number (0xCAFEBABE)
+  - [x] Version numbers (Java 8: 52.0)
+  - [x] Access flags (PUBLIC, SUPER)
+  - [x] This class, super class references
+  - [x] Escritura binaria big-endian
+  - [x] MethodInfo, AttributeInfo classes
+  - [x] CodeAttribute para métodos
+  - [x] SourceFileAttribute
 
-- [ ] **Constant Pool** (`core/jvm/constant_pool.py`)
-  - [ ] CONSTANT_Utf8 (strings)
-  - [ ] CONSTANT_Integer, CONSTANT_Double
-  - [ ] CONSTANT_Class (referencias a clases)
-  - [ ] CONSTANT_String (string literals)
-  - [ ] CONSTANT_Methodref (referencias a métodos)
-  - [ ] CONSTANT_Fieldref (referencias a campos)
-  - [ ] CONSTANT_NameAndType (descriptores)
-  - [ ] Gestión de índices (1-based)
+- [x] **Constant Pool** (`core/jvm/constant_pool.py`)
+  - [x] CONSTANT_Utf8 (strings)
+  - [x] CONSTANT_Integer, CONSTANT_Double, CONSTANT_Long, CONSTANT_Float
+  - [x] CONSTANT_Class (referencias a clases)
+  - [x] CONSTANT_String (string literals)
+  - [x] CONSTANT_Methodref (referencias a métodos)
+  - [x] CONSTANT_Fieldref (referencias a campos)
+  - [x] CONSTANT_NameAndType (descriptores)
+  - [x] Gestión de índices (1-based)
+  - [x] Cache de constantes (deduplicación automática)
+  - [x] Soporte para Long/Double (2 slots)
 
-- [ ] **Method/Field Descriptors** (`core/jvm/descriptors.py`)
-  - [ ] Mapeo de tipos: Int→I, Double→D, String→Ljava/lang/String;
-  - [ ] Generación de method signatures: `(II)I`
-  - [ ] Field descriptors
+- [x] **Method/Field Descriptors** (`core/jvm/descriptors.py`)
+  - [x] Mapeo de tipos: Int→I, Double→D, String→Ljava/lang/String;, Boolean→Z, Unit→V
+  - [x] Generación de method signatures: `(II)I`
+  - [x] Field descriptors
+  - [x] Descriptores predefinidos (main, println)
 
-**Entregable**: Archivo .class vacío pero válido
+- [x] **Tests Completos**
+  - [x] 8/8 tests Constant Pool
+  - [x] 10/10 tests ClassFile Writer
+  - [x] 4/4 tests Validación JVM
+
+**Entregable**: ✅ Archivos .class válidos generados (MinimalClass.class, HelloWorld.class)
 
 ---
 
