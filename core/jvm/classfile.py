@@ -150,6 +150,15 @@ class CodeAttribute(AttributeInfo):
         self.exception_table: List[tuple] = []  # (start_pc, end_pc, handler_pc, catch_type)
         self.attributes: List[AttributeInfo] = []
 
+    def add_sub_attribute(self, attribute):
+        """
+        Agrega un sub-atributo al Code attribute.
+
+        Args:
+            attribute: LineNumberTableAttribute, LocalVariableTableAttribute, etc.
+        """
+        self.attributes.append(attribute)
+
     def to_bytes(self) -> bytes:
         """Convierte el atributo Code a bytes."""
         # Construir info del atributo

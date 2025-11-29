@@ -7,6 +7,65 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [2.0.0-alpha.5] - 2025-11-28
+
+### Added - Fase 10: Attributes + Metadata
+
+- **Advanced Attributes** (`core/jvm/attributes.py`)
+  - `LineNumberTableAttribute`: Mapeo PC offset a linea de codigo fuente
+  - `LocalVariableTableAttribute`: Informacion de variables locales para debugging
+  - `LineNumberEntry`: Entrada individual (start_pc, line_number)
+  - `LocalVariableEntry`: Entrada de variable (start_pc, length, name, descriptor, index)
+  - Helper functions: `create_line_number_table()`, `create_local_variable_table()`
+  - `StackMapTableAttribute`: Placeholder para upgrade futuro a Java 7+
+
+- **CodeAttribute Enhancements**
+  - Metodo `add_sub_attribute()` para agregar LineNumberTable y LocalVariableTable
+  - Soporte completo para sub-attributes en Code attribute
+  - Escritura binaria correcta de sub-attributes
+
+- **Tests Completos** (`tests/jvm/test_attributes.py`)
+  - 10 tests exhaustivos para attributes avanzados
+  - Test LineNumberEntry y LocalVariableEntry basicos
+  - Test LineNumberTable y LocalVariableTable attributes
+  - Test helpers create_line_number_table() y create_local_variable_table()
+  - Test CodeAttribute con LineNumberTable
+  - Test CodeAttribute con LocalVariableTable
+  - Test CodeAttribute con ambos attributes simultaneamente
+  - Test clase completa con debugging info
+  - Todos pasando checkmark
+
+### Changed
+- **core/jvm/__init__.py**
+  - Exports nuevos: LineNumberTableAttribute, LocalVariableTableAttribute
+  - Exports entries: LineNumberEntry, LocalVariableEntry
+  - Exports helpers: create_line_number_table, create_local_variable_table
+
+- **run_all_jvm_tests.py**
+  - Agregado test_attributes.py a la suite
+  - Total: 6/6 test files (52+ tests individuales)
+
+- **ROADMAP.md**
+  - Fase 10 marcada como completada
+  - Timeline actualizado: Fases 7-10 completadas (4/6 JVM phases) - 67%
+  - Current phase: Fase 11 (Runtime Support)
+  - File structure actualizado
+
+### Features
+**Debugging Info Completo**:
+- Checkmark SourceFile attribute (de Fase 7)
+- Checkmark LineNumberTable attribute (mapeo bytecode a codigo fuente)
+- Checkmark LocalVariableTable attribute (nombres y tipos de variables)
+- Checkmark Estructuras binarias conformes a JVM Spec 4.7.12 y 4.7.13
+
+**Technical Details**:
+- LineNumberTable: 4 bytes por entry (u2 start_pc + u2 line_number)
+- LocalVariableTable: 10 bytes por entry (u2x5 campos)
+- Sub-attributes escritos en Code attribute despues de exception_table
+- Conformidad total con JVM Specification
+
+---
+
 ## [2.0.0-alpha.4] - 2025-11-28
 
 ### Added - Fase 9: Java 6 Bytecode Strategy

@@ -63,6 +63,15 @@ from core.jvm.jvm_generator import (
     StackDepthTracker
 )
 
+from core.jvm.attributes import (
+    LineNumberTableAttribute,
+    LocalVariableTableAttribute,
+    LineNumberEntry,
+    LocalVariableEntry,
+    create_line_number_table,
+    create_local_variable_table
+)
+
 __all__ = [
     # Constant Pool
     'ConstantPool',
@@ -106,5 +115,13 @@ __all__ = [
     # Generator
     'JVMGenerator',
     'LocalVariableManager',
-    'StackDepthTracker'
+    'StackDepthTracker',
+
+    # Attributes
+    'LineNumberTableAttribute',
+    'LocalVariableTableAttribute',
+    'LineNumberEntry',
+    'LocalVariableEntry',
+    'create_line_number_table',
+    'create_local_variable_table'
 ]
