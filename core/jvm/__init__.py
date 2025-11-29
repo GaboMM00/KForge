@@ -72,6 +72,16 @@ from core.jvm.attributes import (
     create_local_variable_table
 )
 
+from core.jvm.runtime import (
+    RuntimeHelper,
+    generate_newarray_int,
+    generate_newarray_double,
+    generate_anewarray,
+    generate_array_store_int,
+    create_main_method,
+    generate_string_constant
+)
+
 __all__ = [
     # Constant Pool
     'ConstantPool',
@@ -123,5 +133,14 @@ __all__ = [
     'LineNumberEntry',
     'LocalVariableEntry',
     'create_line_number_table',
-    'create_local_variable_table'
+    'create_local_variable_table',
+
+    # Runtime
+    'RuntimeHelper',
+    'generate_newarray_int',
+    'generate_newarray_double',
+    'generate_anewarray',
+    'generate_array_store_int',
+    'create_main_method',
+    'generate_string_constant'
 ]

@@ -7,6 +7,84 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [2.0.0-alpha.6] - 2025-11-28
+
+### Added - Fase 11: Runtime Support
+
+- **Runtime Module** (`core/jvm/runtime.py`)
+  - `RuntimeHelper` class: Gestiona referencias runtime (System.out, println, print)
+  - Cache automatico de fieldref y methodrefs para optimizacion
+  - Soporte para multiples tipos: Int, Double, String, Boolean
+
+- **System I/O Functions**
+  - `generate_println()`: Genera instrucciones para println(value)
+  - `generate_print()`: Genera instrucciones para print(value) sin newline
+  - Soporta Int, Double, String, Boolean
+  - Invoca System.out.println() mediante GETSTATIC + INVOKEVIRTUAL
+
+- **Array Creation**
+  - `generate_newarray_int()`: Crea arrays de enteros (newarray T_INT)
+  - `generate_newarray_double()`: Crea arrays de doubles (newarray T_DOUBLE)
+  - `generate_anewarray()`: Crea arrays de objetos (String[], etc.)
+  - `generate_array_store_int()`: Inicializa elementos de arrays
+
+- **Main Method Support**
+  - `create_main_method()`: Helper para crear metodo main correcto
+  - Signature: public static void main(String[] args)
+  - Code attribute automatico con max_stack y max_locals
+  - Entry point valido para ejecucion JVM
+
+- **String Constants**
+  - `generate_string_constant()`: Carga String constants al stack
+  - Usa LDC o LDC_W segun indice en constant pool
+  - Agrega strings automaticamente al constant pool
+
+- **Tests Completos** (`tests/jvm/test_runtime.py`)
+  - 12 tests exhaustivos para runtime support
+  - Test RuntimeHelper initialization
+  - Test System.out fieldref
+  - Test println methodrefs (Int, Double, String, Boolean)
+  - Test generacion de instrucciones println
+  - Test creacion de arrays (int[], double[], String[])
+  - Test metodo main()
+  - Test constantes String
+  - Test programa Hello World completo con println
+  - Todos pasando ✓
+
+### Changed
+- **core/jvm/__init__.py**
+  - Exports runtime: RuntimeHelper, generate_newarray_int, generate_newarray_double
+  - Exports: generate_anewarray, generate_array_store_int
+  - Exports: create_main_method, generate_string_constant
+
+- **run_all_jvm_tests.py**
+  - Agregado test_runtime.py a la suite
+  - Total: 7/7 test files (64+ tests individuales)
+
+- **ROADMAP.md**
+  - Fase 11 marcada como completada
+  - Timeline actualizado: Fases 7-11 completadas (5/6 JVM phases) - 83%
+  - Current phase: Fase 12 (Integration + Tests)
+  - File structure actualizado
+
+### Features
+**Runtime Completo**:
+- ✓ println(Int, Double, String, Boolean) funcional
+- ✓ print() variantes sin newline
+- ✓ Creacion de arrays primitivos y objetos
+- ✓ Metodo main() correcto para ejecucion
+- ✓ Constantes String
+- ✓ Programas ejecutables con I/O
+
+**Technical Details**:
+- System.out: GETSTATIC java/lang/System.out
+- println: INVOKEVIRTUAL java/io/PrintStream.println(tipo)V
+- Arrays primitivos: newarray T_INT, T_DOUBLE
+- Arrays objetos: anewarray class_index
+- Main signature: ([Ljava/lang/String;)V
+
+---
+
 ## [2.0.0-alpha.5] - 2025-11-28
 
 ### Added - Fase 10: Attributes + Metadata

@@ -35,7 +35,8 @@ def main():
         'tests/jvm/test_instructions.py',
         'tests/jvm/test_jvm_generator.py',
         'tests/jvm/test_jvm_validation.py',
-        'tests/jvm/test_attributes.py'
+        'tests/jvm/test_attributes.py',
+        'tests/jvm/test_runtime.py'
     ]
 
     results = []

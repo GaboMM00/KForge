@@ -227,26 +227,39 @@ Código Kotlin
 
 ### 📅 Semana 7: Runtime Support
 
-#### Fase 11: Built-in Functions y Runtime
-**Duración**: 10 días
+#### ✅ Fase 11: Built-in Functions y Runtime (COMPLETADA)
+**Duración**: 1 día (2025-11-28)
 **Prioridad**: 🔴 ALTA
 
-- [ ] **System I/O**
-  - [ ] `println(Int)` → `System.out.println`
-  - [ ] `println(Double)`
-  - [ ] `println(String)`
-  - [ ] `print()` variantes
+- [x] **System I/O**
+  - [x] `println(Int)` → `System.out.println`
+  - [x] `println(Double)`
+  - [x] `println(String)`
+  - [x] `println(Boolean)`
+  - [x] `print()` variantes sin newline
 
-- [ ] **Array Creation**
-  - [ ] `intArrayOf()` → `newarray T_INT`
-  - [ ] `doubleArrayOf()` → `newarray T_DOUBLE`
-  - [ ] Inicialización de elementos
+- [x] **Array Creation**
+  - [x] `generate_newarray_int()` → `newarray T_INT`
+  - [x] `generate_newarray_double()` → `newarray T_DOUBLE`
+  - [x] `generate_anewarray()` → arrays de objetos (String[], etc.)
+  - [x] `generate_array_store_int()` → inicialización de elementos
 
-- [ ] **Main Method**
-  - [ ] Signature: `public static void main(String[] args)`
-  - [ ] Entry point correcto
+- [x] **Main Method**
+  - [x] `create_main_method()` helper
+  - [x] Signature: `public static void main(String[] args)`
+  - [x] Entry point correcto con Code attribute
 
-**Entregable**: Programas con I/O ejecutables
+- [x] **Runtime Helpers**
+  - [x] `RuntimeHelper` class para gestión de referencias
+  - [x] Cache de System.out fieldref
+  - [x] Cache de println/print methodrefs por tipo
+  - [x] `generate_string_constant()` para strings
+
+- [x] **Tests Completos**
+  - [x] `test_runtime.py` - 12 tests exhaustivos
+  - [x] Todos los tests JVM pasando (64+ tests) ✓
+
+**Entregable**: ✅ Programas con I/O ejecutables, soporte completo runtime
 
 ---
 
@@ -293,11 +306,11 @@ Código Kotlin
 | **✅** | Fase 8 | JVM Instructions | ✅ Completada |
 | **✅** | Fase 9 | Stack Map Frames (Java 6) | ✅ Completada |
 | **✅** | Fase 10 | Attributes + Metadata | ✅ Completada |
-| **7** | Fase 11 | Runtime Support | 📝 Siguiente |
-| **8** | Fase 12 | Integration + Tests | 📝 Planeada |
+| **✅** | Fase 11 | Runtime Support | ✅ Completada |
+| **8** | Fase 12 | Integration + Tests | 📝 Siguiente |
 
 **Tiempo total estimado**: 8 semanas (~60 días)
-**Progreso actual**: Fases 7-10 completadas (4/6 fases JVM) ✓ - 67% completo
+**Progreso actual**: Fases 7-11 completadas (5/6 fases JVM) ✓ - 83% completo
 
 ---
 
@@ -337,7 +350,7 @@ KForge/
 │       ├── instructions.py   ✅ Fase 8
 │       ├── jvm_generator.py  ✅ Fase 8
 │       ├── attributes.py     ✅ Fase 10
-│       └── runtime.py        📝 Fase 11
+│       └── runtime.py        ✅ Fase 11
 ├── tests/
 │   ├── test_tac_generator.py   ✅ 11/11
 │   ├── test_bytecode_generator.py ✅ 10/10
@@ -347,7 +360,8 @@ KForge/
 │       ├── test_instructions.py    ✅ 10 tests
 │       ├── test_jvm_generator.py   ✅ 10 tests
 │       ├── test_jvm_validation.py  ✅ 4 tests
-│       └── test_attributes.py      ✅ 10 tests (Fase 10)
+│       ├── test_attributes.py      ✅ 10 tests (Fase 10)
+│       └── test_runtime.py         ✅ 12 tests (Fase 11)
 └── ui/
     ├── app_ui.py             ✅ Actualizar Fase 12
     └── console_panel.py      ✅ Actualizar Fase 12
@@ -382,10 +396,10 @@ pip install asm-python       # Para Stack Map Frames (recomendado)
 ## 🎯 Versión Actual y Fase de Desarrollo
 
 ### **📍 ESTAMOS EN:**
-- **Versión**: v2.0.0-alpha.5 ✅ EN DESARROLLO
-- **Siguiente**: v2.0.0-alpha.6 (Fase 11 - Runtime Support)
-- **Fase Actual**: Fases 7-10 ✅ completadas → **Fase 11** (Runtime Support)
-- **Estado**: Generando bytecode Java 6 válido con debugging info completo
+- **Versión**: v2.0.0-alpha.6 ✅ EN DESARROLLO
+- **Siguiente**: v2.0.0-beta.1 (Fase 12 - Integration + Tests)
+- **Fase Actual**: Fases 7-11 ✅ completadas → **Fase 12** (Integration + Tests)
+- **Estado**: Generando bytecode Java 6 ejecutable con I/O y debugging completo
 
 ### **Pipeline Actual** (v1.1.0):
 ```
