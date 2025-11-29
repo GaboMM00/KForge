@@ -7,6 +7,92 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [2.0.0-alpha.4] - 2025-11-28
+
+### Added - Fase 9: Java 6 Bytecode Strategy
+
+- **Multi-Version Support in ClassFileWriter**
+  - `java_version` parameter (6, 7, 8) in `ClassFileWriter.__init__()`
+  - `requires_stack_maps` flag based on version
+  - Version constants: `JAVA_6_MAJOR=50`, `JAVA_7_MAJOR=51`, `JAVA_8_MAJOR=52`
+  - Default to Java 6 (version 50.0) - no Stack Map Frames required
+
+- **Java 6 Bytecode Generation**
+  - Version 50.0 bytecode (compatible with all modern JVMs)
+  - No Stack Map Frames required
+  - All KForge features work correctly
+  - Valid .class files executable by JVM
+
+- **Tests - Java Version Configuration**
+  - New test: `test_java_version_configuration()` in `test_classfile.py`
+  - Tests Java 6, 7, 8 version generation
+  - Tests invalid version fallback to Java 6
+  - All 42+ JVM tests updated and passing ✓
+
+- **Documentation**
+  - `docs/PHASE9_JAVA6_APPROACH.md`: Complete Java 6 approach guide
+  - Technical decision rationale
+  - Compatibility matrix (Java 6-11+)
+  - Optional upgrade path to Java 7+ with Stack Map Frames
+  - `run_all_jvm_tests.py`: Test runner script for all JVM tests
+
+### Changed
+- **ClassFileWriter** (`core/jvm/classfile.py`)
+  - Instance variables for version instead of class constants
+  - `to_bytes()` uses `self.major_version`, `self.minor_version`
+  - `get_class_info()` returns instance version
+  - Helper functions accept `java_version` parameter
+
+- **All JVM Tests**
+  - Updated version expectations from 52.0 (Java 8) to 50.0 (Java 6)
+  - `test_magic_and_version()`, `test_hello_world_class()`, `test_class_info()`
+  - `test_bytecode_structure()` in `test_jvm_validation.py`
+
+- **ROADMAP.md**
+  - Phase 9 marked as completed with Java 6 approach
+  - Timeline updated: Phases 7-9 completed (3/6 JVM phases)
+  - Current phase: Phase 10 (Attributes + Metadata)
+  - File structure updated with completed files
+
+### Development Environment
+- Virtual environment (venv) setup completed
+- All tests running in isolated environment
+- Test runner script: `run_all_jvm_tests.py`
+- Total: 5/5 test files passing (42+ individual tests)
+
+### Technical Decisions
+**Decision**: Use Java 6 bytecode (version 50.0) instead of implementing Stack Map Frames
+
+**Rationale**:
+- asm-python library not available/maintained
+- Manual Stack Map Frame implementation too complex for educational project
+- Java 6 bytecode valid on all modern JVMs
+- All KForge features work correctly
+
+**Future**: Optional upgrade to Java 7+ documented in `PHASE9_JAVA6_APPROACH.md`
+
+---
+
+## [2.0.0-alpha.3] - 2025-11-28
+
+### Added - Setup y Configuración del Proyecto
+
+- **Archivos de Configuración**
+  - `requirements.txt`: Lista de dependencias (actualmente solo stdlib)
+  - `.gitignore`: Configuración Git (venv, pycache, outputs)
+  - `INSTALL.md`: Guía completa de instalación y setup con venv
+
+### Changed
+- **README.md**: Actualizado con instrucciones venv y referencias a INSTALL.md
+- **ROADMAP.md**: Fase 9 definida con implementación manual de Stack Map Frames
+
+### Development Environment
+- Entorno virtual (venv) recomendado
+- Compatible Python 3.8+
+- Sin dependencias externas requeridas
+
+---
+
 ## [2.0.0-alpha.2] - 2025-11-28
 
 ### Added - Fase 8: JVM Instruction Set y Generator

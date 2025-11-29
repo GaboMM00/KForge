@@ -73,9 +73,9 @@ Kotlin → Lexer → Parser → Semantic → TAC → JVM Bytecode → .class →
 
 | Fase | Componente | Duración | Estado |
 |------|-----------|----------|--------|
-| **7** | ClassFile + Constant Pool | 2 semanas | 📝 Siguiente |
-| **8** | JVM Instruction Set | 2 semanas | 📝 Planeada |
-| **9** | Stack Map Frames | 1 semana | 📝 Planeada |
+| **7** | ClassFile + Constant Pool | 2 semanas | ✅ Completada |
+| **8** | JVM Instruction Set | 2 semanas | ✅ Completada |
+| **9** | Stack Map Frames | 1 semana | 📝 En Desarrollo |
 | **10** | Attributes + Metadata | 1 semana | 📝 Planeada |
 | **11** | Runtime Support | 1 semana | 📝 Planeada |
 | **12** | Integration + Testing | 1 semana | 📝 Planeada |
@@ -95,7 +95,7 @@ Ver **[ROADMAP.md](ROADMAP.md)** para el plan completo.
 ### Requisitos
 
 - **Python 3.8+** (con Tkinter incluido)
-- **JDK 8+** (para v2.0 - ejecutar .class files)
+- **JDK 8+** (opcional, para verificar .class files con javap)
 
 ### Instalación
 
@@ -104,11 +104,23 @@ Ver **[ROADMAP.md](ROADMAP.md)** para el plan completo.
 git clone <repository-url>
 cd KForge
 
+# Crear entorno virtual
+python -m venv venv
+
+# Activar entorno virtual
+# Windows:
+venv\Scripts\activate
+# Linux/macOS:
+source venv/bin/activate
+
+# Instalar dependencias (actualmente solo biblioteca estándar)
+pip install -r requirements.txt
+
 # Verificar Python
 python --version  # Debe ser 3.8+
-
-# El proyecto no requiere dependencias externas
 ```
+
+**📖 Ver [INSTALL.md](INSTALL.md) para instrucciones detalladas de instalación y configuración**
 
 ### Ejecutar el Compilador
 

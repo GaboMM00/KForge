@@ -170,8 +170,8 @@ def test_bytecode_structure():
     # Verificar version
     minor = int.from_bytes(bytecode[4:6], 'big')
     major = int.from_bytes(bytecode[6:8], 'big')
-    assert minor == 0 and major == 52, f"Version incorrecta: {major}.{minor}"
-    print(f"  ✓ Version: {major}.{minor} (Java 8)")
+    assert minor == 0 and major == 50, f"Version incorrecta: {major}.{minor}"
+    print(f"  ✓ Version: {major}.{minor} (Java 6)")
 
     # Verificar constant pool count
     cp_count = int.from_bytes(bytecode[8:10], 'big')
@@ -202,7 +202,7 @@ def test_class_file_info():
 
     # Verificaciones
     assert info['magic'] == '0xCAFEBABE'
-    assert info['version'] == '52.0'
+    assert info['version'] == '50.0'
     assert info['methods_count'] >= 1
     assert info['bytecode_size'] > 100
 

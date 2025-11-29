@@ -41,10 +41,10 @@ def test_magic_and_version():
     # Leer version (bytes 4-8)
     minor, major = struct.unpack('>HH', bytecode[4:8])
     assert minor == 0, f"Minor version debería ser 0, fue {minor}"
-    assert major == 52, f"Major version debería ser 52 (Java 8), fue {major}"
+    assert major == 50, f"Major version debería ser 50 (Java 6 - default), fue {major}"
 
     print("  ✓ Magic number: 0xCAFEBABE")
-    print("  ✓ Version: 52.0 (Java 8)")
+    print("  ✓ Version: 50.0 (Java 6 - default)")
     print()
 
 
@@ -186,7 +186,7 @@ def test_hello_world_class():
     # Obtener info
     info = writer.get_class_info()
     assert info['magic'] == '0xCAFEBABE'
-    assert info['version'] == '52.0'
+    assert info['version'] == '50.0'
     assert info['class_name'] == 'HelloWorld'
 
     print("  ✓ Clase HelloWorld generada correctamente")
@@ -284,7 +284,7 @@ def test_class_info():
 
     # Verificar valores
     assert info['magic'] == '0xCAFEBABE'
-    assert info['version'] == '52.0'
+    assert info['version'] == '50.0'
     assert info['class_name'] == 'HelloWorld'
     assert info['methods_count'] == 1
     assert info['bytecode_size'] > 0
@@ -292,6 +292,45 @@ def test_class_info():
     print("  ✓ Información del class file:")
     for key, value in info.items():
         print(f"    - {key}: {value}")
+    print()
+
+
+def test_java_version_configuration():
+    """Test configuración de versiones de Java."""
+    print("[TEST 11] Configuración de versiones de Java")
+
+    # Java 6 (default)
+    writer6 = ClassFileWriter("TestClass", java_version=6)
+    assert writer6.major_version == 50
+    assert writer6.requires_stack_maps == False
+    bytecode6 = writer6.to_bytes()
+    _, major6 = struct.unpack('>HH', bytecode6[4:8])
+    assert major6 == 50
+    print("  ✓ Java 6 (version 50.0) - Sin Stack Map Frames")
+
+    # Java 7
+    writer7 = ClassFileWriter("TestClass", java_version=7)
+    assert writer7.major_version == 51
+    assert writer7.requires_stack_maps == True
+    bytecode7 = writer7.to_bytes()
+    _, major7 = struct.unpack('>HH', bytecode7[4:8])
+    assert major7 == 51
+    print("  ✓ Java 7 (version 51.0) - Requiere Stack Map Frames")
+
+    # Java 8
+    writer8 = ClassFileWriter("TestClass", java_version=8)
+    assert writer8.major_version == 52
+    assert writer8.requires_stack_maps == True
+    bytecode8 = writer8.to_bytes()
+    _, major8 = struct.unpack('>HH', bytecode8[4:8])
+    assert major8 == 52
+    print("  ✓ Java 8 (version 52.0) - Requiere Stack Map Frames")
+
+    # Invalid version (should default to Java 6)
+    writer_invalid = ClassFileWriter("TestClass", java_version=99)
+    assert writer_invalid.major_version == 50
+    print("  ✓ Versión inválida usa default (Java 6)")
+
     print()
 
 
@@ -312,6 +351,7 @@ def run_all_tests():
     test_write_to_file()
     test_code_attribute_structure()
     test_class_info()
+    test_java_version_configuration()
 
     print("=" * 70)
     print("TODOS LOS TESTS PASARON EXITOSAMENTE")

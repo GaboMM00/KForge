@@ -202,26 +202,48 @@ class ClassFileWriter:
     """
     Escritor de archivos .class JVM.
 
-    Genera archivos .class válidos siguiendo la JVM Specification SE 8.
+    Genera archivos .class válidos siguiendo la JVM Specification.
+
+    Soporta dos modos:
+    - Java 6 (50.0): No requiere Stack Map Frames (más simple)
+    - Java 7+ (51.0+): Requiere Stack Map Frames para verificación
     """
 
     # Magic number del formato .class
     MAGIC = 0xCAFEBABE
 
-    # Versión Java 8 (52.0)
-    MAJOR_VERSION = 52
+    # Versiones soportadas
+    JAVA_6_MAJOR = 50  # Java 6 - No requiere Stack Map Frames
+    JAVA_7_MAJOR = 51  # Java 7 - Requiere Stack Map Frames
+    JAVA_8_MAJOR = 52  # Java 8 - Requiere Stack Map Frames
+
     MINOR_VERSION = 0
 
-    def __init__(self, class_name: str):
+    def __init__(self, class_name: str, java_version: int = 6):
         """
         Inicializa el ClassFile writer.
 
         Args:
             class_name: Nombre de la clase (formato: "com/example/MyClass")
+            java_version: Versión de Java target (6, 7, o 8). Default: 6 (sin Stack Map Frames)
         """
         self.class_name = class_name
         self.constant_pool = ConstantPool()
         self.access_flags = AccessFlags.ACC_PUBLIC | AccessFlags.ACC_SUPER
+
+        # Configurar versión según target
+        if java_version == 6:
+            self.major_version = self.JAVA_6_MAJOR
+        elif java_version == 7:
+            self.major_version = self.JAVA_7_MAJOR
+        elif java_version == 8:
+            self.major_version = self.JAVA_8_MAJOR
+        else:
+            # Default a Java 6 para simplicidad
+            self.major_version = self.JAVA_6_MAJOR
+
+        self.minor_version = self.MINOR_VERSION
+        self.requires_stack_maps = self.major_version >= self.JAVA_7_MAJOR
         self.this_class: Optional[int] = None
         self.super_class: Optional[int] = None
         self.interfaces: List[int] = []
@@ -270,7 +292,7 @@ class ClassFileWriter:
         result += struct.pack('>I', self.MAGIC)
 
         # 2. Version (minor, major)
-        result += struct.pack('>HH', self.MINOR_VERSION, self.MAJOR_VERSION)
+        result += struct.pack('>HH', self.minor_version, self.major_version)
 
         # 3. Constant pool
         result += self.constant_pool.to_bytes()
@@ -326,7 +348,7 @@ class ClassFileWriter:
         """
         return {
             'magic': f'0x{self.MAGIC:X}',
-            'version': f'{self.MAJOR_VERSION}.{self.MINOR_VERSION}',
+            'version': f'{self.major_version}.{self.minor_version}',
             'class_name': self.class_name,
             'constant_pool_count': self.constant_pool.get_count(),
             'constant_pool_entries': len(self.constant_pool),
@@ -337,7 +359,7 @@ class ClassFileWriter:
         }
 
 
-def create_minimal_class(class_name: str, source_file: str) -> ClassFileWriter:
+def create_minimal_class(class_name: str, source_file: str, java_version: int = 6) -> ClassFileWriter:
     """
     Crea una clase mínima válida (sin métodos).
 
@@ -346,16 +368,17 @@ def create_minimal_class(class_name: str, source_file: str) -> ClassFileWriter:
     Args:
         class_name: Nombre de la clase (ej: "MinimalClass")
         source_file: Nombre del archivo fuente (ej: "MinimalClass.kt")
+        java_version: Versión de Java target (6, 7, o 8). Default: 6
 
     Returns:
         ClassFileWriter configurado
     """
-    writer = ClassFileWriter(class_name)
+    writer = ClassFileWriter(class_name, java_version=java_version)
     writer.add_source_file(source_file)
     return writer
 
 
-def create_hello_world_class() -> ClassFileWriter:
+def create_hello_world_class(java_version: int = 6) -> ClassFileWriter:
     """
     Crea una clase con un método main vacío.
 
@@ -365,10 +388,13 @@ def create_hello_world_class() -> ClassFileWriter:
         }
     }
 
+    Args:
+        java_version: Versión de Java target (6, 7, o 8). Default: 6
+
     Returns:
         ClassFileWriter configurado
     """
-    writer = ClassFileWriter("HelloWorld")
+    writer = ClassFileWriter("HelloWorld", java_version=java_version)
     writer.add_source_file("HelloWorld.kt")
 
     # Crear método main

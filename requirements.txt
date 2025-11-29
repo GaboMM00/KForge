@@ -1,0 +1,13 @@
+# KForge Compiler - Dependencies
+# Python 3.8+
+
+# No external dependencies required for core compiler functionality
+# The compiler uses only Python standard library
+
+# Optional: For JVM bytecode verification (Fase 9+)
+# asm-python==0.2.1  # ASM library for automatic Stack Map Frame computation
+# Note: Currently not available via pip, will use manual implementation
+
+# Development dependencies (optional)
+# pytest==7.4.3  # For running test suite
+# pytest-cov==4.1.0  # For code coverage reports

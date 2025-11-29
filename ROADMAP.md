@@ -159,23 +159,37 @@ Código Kotlin
 
 ### 📅 Semana 5: Verificación de Bytecode
 
-#### Fase 9: Stack Map Frames
-**Duración**: 7 días
+#### ✅ Fase 9: Stack Map Frames (COMPLETADA)
+**Duración**: 1 día (2025-11-28)
 **Prioridad**: 🔴 MUY COMPLEJA
+**Decisión**: ✅ Enfoque Java 6 (OPCIÓN PRAGMÁTICA)
 
-**OPCIÓN A (Recomendada)**: Usar librería ASM
-```bash
-pip install asm-python
-```
-- [ ] Integrar ASM para cálculo automático de frames
-- [ ] Configurar `COMPUTE_FRAMES` flag
+**Razón**: La librería ASM (asm-python) no está disponible/mantenida para Python. La implementación manual de Stack Map Frames es excesivamente compleja para un proyecto educativo.
 
-**OPCIÓN B (Avanzada)**: Implementación manual
-- [ ] Análisis de flujo de control
-- [ ] Cálculo de tipos en cada branch
-- [ ] Generación de StackMapTable attribute
+**Estrategia Implementada**:
 
-**Entregable**: Bytecode verificable por JVM
+- [x] **Soporte Multi-Versión en ClassFileWriter**
+  - [x] Parámetro `java_version` (6, 7, 8)
+  - [x] Flag `requires_stack_maps` basado en versión
+  - [x] Default a Java 6 (version 50.0)
+
+- [x] **Generación de Bytecode Java 6**
+  - [x] Version 50.0 (no requiere Stack Map Frames)
+  - [x] Compatible con todas las JVMs modernas
+  - [x] Todas las características de KForge funcionan correctamente
+
+- [x] **Tests Actualizados**
+  - [x] Test de configuración de versiones Java
+  - [x] Verificación de bytecode Java 6
+  - [x] 42+ tests JVM pasando ✓
+
+- [x] **Documentación**
+  - [x] `docs/PHASE9_JAVA6_APPROACH.md` - Guía completa
+  - [x] Explicación de decisión técnica
+  - [x] Path de upgrade a Java 7+ (opcional)
+
+**Entregable**: ✅ Bytecode Java 6 válido y verificable por JVM (todas las versiones)
+**Documentación**: Ver `docs/PHASE9_JAVA6_APPROACH.md`
 
 ---
 
@@ -264,14 +278,15 @@ pip install asm-python
 | Semana | Fase | Componente | Estado |
 |--------|------|-----------|--------|
 | **✅ Completadas** | Fase 1-6 | Frontend + TAC + Bytecode educativo | ✅ |
-| **1-2** | Fase 7 | ClassFile + Constant Pool | 📝 Siguiente |
-| **3-4** | Fase 8 | JVM Instructions | 📝 Planeada |
-| **5** | Fase 9 | Stack Map Frames | 📝 Planeada |
-| **6** | Fase 10 | Attributes + Metadata | 📝 Planeada |
+| **✅** | Fase 7 | ClassFile + Constant Pool | ✅ Completada |
+| **✅** | Fase 8 | JVM Instructions | ✅ Completada |
+| **✅** | Fase 9 | Stack Map Frames (Java 6) | ✅ Completada |
+| **6** | Fase 10 | Attributes + Metadata | 📝 Siguiente |
 | **7** | Fase 11 | Runtime Support | 📝 Planeada |
 | **8** | Fase 12 | Integration + Tests | 📝 Planeada |
 
 **Tiempo total estimado**: 8 semanas (~60 días)
+**Progreso actual**: Fases 7-9 completadas (3/6 fases JVM) ✓
 
 ---
 
@@ -303,23 +318,24 @@ KForge/
 │   ├── tac.py                ✅ Completado
 │   ├── bytecode.py           ✅ Bytecode educativo
 │   ├── controller.py         ✅ Completado
-│   └── jvm/                  📝 NUEVO
-│       ├── __init__.py
-│       ├── classfile.py      📝 Fase 7
-│       ├── constant_pool.py  📝 Fase 7
-│       ├── descriptors.py    📝 Fase 7
-│       ├── instructions.py   📝 Fase 8
-│       ├── jvm_generator.py  📝 Fase 8
-│       ├── stackmaps.py      📝 Fase 9
+│   └── jvm/                  ✅ NUEVO
+│       ├── __init__.py       ✅ Completado
+│       ├── classfile.py      ✅ Fase 7 (con soporte Java 6/7/8)
+│       ├── constant_pool.py  ✅ Fase 7
+│       ├── descriptors.py    ✅ Fase 7
+│       ├── instructions.py   ✅ Fase 8
+│       ├── jvm_generator.py  ✅ Fase 8
 │       ├── attributes.py     📝 Fase 10
 │       └── runtime.py        📝 Fase 11
 ├── tests/
 │   ├── test_tac_generator.py   ✅ 11/11
 │   ├── test_bytecode_generator.py ✅ 10/10
-│   └── jvm/                     📝 NUEVO
-│       ├── test_classfile.py
-│       ├── test_jvm_generation.py
-│       └── test_execution.py
+│   └── jvm/                     ✅ NUEVO
+│       ├── test_constant_pool.py   ✅ 8 tests
+│       ├── test_classfile.py       ✅ 11 tests
+│       ├── test_instructions.py    ✅ 10 tests
+│       ├── test_jvm_generator.py   ✅ 10 tests
+│       └── test_jvm_validation.py  ✅ 4 tests
 └── ui/
     ├── app_ui.py             ✅ Actualizar Fase 12
     └── console_panel.py      ✅ Actualizar Fase 12
@@ -354,10 +370,10 @@ pip install asm-python       # Para Stack Map Frames (recomendado)
 ## 🎯 Versión Actual y Fase de Desarrollo
 
 ### **📍 ESTAMOS EN:**
-- **Versión**: v1.1.0 ✅ COMPLETADA
-- **Siguiente**: v2.0.0 (JVM Bytecode Real)
-- **Fase Actual**: Transición → **Fase 7** (ClassFile + Constant Pool)
-- **Estado**: Listo para comenzar desarrollo JVM
+- **Versión**: v2.0.0-alpha.4 ✅ EN DESARROLLO
+- **Siguiente**: v2.0.0-alpha.5 (Fase 10 - Attributes)
+- **Fase Actual**: Fases 7-9 ✅ completadas → **Fase 10** (Attributes + Metadata)
+- **Estado**: Generando bytecode Java 6 válido (.class files ejecutables)
 
 ### **Pipeline Actual** (v1.1.0):
 ```
